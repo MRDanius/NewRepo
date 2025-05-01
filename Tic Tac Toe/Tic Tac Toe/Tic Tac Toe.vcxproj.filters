@@ -44,5 +44,8 @@
     <ClInclude Include="GameLauncher.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="Cell.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

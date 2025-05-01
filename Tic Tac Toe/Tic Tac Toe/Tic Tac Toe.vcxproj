@@ -134,6 +134,7 @@
     <ClCompile Include="Tic Tac Toe.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cell.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameLauncher.h" />
     <ClInclude Include="GameState.h" />

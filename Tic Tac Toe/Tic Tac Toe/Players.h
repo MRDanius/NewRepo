@@ -1,21 +1,52 @@
+//#pragma once
+//#include "Cell.h"
+//#include "GameState.h"
+//
+//class Game; // Forward declaration
+//
+//class Player {
+//protected:
+//    char symbol;
+//public:
+//    virtual ~Player() = default;
+//    virtual Cell getMove(const Game& game) = 0;
+//    void setSymbol(char s) { symbol = s; }
+//    char getSymbol() const { return symbol; }
+//};
+//
+//class HumanPlayer : public Player {
+//public:
+//    Cell getMove(const Game& game) override;
+//};
+//
+//class BotPlayer : public Player {
+//public:
+//    enum Difficulty { RANDOM, EASY, HARD, PROLONG };
+//
+//    BotPlayer(Difficulty difficulty);
+//    Cell getMove(const Game& game) override;
+//
+//private:
+//    Difficulty difficulty;
+//
+//    GameState* findCurrentState(const Game& game) const;
+//    int calculateScore(const GameState* state) const;
+//};
+
 #pragma once
+#include "Cell.h"
+#include "GameState.h"
 
-
-#include "GameState.h"  // Добавлено!
-
-class Game; // Предварительное объявление
-
-struct Cell {
-    int row;
-    int col;
-};
+class Game;
 
 class Player {
-public:
+protected:
     char symbol;
-    virtual ~Player() {}
+public:
+    virtual ~Player() = default;
     virtual Cell getMove(const Game& game) = 0;
-    virtual void setSymbol(char s) { symbol = s; }
+    void setSymbol(char s) { symbol = s; }
+    char getSymbol() const { return symbol; }
 };
 
 class HumanPlayer : public Player {
@@ -25,18 +56,12 @@ public:
 
 class BotPlayer : public Player {
 public:
-    enum Mode { NORMAL, PROLONG };
-    enum Difficulty { EASY, MEDIUM, HARD };
-
-    BotPlayer(Mode mode, Difficulty diff);
-    ~BotPlayer();
+    enum Difficulty { RANDOM, EASY, HARD, PROLONG };
+    BotPlayer(Difficulty difficulty);
     Cell getMove(const Game& game) override;
 
 private:
-    Mode mode;
     Difficulty difficulty;
-
-    // Исправленные объявления:
-    GameState* find_current_state(const Game& game) const; // Добавлен GameState*
-    int calculate_score(const GameState* state) const;      // Добавлен GameState*
+    GameState* findCurrentState(const Game& game) const;
+    int calculateScore(const GameState* state) const;
 };
