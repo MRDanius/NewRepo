@@ -135,6 +135,8 @@
 //    }
 //}
 
+
+
 #include "Players.h"
 #include "Game.h"
 #include "GameState.h"
@@ -209,13 +211,6 @@ Cell BotPlayer::getMove(const Game& game) {
         GameState* child = all_states[child_id];
         int score = calculateScore(child);
 
-        // Debug output
-        std::cout << "Child ID: " << child_id
-            << " | Score: " << score
-            << " | X Steps: " << child->x_steps
-            << " | O Steps: " << child->o_steps
-            << " | Draw: " << child->draw_steps << std::endl;
-
         if ((difficulty == EASY && score < best_score) ||
             (difficulty != EASY && score > best_score)) {
             best_score = score;
@@ -250,22 +245,27 @@ GameState* BotPlayer::findCurrentState(const Game& game) const {
 
 int BotPlayer::calculateScore(const GameState* state) const {
     const bool is_x = (this->getSymbol() == 'X');
-    const bool can_win = (is_x && state->x_steps != INT_MAX) ||
+    const bool can_self_win = (is_x && state->x_steps != INT_MAX) ||
         (!is_x && state->o_steps != INT_MAX);
-    const bool can_lose = (!is_x && state->x_steps != INT_MAX) ||
+    const bool can_opponent_win = (!is_x && state->x_steps != INT_MAX) ||
         (is_x && state->o_steps != INT_MAX);
 
-    if (can_win) {
-        return is_x ?
-            1000 - state->x_steps * 10 :
-            1000 - state->o_steps * 10;
+    // Приоритет 1: Немедленная победа
+    if (is_x && state->x_steps == 0) return 10000;
+    if (!is_x && state->o_steps == 0) return 10000;
+
+    // Приоритет 2: Блокировка победы противника на следующем ходу
+    if (can_opponent_win) {
+        const int opponent_steps = is_x ? state->o_steps : state->x_steps;
+        if (opponent_steps == 1) return 9000;
     }
 
-    if (can_lose) {
-        return is_x ?
-            state->o_steps * (-1000) :
-            state->x_steps * (-1000);
+    // Приоритет 3: Собственная победа
+    if (can_self_win) {
+        const int self_steps = is_x ? state->x_steps : state->o_steps;
+        return 800 - self_steps * 10;
     }
 
-    return state->draw_steps * 100;
+    // Приоритет 4: Максимизация шагов до ничьей
+    return state->draw_steps * 10;
 }

@@ -18,6 +18,8 @@
 //void save_to_file(const char* filename); // Сохранение в файл
 //void load_from_file(const char* filename); // Загрузка из файла
 //void free_memory();            // Освобождение памяти
+
+
 #pragma once
 #include <climits>
 

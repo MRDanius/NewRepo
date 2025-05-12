@@ -33,6 +33,7 @@
 //    int calculateScore(const GameState* state) const;
 //};
 
+
 #pragma once
 #include "Cell.h"
 #include "GameState.h"

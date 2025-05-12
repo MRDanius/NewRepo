@@ -206,6 +206,8 @@
 //    state_count = 0;
 //}
 
+
+
 #define _CRT_SECURE_NO_WARNINGS
 #include "GameState.h"
 #include <queue>
@@ -251,7 +253,10 @@ bool is_draw(const char board[3][3]) {
 }
 
 void generate_all_states() {
-    if (state_count >= MAX_STATES) return;
+    if (state_count >= MAX_STATES) {
+        std::cerr << "Максимальное количество состояний достигнуто!" << std::endl;
+        return;
+    }
 
     all_states = new GameState * [MAX_STATES];
     char empty_board[3][3] = { {' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '} };
@@ -337,17 +342,22 @@ void evaluate_states(GameState* state) {
         GameState* child = all_states[child_id];
         if (child->x_steps == INT_MAX) evaluate_states(child);
 
-        state->x_steps = std::min(state->x_steps, child->x_steps + 1);
-        state->o_steps = std::min(state->o_steps, child->o_steps + 1);
-        state->draw_steps = std::min(state->draw_steps,
-            (child->draw_steps != INT_MAX) ? child->draw_steps + 1 : INT_MAX);
+        if (child->x_steps != INT_MAX) {
+            state->x_steps = std::min(state->x_steps, child->x_steps + 1);
+        }
+        if (child->o_steps != INT_MAX) {
+            state->o_steps = std::min(state->o_steps, child->o_steps + 1);
+        }
+        if (child->draw_steps != INT_MAX) {
+            state->draw_steps = std::min(state->draw_steps, child->draw_steps + 1);
+        }
     }
 }
 
 void save_to_file(const char* filename) {
     FILE* f = fopen(filename, "w");
     if (!f) {
-        std::cerr << "Error opening file: " << filename << std::endl;
+        std::cerr << "Ошибка открытия файла для записи: " << filename << std::endl;
         return;
     }
 
@@ -373,20 +383,27 @@ void save_to_file(const char* filename) {
 void load_from_file(const char* filename) {
     FILE* f = fopen(filename, "r");
     if (!f) {
-        std::cerr << "File not found: " << filename << ". Generating new..." << std::endl;
+        std::cerr << "Файл не найден: " << filename << ". Генерация новых данных..." << std::endl;
         generate_all_states();
         evaluate_states(all_states[0]);
         save_to_file(filename);
         return;
     }
 
-    fscanf(f, "%d\n", &state_count);
-    all_states = new GameState * [state_count];
+    if (fscanf(f, "%d\n", &state_count) != 1) {
+        std::cerr << "Ошибка чтения количества состояний!" << std::endl;
+        fclose(f);
+        return;
+    }
 
+    all_states = new GameState * [state_count];
     for (int i = 0; i < state_count; i++) {
         all_states[i] = new GameState();
         char board_str[10];
-        fgets(board_str, 10, f);
+        if (!fgets(board_str, 10, f)) {
+            std::cerr << "Ошибка чтения доски!" << std::endl;
+            break;
+        }
 
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 3; c++) {
@@ -394,16 +411,22 @@ void load_from_file(const char* filename) {
             }
         }
 
-        fscanf(f, "%d %d %d %d\n",
+        if (fscanf(f, "%d %d %d %d\n",
             &all_states[i]->x_steps,
             &all_states[i]->o_steps,
             &all_states[i]->draw_steps,
-            &all_states[i]->children_count);
+            &all_states[i]->children_count) != 4) {
+            std::cerr << "Ошибка чтения параметров состояния!" << std::endl;
+            break;
+        }
 
         if (all_states[i]->children_count > 0) {
             all_states[i]->child_ids = new int[all_states[i]->children_count];
             for (int j = 0; j < all_states[i]->children_count; j++) {
-                fscanf(f, "%d ", &all_states[i]->child_ids[j]);
+                if (fscanf(f, "%d ", &all_states[i]->child_ids[j]) != 1) {
+                    std::cerr << "Ошибка чтения ID потомков!" << std::endl;
+                    break;
+                }
             }
         }
     }
