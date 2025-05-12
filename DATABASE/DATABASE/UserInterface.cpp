@@ -234,17 +234,23 @@ void UserInterface::showViolationMenu() {
 
         switch (choice) {
         case 1: {
-            FineRegistry::FineRecord* record = db.getRegistry().getRecordsByDriver(0);
             cout << "\nСписок нарушений:\n";
+            FineRegistry::FineRecord* record = db.getRegistry().getRecordsByDriver(0);
             while (record) {
+                FineTable::Fine* fine = db.getFines().getFineById(record->fineId);  // Получаем данные о штрафе
+
                 cout << "ID: " << setw(5) << left << record->id
                     << " | Водитель: " << db.getDrivers().getDriverInfo(record->driverId)
                     << " | Город: " << db.getCities().getCityName(record->cityId)
-                    << " | Статус: " << (record->isPaid ? "Оплачен" : "Не оплачен") << endl;
+                    << " | Штраф: " << (fine ? fine->type : "Неизвестно")  // Проверка на nullptr
+                    << " (" << fixed << setprecision(0) << fine->amount << " руб.)" // Сумма, если штраф существует
+                    << " | Статус: " << (record->isPaid ? "Оплачен" : "Не оплачен")
+                    << endl;
                 record = record->next;
             }
             break;
         }
+
         case 2: {
             int driverId, fineId;
             bool driverExists = false, fineExists = false;
