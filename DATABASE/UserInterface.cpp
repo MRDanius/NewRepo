@@ -127,7 +127,7 @@ void UserInterface::showDriverMenu() {
 
             do {
                 cout << "Введите ФИО: ";
-                cin.ignore();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 getline(cin, fullName);
                 valid = validateName(fullName);
                 if (!valid) cout << "Ошибка! Используйте только буквы и пробелы.\n";
@@ -136,8 +136,10 @@ void UserInterface::showDriverMenu() {
 
             do {
                 cout << "Введите дату рождения (ДД.ММ.ГГГГ): ";
-                getline(cin, birthDate);
-                cin >> birthDate;
+               /* getline(cin, birthDate);
+                cin >> birthDate;*/
+                
+                getline(cin, birthDate);//изменил
                 valid = validateDate(birthDate);
                 if (!valid) cout << "Неверный формат даты!\n";
             } while (!valid);
@@ -150,6 +152,7 @@ void UserInterface::showDriverMenu() {
             }
             cout << "Введите ID города: ";
             cin >> cityId;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');//изменил
 
             try {
                 db.addDriver(fullName, birthDate, cityId);

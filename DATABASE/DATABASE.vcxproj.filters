@@ -67,6 +67,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="README.txt">
+      <Filter>HELP</Filter>
+    </Text>
     <Text Include="cities.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
@@ -78,9 +81,6 @@
     </Text>
     <Text Include="registry.txt">
       <Filter>Файлы ресурсов</Filter>
-    </Text>
-    <Text Include="README.txt">
-      <Filter>HELP</Filter>
     </Text>
   </ItemGroup>
 </Project>
