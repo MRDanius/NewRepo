@@ -1,0 +1,6 @@
+1    Moscow
+6    Tula
+5    Yekaterinburg
+2    Saint-Petersburg
+3    Kazan
+4    Kamenck-Uralsky
