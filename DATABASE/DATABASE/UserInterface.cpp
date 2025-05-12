@@ -29,14 +29,14 @@ void UserInterface::run() {
 void UserInterface::showMainMenu() {
     int choice;
     do {
-        cout << "\n========== ГЛАВНОЕ МЕНЮ ==========\n"
-            << "1. Управление городами\n"
-            << "2. Управление водителями\n"
-            << "3. Управление штрафами\n"
-            << "4. Управление нарушениями\n"
-            << "5. Статистика\n"
-            << "6. Выход\n"
-            << "Выберите опцию: ";
+        cout << "\n========== Р“Р›РђР’РќРћР• РњР•РќР® ==========\n"
+            << "1. РЈРїСЂР°РІР»РµРЅРёРµ РіРѕСЂРѕРґР°РјРё\n"
+            << "2. РЈРїСЂР°РІР»РµРЅРёРµ РІРѕРґРёС‚РµР»СЏРјРё\n"
+            << "3. РЈРїСЂР°РІР»РµРЅРёРµ С€С‚СЂР°С„Р°РјРё\n"
+            << "4. РЈРїСЂР°РІР»РµРЅРёРµ РЅР°СЂСѓС€РµРЅРёСЏРјРё\n"
+            << "5. РЎС‚Р°С‚РёСЃС‚РёРєР°\n"
+            << "6. Р’С‹С…РѕРґ\n"
+            << "Р’С‹Р±РµСЂРёС‚Рµ РѕРїС†РёСЋ: ";
         cin >> choice;
 
         switch (choice) {
@@ -45,11 +45,11 @@ void UserInterface::showMainMenu() {
         case 3: showFineMenu(); break;
         case 4: showViolationMenu(); break;
         case 5: showStatisticsMenu(); break;
-        case 6: cout << "Сохранение данных...\n"; break;
+        case 6: cout << "РЎРѕС…СЂР°РЅРµРЅРёРµ РґР°РЅРЅС‹С…...\n"; break;
         default:
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Неверный ввод!\n";
+            cout << "РќРµРІРµСЂРЅС‹Р№ РІРІРѕРґ!\n";
         }
     } while (choice != 6);
 }
@@ -57,37 +57,37 @@ void UserInterface::showMainMenu() {
 void UserInterface::showCityMenu() {
     int choice;
     do {
-        cout << "\n========== УПРАВЛЕНИЕ ГОРОДАМИ ==========\n"
-            << "1. Список городов\n"
-            << "2. Добавить город\n"
-            << "3. Удалить город\n"
-            << "4. Назад\n"
-            << "Выберите опцию: ";
+        cout << "\n========== РЈРџР РђР’Р›Р•РќРР• Р“РћР РћР”РђРњР ==========\n"
+            << "1. РЎРїРёСЃРѕРє РіРѕСЂРѕРґРѕРІ\n"
+            << "2. Р”РѕР±Р°РІРёС‚СЊ РіРѕСЂРѕРґ\n"
+            << "3. РЈРґР°Р»РёС‚СЊ РіРѕСЂРѕРґ\n"
+            << "4. РќР°Р·Р°Рґ\n"
+            << "Р’С‹Р±РµСЂРёС‚Рµ РѕРїС†РёСЋ: ";
         cin >> choice;
 
         switch (choice) {
         case 1: {
             CityTable::City* city = db.getCities().getAllCities();
-            cout << "\nСписок городов:\n";
+            cout << "\nРЎРїРёСЃРѕРє РіРѕСЂРѕРґРѕРІ:\n";
             while (city) {
                 cout << "ID: " << setw(5) << left << city->id
-                    << " | Название: " << city->name << endl;
+                    << " | РќР°Р·РІР°РЅРёРµ: " << city->name << endl;
                 city = city->next;
             }
             break;
         }
         case 2: {
             string name;
-            cout << "Введите название города: ";
+            cout << "Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ РіРѕСЂРѕРґР°: ";
             cin.ignore();
             getline(cin, name);
             db.addCity(name);
-            cout << "Город добавлен!\n";
+            cout << "Р“РѕСЂРѕРґ РґРѕР±Р°РІР»РµРЅ!\n";
             break;
         }
         case 3: {
             int cityId;
-            cout << "Введите ID города: ";
+            cout << "Р’РІРµРґРёС‚Рµ ID РіРѕСЂРѕРґР°: ";
             cin >> cityId;
             db.deleteCity(cityId);
             break;
@@ -99,23 +99,23 @@ void UserInterface::showCityMenu() {
 void UserInterface::showDriverMenu() {
     int choice;
     do {
-        cout << "\n========== УПРАВЛЕНИЕ ВОДИТЕЛЯМИ ==========\n"
-            << "1. Список водителей\n"
-            << "2. Добавить водителя\n"
-            << "3. Удалить водителя\n"
-            << "4. Назад\n"
-            << "Выберите опцию: ";
+        cout << "\n========== РЈРџР РђР’Р›Р•РќРР• Р’РћР”РРўР•Р›РЇРњР ==========\n"
+            << "1. РЎРїРёСЃРѕРє РІРѕРґРёС‚РµР»РµР№\n"
+            << "2. Р”РѕР±Р°РІРёС‚СЊ РІРѕРґРёС‚РµР»СЏ\n"
+            << "3. РЈРґР°Р»РёС‚СЊ РІРѕРґРёС‚РµР»СЏ\n"
+            << "4. РќР°Р·Р°Рґ\n"
+            << "Р’С‹Р±РµСЂРёС‚Рµ РѕРїС†РёСЋ: ";
         cin >> choice;
 
         switch (choice) {
         case 1: {
             DriverTable::Driver* driver = db.getDrivers().getAllDrivers();
-            cout << "\nСписок водителей:\n";
+            cout << "\nРЎРїРёСЃРѕРє РІРѕРґРёС‚РµР»РµР№:\n";
             while (driver) {
                 cout << "ID: " << setw(5) << left << driver->id
-                    << " | ФИО: " << driver->fullName
-                    << " | Дата рождения: " << driver->birthDate
-                    << " | Город: " << db.getCities().getCityName(driver->cityId) << endl;
+                    << " | Р¤РРћ: " << driver->fullName
+                    << " | Р”Р°С‚Р° СЂРѕР¶РґРµРЅРёСЏ: " << driver->birthDate
+                    << " | Р“РѕСЂРѕРґ: " << db.getCities().getCityName(driver->cityId) << endl;
                 driver = driver->next;
             }
             break;
@@ -126,43 +126,46 @@ void UserInterface::showDriverMenu() {
             bool valid = false;
 
             do {
-                cout << "Введите ФИО: ";
-                cin.ignore();
+                cout << "Р’РІРµРґРёС‚Рµ Р¤РРћ: ";
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 getline(cin, fullName);
                 valid = validateName(fullName);
-                if (!valid) cout << "Ошибка! Используйте только буквы и пробелы.\n";
+                if (!valid) cout << "РћС€РёР±РєР°! РСЃРїРѕР»СЊР·СѓР№С‚Рµ С‚РѕР»СЊРєРѕ Р±СѓРєРІС‹ Рё РїСЂРѕР±РµР»С‹.\n";
             } while (!valid);
 
 
             do {
-                cout << "Введите дату рождения (ДД.ММ.ГГГГ): ";
-                getline(cin, birthDate);
-                cin >> birthDate;
+                cout << "Р’РІРµРґРёС‚Рµ РґР°С‚Сѓ СЂРѕР¶РґРµРЅРёСЏ (Р”Р”.РњРњ.Р“Р“Р“Р“): ";
+               /* getline(cin, birthDate);
+                cin >> birthDate;*/
+                
+                getline(cin, birthDate);//РёР·РјРµРЅРёР»
                 valid = validateDate(birthDate);
-                if (!valid) cout << "Неверный формат даты!\n";
+                if (!valid) cout << "РќРµРІРµСЂРЅС‹Р№ С„РѕСЂРјР°С‚ РґР°С‚С‹!\n";
             } while (!valid);
 
-            cout << "\nДоступные города:\n";
+            cout << "\nР”РѕСЃС‚СѓРїРЅС‹Рµ РіРѕСЂРѕРґР°:\n";
             CityTable::City* city = db.getCities().getAllCities();
             while (city) {
                 cout << "ID: " << city->id << " | " << city->name << endl;
                 city = city->next;
             }
-            cout << "Введите ID города: ";
+            cout << "Р’РІРµРґРёС‚Рµ ID РіРѕСЂРѕРґР°: ";
             cin >> cityId;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');//РёР·РјРµРЅРёР»
 
             try {
                 db.addDriver(fullName, birthDate, cityId);
-                cout << "Водитель добавлен!\n";
+                cout << "Р’РѕРґРёС‚РµР»СЊ РґРѕР±Р°РІР»РµРЅ!\n";
             }
             catch (const exception& e) {
-                cout << "Ошибка: " << e.what() << endl;
+                cout << "РћС€РёР±РєР°: " << e.what() << endl;
             }
             break;
         }
         case 3: {
             int driverId;
-            cout << "Введите ID водителя: ";
+            cout << "Р’РІРµРґРёС‚Рµ ID РІРѕРґРёС‚РµР»СЏ: ";
             cin >> driverId;
             db.deleteDriver(driverId);
             break;
@@ -174,22 +177,22 @@ void UserInterface::showDriverMenu() {
 void UserInterface::showFineMenu() {
     int choice;
     do {
-        cout << "\n========== УПРАВЛЕНИЕ ШТРАФАМИ ==========\n"
-            << "1. Список штрафов\n"
-            << "2. Добавить штраф\n"
-            << "3. Удалить штраф\n"
-            << "4. Назад\n"
-            << "Выберите опцию: ";
+        cout << "\n========== РЈРџР РђР’Р›Р•РќРР• РЁРўР РђР¤РђРњР ==========\n"
+            << "1. РЎРїРёСЃРѕРє С€С‚СЂР°С„РѕРІ\n"
+            << "2. Р”РѕР±Р°РІРёС‚СЊ С€С‚СЂР°С„\n"
+            << "3. РЈРґР°Р»РёС‚СЊ С€С‚СЂР°С„\n"
+            << "4. РќР°Р·Р°Рґ\n"
+            << "Р’С‹Р±РµСЂРёС‚Рµ РѕРїС†РёСЋ: ";
         cin >> choice;
 
         switch (choice) {
         case 1: {
             FineTable::Fine* fine = db.getFines().getAllFines();
-            cout << "\nСписок штрафов:\n";
+            cout << "\nРЎРїРёСЃРѕРє С€С‚СЂР°С„РѕРІ:\n";
             while (fine) {
                 cout << "ID: " << setw(5) << left << fine->id
-                    << " | Сумма: " << fine->amount
-                    << " | Тип: " << fine->type << endl;
+                    << " | РЎСѓРјРјР°: " << fine->amount
+                    << " | РўРёРї: " << fine->type << endl;
                 fine = fine->next;
             }
             break;
@@ -197,18 +200,18 @@ void UserInterface::showFineMenu() {
         case 2: {
             double amount;
             string type;
-            cout << "Введите сумму штрафа: ";
+            cout << "Р’РІРµРґРёС‚Рµ СЃСѓРјРјСѓ С€С‚СЂР°С„Р°: ";
             cin >> amount;
-            cout << "Введите тип нарушения: ";
+            cout << "Р’РІРµРґРёС‚Рµ С‚РёРї РЅР°СЂСѓС€РµРЅРёСЏ: ";
             cin.ignore();
             getline(cin, type);
             db.addFine(amount, type);
-            cout << "Штраф добавлен!\n";
+            cout << "РЁС‚СЂР°С„ РґРѕР±Р°РІР»РµРЅ!\n";
             break;
         }
         case 3: {
             int fineId;
-            cout << "Введите ID штрафа: ";
+            cout << "Р’РІРµРґРёС‚Рµ ID С€С‚СЂР°С„Р°: ";
             cin >> fineId;
             db.getFines().deleteRecord(fineId);
             break;
@@ -220,24 +223,24 @@ void UserInterface::showFineMenu() {
 void UserInterface::showViolationMenu() {
     int choice;
     do {
-        cout << "\n========== УПРАВЛЕНИЕ НАРУШЕНИЯМИ ==========\n"
-            << "1. Все нарушения\n"
-            << "2. Добавить нарушение\n"
-            << "3. Отметить как оплаченное\n"
-            << "4. Назад\n"
-            << "Выберите опцию: ";
+        cout << "\n========== РЈРџР РђР’Р›Р•РќРР• РќРђР РЈРЁР•РќРРЇРњР ==========\n"
+            << "1. Р’СЃРµ РЅР°СЂСѓС€РµРЅРёСЏ\n"
+            << "2. Р”РѕР±Р°РІРёС‚СЊ РЅР°СЂСѓС€РµРЅРёРµ\n"
+            << "3. РћС‚РјРµС‚РёС‚СЊ РєР°Рє РѕРїР»Р°С‡РµРЅРЅРѕРµ\n"
+            << "4. РќР°Р·Р°Рґ\n"
+            << "Р’С‹Р±РµСЂРёС‚Рµ РѕРїС†РёСЋ: ";
         cin >> choice;
 
 
         switch (choice) {
         case 1: {
             FineRegistry::FineRecord* record = db.getRegistry().getRecordsByDriver(0);
-            cout << "\nСписок нарушений:\n";
+            cout << "\nРЎРїРёСЃРѕРє РЅР°СЂСѓС€РµРЅРёР№:\n";
             while (record) {
                 cout << "ID: " << setw(5) << left << record->id
-                    << " | Водитель: " << db.getDrivers().getDriverInfo(record->driverId)
-                    << " | Город: " << db.getCities().getCityName(record->cityId)
-                    << " | Статус: " << (record->isPaid ? "Оплачен" : "Не оплачен") << endl;
+                    << " | Р’РѕРґРёС‚РµР»СЊ: " << db.getDrivers().getDriverInfo(record->driverId)
+                    << " | Р“РѕСЂРѕРґ: " << db.getCities().getCityName(record->cityId)
+                    << " | РЎС‚Р°С‚СѓСЃ: " << (record->isPaid ? "РћРїР»Р°С‡РµРЅ" : "РќРµ РѕРїР»Р°С‡РµРЅ") << endl;
                 record = record->next;
             }
             break;
@@ -246,19 +249,19 @@ void UserInterface::showViolationMenu() {
             int driverId, fineId;
             bool driverExists = false, fineExists = false;
 
-            // Выбор водителя с проверкой
+            // Р’С‹Р±РѕСЂ РІРѕРґРёС‚РµР»СЏ СЃ РїСЂРѕРІРµСЂРєРѕР№
             do {
-                cout << "\nСписок водителей:\n";
+                cout << "\nРЎРїРёСЃРѕРє РІРѕРґРёС‚РµР»РµР№:\n";
                 DriverTable::Driver* driver = db.getDrivers().getAllDrivers();
                 while (driver) {
                     cout << "ID: " << driver->id << " | " << driver->fullName << endl;
                     driver = driver->next;
                 }
 
-                cout << "\nВведите ID водителя: ";
+                cout << "\nР’РІРµРґРёС‚Рµ ID РІРѕРґРёС‚РµР»СЏ: ";
                 cin >> driverId;
 
-                // Проверяем, существует ли водитель с таким ID
+                // РџСЂРѕРІРµСЂСЏРµРј, СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё РІРѕРґРёС‚РµР»СЊ СЃ С‚Р°РєРёРј ID
                 DriverTable::Driver* currentDriver = db.getDrivers().getAllDrivers();
                 while (currentDriver) {
                     if (currentDriver->id == driverId) {
@@ -269,26 +272,26 @@ void UserInterface::showViolationMenu() {
                 }
 
                 if (!driverExists) {
-                    cout << "Ошибка: Водитель с ID " << driverId << " не найден!\n";
-                    cout << "Попробуйте снова.\n";
+                    cout << "РћС€РёР±РєР°: Р’РѕРґРёС‚РµР»СЊ СЃ ID " << driverId << " РЅРµ РЅР°Р№РґРµРЅ!\n";
+                    cout << "РџРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°.\n";
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
             } while (!driverExists);
 
-            // Выбор штрафа с проверкой
+            // Р’С‹Р±РѕСЂ С€С‚СЂР°С„Р° СЃ РїСЂРѕРІРµСЂРєРѕР№
             do {
-                cout << "\nСписок штрафов:\n";
+                cout << "\nРЎРїРёСЃРѕРє С€С‚СЂР°С„РѕРІ:\n";
                 FineTable::Fine* fine = db.getFines().getAllFines();
                 while (fine) {
-                    cout << "ID: " << fine->id << " | " << fine->type << " | " << fine->amount << " руб." << endl;
+                    cout << "ID: " << fine->id << " | " << fine->type << " | " << fine->amount << " СЂСѓР±." << endl;
                     fine = fine->next;
                 }
 
-                cout << "\nВведите ID штрафа: ";
+                cout << "\nР’РІРµРґРёС‚Рµ ID С€С‚СЂР°С„Р°: ";
                 cin >> fineId;
 
-                // Проверяем, существует ли штраф с таким ID
+                // РџСЂРѕРІРµСЂСЏРµРј, СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё С€С‚СЂР°С„ СЃ С‚Р°РєРёРј ID
                 FineTable::Fine* currentFine = db.getFines().getAllFines();
                 while (currentFine) {
                     if (currentFine->id == fineId) {
@@ -299,26 +302,26 @@ void UserInterface::showViolationMenu() {
                 }
 
                 if (!fineExists) {
-                    cout << "Ошибка: Штраф с ID " << fineId << " не найден!\n";
-                    cout << "Попробуйте снова.\n";
+                    cout << "РћС€РёР±РєР°: РЁС‚СЂР°С„ СЃ ID " << fineId << " РЅРµ РЅР°Р№РґРµРЅ!\n";
+                    cout << "РџРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°.\n";
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
             } while (!fineExists);
 
-            // Если оба ID корректны — добавляем нарушение
+            // Р•СЃР»Рё РѕР±Р° ID РєРѕСЂСЂРµРєС‚РЅС‹ вЂ” РґРѕР±Р°РІР»СЏРµРј РЅР°СЂСѓС€РµРЅРёРµ
             try {
                 db.addViolation(driverId, fineId);
-                cout << "Нарушение успешно добавлено!\n";
+                cout << "РќР°СЂСѓС€РµРЅРёРµ СѓСЃРїРµС€РЅРѕ РґРѕР±Р°РІР»РµРЅРѕ!\n";
             }
             catch (const exception& e) {
-                cout << "Ошибка при добавлении нарушения: " << e.what() << endl;
+                cout << "РћС€РёР±РєР° РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё РЅР°СЂСѓС€РµРЅРёСЏ: " << e.what() << endl;
             }
             break;
         }
         case 3: {
             int recordId;
-            cout << "Введите ID нарушения: ";
+            cout << "Р’РІРµРґРёС‚Рµ ID РЅР°СЂСѓС€РµРЅРёСЏ: ";
             cin >> recordId;
             db.markFineAsPaid(recordId);
             break;
@@ -330,11 +333,11 @@ void UserInterface::showViolationMenu() {
 void UserInterface::showStatisticsMenu() {
     int choice; 
         do {
-            cout << "\n========== СТАТИСТИКА ==========\n"
-                << "1. Нарушения по городам\n"
-                << "2. Топ нарушителей\n"
-                << "3. Назад\n"
-                << "Выберите опцию: ";
+            cout << "\n========== РЎРўРђРўРРЎРўРРљРђ ==========\n"
+                << "1. РќР°СЂСѓС€РµРЅРёСЏ РїРѕ РіРѕСЂРѕРґР°Рј\n"
+                << "2. РўРѕРї РЅР°СЂСѓС€РёС‚РµР»РµР№\n"
+                << "3. РќР°Р·Р°Рґ\n"
+                << "Р’С‹Р±РµСЂРёС‚Рµ РѕРїС†РёСЋ: ";
             cin >> choice;
 
             switch (choice) {
@@ -347,7 +350,7 @@ void UserInterface::showStatisticsMenu() {
                         count++;
                         record = record->next;
                     }
-                    cout << city->name << ": " << count << " нарушений\n";
+                    cout << city->name << ": " << count << " РЅР°СЂСѓС€РµРЅРёР№\n";
                     city = city->next;
                 }
                 break;
@@ -365,10 +368,10 @@ void UserInterface::showStatisticsMenu() {
                     return a.second > b.second;
                     });
 
-                cout << "\nТоп нарушителей:\n";
+                cout << "\nРўРѕРї РЅР°СЂСѓС€РёС‚РµР»РµР№:\n";
                 for (size_t i = 0; i < min(5, (int)sorted.size()); i++) {
                     cout << i + 1 << ". " << db.getDrivers().getDriverInfo(sorted[i].first)
-                        << " | Нарушений: " << sorted[i].second << endl;
+                        << " | РќР°СЂСѓС€РµРЅРёР№: " << sorted[i].second << endl;
                 }
                 break;
             }
