@@ -1,4 +1,4 @@
-the 18
+ï»¿the 18
 walk 85
 stroll 96
 jackson 87
@@ -36,7 +36,7 @@ were 103
 remaining 78
 last 105
 and 33
-world’s 92
+worldâ€™s 92
 1871 83
 features 98
 top 120
@@ -125,6 +125,6 @@ space 90
 background 129
 architecture 101
 effort 122
-city’s 127
+cityâ€™s 127
 a 8
 cubs 53
