@@ -1,8 +1,6 @@
-// IntHashMap.h
 #pragma once
 
 class IntHashMap {
-private:
     struct Node {
         int key;
         void* value;

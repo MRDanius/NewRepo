@@ -1,4 +1,3 @@
-// IntHashMap.cpp
 #include "IntHashMap.h"
 #include <cmath>
 
@@ -15,7 +14,6 @@ bool IntHashMap::isPrime(int num) const {
     if (num <= 1) return false;
     if (num == 2) return true;
     if (num % 2 == 0) return false;
-
     for (int i = 3; i * i <= num; i += 2) {
         if (num % i == 0) return false;
     }
@@ -23,9 +21,7 @@ bool IntHashMap::isPrime(int num) const {
 }
 
 int IntHashMap::nextPrime(int num) const {
-    while (!isPrime(num)) {
-        num++;
-    }
+    while (!isPrime(num)) num++;
     return num;
 }
 
@@ -40,30 +36,26 @@ int IntHashMap::hash2(int key) const {
 void IntHashMap::rehash() {
     int oldCapacity = capacity;
     capacity = nextPrime(capacity * 2);
-
     Node* oldTable = table;
     table = new Node[capacity];
     count = 0;
 
     for (int i = 0; i < oldCapacity; ++i) {
-        if (oldTable[i].value != nullptr && !oldTable[i].isDeleted) {
+        if (oldTable[i].value && !oldTable[i].isDeleted) {
             insert(oldTable[i].key, oldTable[i].value);
         }
     }
-
     delete[] oldTable;
 }
 
 void IntHashMap::insert(int key, void* value) {
-    if (count >= capacity * loadFactor) {
-        rehash();
-    }
+    if (count >= capacity * loadFactor) rehash();
 
     int index = hash1(key);
     int step = hash2(key);
 
     for (int i = 0; i < capacity; ++i) {
-        if (table[index].value == nullptr || table[index].isDeleted) {
+        if (!table[index].value || table[index].isDeleted) {
             table[index].key = key;
             table[index].value = value;
             table[index].isDeleted = false;
@@ -88,18 +80,13 @@ bool IntHashMap::get(int key, void*& value) const {
     int step = hash2(key);
 
     for (int i = 0; i < capacity; ++i) {
-        if (table[index].value == nullptr && !table[index].isDeleted) {
-            return false;
-        }
-
+        if (!table[index].value && !table[index].isDeleted) return false;
         if (table[index].key == key && !table[index].isDeleted) {
             value = table[index].value;
             return true;
         }
-
         index = (index + step) % capacity;
     }
-
     return false;
 }
 
@@ -108,19 +95,14 @@ bool IntHashMap::remove(int key) {
     int step = hash2(key);
 
     for (int i = 0; i < capacity; ++i) {
-        if (table[index].value == nullptr && !table[index].isDeleted) {
-            return false;
-        }
-
+        if (!table[index].value && !table[index].isDeleted) return false;
         if (table[index].key == key && !table[index].isDeleted) {
             table[index].isDeleted = true;
             count--;
             return true;
         }
-
         index = (index + step) % capacity;
     }
-
     return false;
 }
 
