@@ -82,6 +82,73 @@
 //    std::string cityIteratorNext();
 //};
 
+//#pragma once
+//#include <string>
+//#include <map>
+//#include "IntHashMap.h"
+//
+//class CityTable {
+//public:
+//    enum class PopulationGrade { SMALL, MEDIUM, LARGE };
+//    enum class SettlementType { CITY, TOWN, VILLAGE };
+//
+//private:
+//    struct CityNode {
+//        int id;
+//        std::string name;
+//        int population;
+//        PopulationGrade populationGrade;
+//        SettlementType settlementType;
+//        CityNode* next;
+//
+//        CityNode(int id, const std::string& name, int population,
+//            PopulationGrade grade, SettlementType type, CityNode* next)
+//            : id(id), name(name), population(population),
+//            populationGrade(grade), settlementType(type), next(next) {
+//        }
+//    };
+//
+//    CityNode* head;
+//    IntHashMap idToCityMap;
+//    std::map<std::string, int> nameToIdMap;
+//    const std::string filename = "cities.txt";
+//    const int ID_LENGTH = 5;
+//    mutable CityNode* currentIterator = nullptr;
+//
+//    const int& generateNextId();
+//    void parseLine(const std::string& line);
+//    void clearList();
+//
+//public:
+//    CityTable();
+//    ~CityTable();
+//
+//    void loadFromFile();
+//    void saveToFile();
+//    void addCity(const std::string& name, int population = 0,
+//        PopulationGrade grade = PopulationGrade::SMALL,
+//        SettlementType type = SettlementType::CITY);
+//    void deleteCity(const std::string& name);
+//
+//    std::string getCityNameById(const int& id) const;
+//    const int& getCityIdByName(const std::string& name) const;
+//
+//    static std::string populationGradeToString(PopulationGrade grade);
+//    static std::string settlementTypeToString(SettlementType type);
+//
+//    void cityIteratorReset() const;
+//    bool cityIteratorHasNext() const;
+//    struct CityInfo {
+//        int id;
+//        std::string name;
+//        int population;
+//        PopulationGrade grade;
+//        SettlementType type;
+//    };
+//    CityInfo cityIteratorNext();
+//};
+
+
 #pragma once
 #include <string>
 #include <map>
@@ -92,19 +159,27 @@ public:
     enum class PopulationGrade { SMALL, MEDIUM, LARGE };
     enum class SettlementType { CITY, TOWN, VILLAGE };
 
+    struct CityInfo {
+        int id;
+        std::string name;
+        int population;
+        PopulationGrade grade;
+        SettlementType type;
+    };
+
 private:
     struct CityNode {
         int id;
         std::string name;
         int population;
-        PopulationGrade populationGrade;
-        SettlementType settlementType;
+        PopulationGrade grade;
+        SettlementType type;
         CityNode* next;
 
         CityNode(int id, const std::string& name, int population,
             PopulationGrade grade, SettlementType type, CityNode* next)
             : id(id), name(name), population(population),
-            populationGrade(grade), settlementType(type), next(next) {
+            grade(grade), type(type), next(next) {
         }
     };
 
@@ -112,7 +187,6 @@ private:
     IntHashMap idToCityMap;
     std::map<std::string, int> nameToIdMap;
     const std::string filename = "cities.txt";
-    const int ID_LENGTH = 5;
     mutable CityNode* currentIterator = nullptr;
 
     const int& generateNextId();
@@ -125,25 +199,16 @@ public:
 
     void loadFromFile();
     void saveToFile();
-    void addCity(const std::string& name, int population = 0,
-        PopulationGrade grade = PopulationGrade::SMALL,
-        SettlementType type = SettlementType::CITY);
+    void addCity(const std::string& name, int population,
+        PopulationGrade grade, SettlementType type);
     void deleteCity(const std::string& name);
 
-    std::string getCityNameById(const int& id) const;
-    const int& getCityIdByName(const std::string& name) const;
-
+    std::string getCityNameById(int id) const;
+    int getCityIdByName(const std::string& name) const;
     static std::string populationGradeToString(PopulationGrade grade);
     static std::string settlementTypeToString(SettlementType type);
 
     void cityIteratorReset() const;
     bool cityIteratorHasNext() const;
-    struct CityInfo {
-        int id;
-        std::string name;
-        int population;
-        PopulationGrade grade;
-        SettlementType type;
-    };
-    CityInfo cityIteratorNext();
+    CityInfo cityIteratorNext() const;
 };

@@ -109,12 +109,79 @@
 //};
 
 
+//#pragma once
+//#include <string>
+//#include "IntHashMap.h"
+//#include "DriverTable.h"
+//#include "CityTable.h"
+//#include "FineTable.h"
+//
+//class FineRegistry {
+//public:
+//    struct ViolationInfo {
+//        int id;
+//        std::string driverName;
+//        std::string cityName;
+//        std::string fineType;
+//        std::string date;
+//        bool paid;
+//        double amount;
+//        FineTable::Severity severity;
+//    };
+//
+//private:
+//    struct ViolationNode {
+//        int id;
+//        int driverId;
+//        int cityId;
+//        int fineId;
+//        std::string date;
+//        bool paid;
+//        ViolationNode* next;
+//
+//        ViolationNode(int id, int driverId, int cityId,
+//            int fineId, const std::string& date,
+//            bool paid, ViolationNode* next)
+//            : id(id), driverId(driverId), cityId(cityId),
+//            fineId(fineId), date(date), paid(paid), next(next) {
+//        }
+//    };
+//
+//    ViolationNode* head;
+//    IntHashMap idToViolationMap;
+//    const std::string filename = "registry.txt";
+//    const int ID_LENGTH = 5;
+//    mutable ViolationNode* currentIterator = nullptr;
+//
+//    const int& generateNextId();
+//    void parseLine(const std::string& line);
+//    void clearList();
+//
+//public:
+//    FineRegistry();
+//    ~FineRegistry();
+//
+//    void loadFromFile();
+//    void saveToFile();
+//    void addViolation(int driverId, int cityId,
+//        int fineId, const std::string& date);
+//    void markAsPaid(int recordId);
+//    void updateDriverReferences(int driverId);
+//    void updateCityReferences(int cityId);
+//
+//    void violationIteratorReset() const;
+//    bool violationIteratorHasNext() const;
+//    ViolationInfo violationIteratorNext(const DriverTable& drivers,
+//        const CityTable& cities,
+//        const FineTable& fines) const;
+//};
+
+
 #pragma once
-#include <string>
-#include "IntHashMap.h"
 #include "DriverTable.h"
 #include "CityTable.h"
 #include "FineTable.h"
+#include <vector>
 
 class FineRegistry {
 public:
@@ -124,8 +191,8 @@ public:
         std::string cityName;
         std::string fineType;
         std::string date;
-        bool paid;
         double amount;
+        bool paid;
         FineTable::Severity severity;
     };
 
@@ -150,7 +217,6 @@ private:
     ViolationNode* head;
     IntHashMap idToViolationMap;
     const std::string filename = "registry.txt";
-    const int ID_LENGTH = 5;
     mutable ViolationNode* currentIterator = nullptr;
 
     const int& generateNextId();
@@ -163,8 +229,7 @@ public:
 
     void loadFromFile();
     void saveToFile();
-    void addViolation(int driverId, int cityId,
-        int fineId, const std::string& date);
+    void addViolation(int driverId, int cityId, int fineId, const std::string& date);
     void markAsPaid(int recordId);
     void updateDriverReferences(int driverId);
     void updateCityReferences(int cityId);

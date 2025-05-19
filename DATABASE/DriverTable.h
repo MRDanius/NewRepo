@@ -97,6 +97,70 @@
 //};
 
 
+//#pragma once
+//#include <string>
+//#include <map>
+//#include "IntHashMap.h"
+//#include "CityTable.h"
+//
+//class DriverTable {
+//public:
+//    struct DriverInfo {
+//        int id;
+//        std::string fullName;
+//        std::string birthDate;
+//        int cityId;
+//    };
+//
+//private:
+//    struct DriverNode {
+//        int id;
+//        std::string fullName;
+//        std::string birthDate;
+//        int cityId;
+//        DriverNode* next;
+//
+//        DriverNode(int id, const std::string& fullName,
+//            const std::string& birthDate, int cityId, DriverNode* next)
+//            : id(id), fullName(fullName), birthDate(birthDate),
+//            cityId(cityId), next(next) {
+//        }
+//    };
+//
+//    DriverNode* head;
+//    IntHashMap idToDriverMap;
+//    std::map<std::string, int> nameToIdMap;
+//    const std::string filename = "drivers.txt";
+//    const int ID_LENGTH = 5;
+//    mutable DriverNode* currentIterator = nullptr;
+//
+//    const int& generateNextId();
+//    void parseLine(const std::string& line);
+//    void clearList();
+//
+//public:
+//    DriverTable();
+//    ~DriverTable();
+//
+//    void loadFromFile();
+//    void saveToFile();
+//    void addDriver(const std::string& fullName,
+//        const std::string& birthDate,
+//        int cityId);
+//    void deleteDriver(const std::string& name);
+//
+//    DriverInfo getDriverInfo(const std::string& name) const;
+//    DriverInfo getDriverInfoById(int driverId) const;
+//    int getCityIdForDriver(const std::string& name) const;
+//    void updateCityReferences(int oldCityId);
+//
+//    void driverIteratorReset() const;
+//    bool driverIteratorHasNext() const;
+//    DriverInfo driverIteratorNext() const;
+//    const int& getDriverId(const std::string& name) const;
+//};
+
+
 #pragma once
 #include <string>
 #include <map>
@@ -112,6 +176,7 @@ public:
         int cityId;
     };
 
+    DriverInfo getDriverInfoById(int driverId) const;
 private:
     struct DriverNode {
         int id;
@@ -131,7 +196,6 @@ private:
     IntHashMap idToDriverMap;
     std::map<std::string, int> nameToIdMap;
     const std::string filename = "drivers.txt";
-    const int ID_LENGTH = 5;
     mutable DriverNode* currentIterator = nullptr;
 
     const int& generateNextId();
@@ -150,12 +214,12 @@ public:
     void deleteDriver(const std::string& name);
 
     DriverInfo getDriverInfo(const std::string& name) const;
-    DriverInfo getDriverInfoById(int driverId) const;
+    int getDriverId(const std::string& name) const;
     int getCityIdForDriver(const std::string& name) const;
     void updateCityReferences(int oldCityId);
+
 
     void driverIteratorReset() const;
     bool driverIteratorHasNext() const;
     DriverInfo driverIteratorNext() const;
-    const int& getDriverId(const std::string& name) const;
 };

@@ -119,23 +119,183 @@
 //void FineTable::updateReferences(int oldId, int newId) {}
 
 
+//#include "FineTable.h"
+//#include <fstream>
+//#include <sstream>
+//#include <iomanip>
+//#include <set>
+//
+//FineTable::FineTable()
+//    : head(new FineNode(-1, "", 0.0, Severity::LIGHT, nullptr)),
+//    currentIterator(nullptr) {
+//    loadFromFile();
+//}
+//
+//FineTable::~FineTable() {
+//    clearList();
+//    delete head;
+//}
+//
+//const int& FineTable::generateNextId() {
+//    static int nextId = 1;
+//    std::set<int> usedIds;
+//    for (FineNode* curr = head->next; curr; curr = curr->next)
+//        usedIds.insert(curr->id);
+//    while (usedIds.count(nextId)) nextId++;
+//    return nextId;
+//}
+//
+//void FineTable::parseLine(const std::string& line) {
+//    if (line.empty()) return;
+//
+//    std::istringstream iss(line);
+//    int id;
+//    std::string type, severityStr;
+//    double amount;
+//
+//    iss >> id >> std::quoted(type) >> amount >> std::quoted(severityStr);
+//
+//    Severity severity = Severity::LIGHT;
+//    if (severityStr == "Среднее") severity = Severity::MEDIUM;
+//    else if (severityStr == "Тяжелое") severity = Severity::HEAVY;
+//
+//    FineNode* newNode = new FineNode(id, type, amount, severity, head->next);
+//    head->next = newNode;
+//    idToFineMap.insert(id, newNode);
+//    typeToIdMap[type] = id;
+//}
+//
+//void FineTable::clearList() {
+//    FineNode* current = head->next;
+//    while (current) {
+//        FineNode* temp = current;
+//        current = current->next;
+//        delete temp;
+//    }
+//    head->next = nullptr;
+//    idToFineMap.clear();
+//    typeToIdMap.clear();
+//}
+//
+//void FineTable::loadFromFile() {
+//    std::ifstream file(filename);
+//    if (!file.is_open()) return;
+//
+//    clearList();
+//    std::string line;
+//    while (std::getline(file, line))
+//        parseLine(line);
+//}
+//
+//void FineTable::saveToFile() {
+//    std::ofstream file(filename);
+//    for (FineNode* curr = head->next; curr; curr = curr->next) {
+//        file << std::setw(5) << std::left << curr->id
+//            << std::quoted(curr->type) << " "
+//            << curr->amount << " "
+//            << std::quoted(severityToString(curr->severity)) << "\n";
+//    }
+//}
+//
+//void FineTable::addFine(const std::string& type, double amount, Severity severity) {
+//    const int& newId = generateNextId();
+//    FineNode* newNode = new FineNode(newId, type, amount, severity, head->next);
+//    head->next = newNode;
+//    idToFineMap.insert(newId, newNode);
+//    typeToIdMap[type] = newId;
+//    saveToFile();
+//}
+//
+//void FineTable::deleteFine(const std::string& type) {
+//    auto it = typeToIdMap.find(type);
+//    if (it == typeToIdMap.end()) return;
+//
+//    const int& targetId = it->second;
+//    FineNode* prev = head;
+//    FineNode* current = head->next;
+//    while (current) {
+//        if (current->id == targetId) {
+//            prev->next = current->next;
+//            idToFineMap.remove(targetId);
+//            typeToIdMap.erase(current->type);
+//            delete current;
+//            saveToFile();
+//            return;
+//        }
+//        prev = current;
+//        current = current->next;
+//    }
+//}
+//
+//std::string FineTable::severityToString(Severity severity) {
+//    switch (severity) {
+//    case Severity::LIGHT: return "Легкое";
+//    case Severity::MEDIUM: return "Среднее";
+//    case Severity::HEAVY: return "Тяжелое";
+//    default: return "Неизвестно";
+//    }
+//}
+//
+//const int& FineTable::getFineIdByType(const std::string& type) const {
+//    static const int invalidId = -1;
+//    auto it = typeToIdMap.find(type);
+//    return (it != typeToIdMap.end()) ? it->second : invalidId;
+//}
+//
+//FineTable::FineInfo FineTable::getFineInfoById(int fineId) const {
+//    FineInfo info;
+//    void* data;
+//    if (idToFineMap.get(fineId, data)) {
+//        FineNode* fine = static_cast<FineNode*>(data);
+//        info.type = fine->type;
+//        info.amount = fine->amount;
+//        info.severity = fine->severity;
+//    }
+//    return info;
+//}
+//
+//void FineTable::fineIteratorReset() const {
+//    currentIterator = head->next;
+//}
+//
+//bool FineTable::fineIteratorHasNext() const {
+//    return currentIterator != nullptr;
+//}
+//
+//FineTable::FineInfo FineTable::fineIteratorNext() {
+//    FineInfo info;
+//    if (!currentIterator) return info;
+//
+//    info.type = currentIterator->type;
+//    info.amount = currentIterator->amount;
+//    info.severity = currentIterator->severity;
+//
+//    currentIterator = currentIterator->next;
+//    return info;
+//}
+
+
 #include "FineTable.h"
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <set>
+#include <iostream>
 
+// Конструктор: инициализация списка и загрузка данных
 FineTable::FineTable()
     : head(new FineNode(-1, "", 0.0, Severity::LIGHT, nullptr)),
     currentIterator(nullptr) {
     loadFromFile();
 }
 
+// Деструктор: очистка списка и освобождение памяти
 FineTable::~FineTable() {
     clearList();
     delete head;
 }
 
+// Генерация уникального ID для нового штрафа
 const int& FineTable::generateNextId() {
     static int nextId = 1;
     std::set<int> usedIds;
@@ -145,6 +305,7 @@ const int& FineTable::generateNextId() {
     return nextId;
 }
 
+// Парсинг строки из файла в объект FineNode
 void FineTable::parseLine(const std::string& line) {
     if (line.empty()) return;
 
@@ -155,16 +316,21 @@ void FineTable::parseLine(const std::string& line) {
 
     iss >> id >> std::quoted(type) >> amount >> std::quoted(severityStr);
 
+    // Конвертация строки в enum Severity
     Severity severity = Severity::LIGHT;
-    if (severityStr == "Среднее") severity = Severity::MEDIUM;
-    else if (severityStr == "Тяжелое") severity = Severity::HEAVY;
+    if (severityStr == "Среднее")
+        severity = Severity::MEDIUM;
+    else if (severityStr == "Тяжелое")
+        severity = Severity::HEAVY;
 
+    // Создание узла и добавление в список
     FineNode* newNode = new FineNode(id, type, amount, severity, head->next);
     head->next = newNode;
     idToFineMap.insert(id, newNode);
     typeToIdMap[type] = id;
 }
 
+// Очистка списка штрафов
 void FineTable::clearList() {
     FineNode* current = head->next;
     while (current) {
@@ -177,16 +343,19 @@ void FineTable::clearList() {
     typeToIdMap.clear();
 }
 
+// Загрузка данных из файла fines.txt
 void FineTable::loadFromFile() {
     std::ifstream file(filename);
     if (!file.is_open()) return;
 
     clearList();
     std::string line;
-    while (std::getline(file, line))
+    while (std::getline(file, line)) {
         parseLine(line);
+    }
 }
 
+// Сохранение данных в файл fines.txt
 void FineTable::saveToFile() {
     std::ofstream file(filename);
     for (FineNode* curr = head->next; curr; curr = curr->next) {
@@ -197,6 +366,7 @@ void FineTable::saveToFile() {
     }
 }
 
+// Добавление нового штрафа
 void FineTable::addFine(const std::string& type, double amount, Severity severity) {
     const int& newId = generateNextId();
     FineNode* newNode = new FineNode(newId, type, amount, severity, head->next);
@@ -206,11 +376,15 @@ void FineTable::addFine(const std::string& type, double amount, Severity severit
     saveToFile();
 }
 
+// Удаление штрафа по типу
 void FineTable::deleteFine(const std::string& type) {
     auto it = typeToIdMap.find(type);
-    if (it == typeToIdMap.end()) return;
+    if (it == typeToIdMap.end()) {
+        std::cerr << "Штраф не найден!\n";
+        return;
+    }
 
-    const int& targetId = it->second;
+    const int targetId = it->second;
     FineNode* prev = head;
     FineNode* current = head->next;
     while (current) {
@@ -220,6 +394,7 @@ void FineTable::deleteFine(const std::string& type) {
             typeToIdMap.erase(current->type);
             delete current;
             saveToFile();
+            std::cout << "Штраф удален!\n";
             return;
         }
         prev = current;
@@ -227,6 +402,7 @@ void FineTable::deleteFine(const std::string& type) {
     }
 }
 
+// Преобразование Severity в строку
 std::string FineTable::severityToString(Severity severity) {
     switch (severity) {
     case Severity::LIGHT: return "Легкое";
@@ -236,12 +412,14 @@ std::string FineTable::severityToString(Severity severity) {
     }
 }
 
+// Получение ID штрафа по типу
 const int& FineTable::getFineIdByType(const std::string& type) const {
     static const int invalidId = -1;
     auto it = typeToIdMap.find(type);
     return (it != typeToIdMap.end()) ? it->second : invalidId;
 }
 
+// Получение информации о штрафе по ID
 FineTable::FineInfo FineTable::getFineInfoById(int fineId) const {
     FineInfo info;
     void* data;
@@ -254,15 +432,18 @@ FineTable::FineInfo FineTable::getFineInfoById(int fineId) const {
     return info;
 }
 
+// Итератор: сброс указателя на начало списка
 void FineTable::fineIteratorReset() const {
     currentIterator = head->next;
 }
 
+// Проверка наличия следующего элемента
 bool FineTable::fineIteratorHasNext() const {
     return currentIterator != nullptr;
 }
 
-FineTable::FineInfo FineTable::fineIteratorNext() {
+// Получение следующего штрафа
+FineTable::FineInfo FineTable::fineIteratorNext() const {
     FineInfo info;
     if (!currentIterator) return info;
 

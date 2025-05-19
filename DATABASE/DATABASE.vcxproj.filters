@@ -65,7 +65,7 @@
     <ClInclude Include="UserInterface.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Enums.h">
+    <ClInclude Include="TableFormatter.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

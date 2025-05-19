@@ -326,32 +326,220 @@
 //    return info;
 //}
 
+//#include "DriverTable.h"
+//#include <fstream>
+//#include <sstream>
+//#include <iomanip>
+//#include <set>
+//
+//DriverTable::DriverTable()
+//    : head(new DriverNode(-1, "", "", -1, nullptr)),
+//    currentIterator(nullptr) {
+//    loadFromFile();
+//}
+//
+//DriverTable::~DriverTable() {
+//    clearList();
+//    delete head;
+//}
+//
+//const int& DriverTable::generateNextId() {
+//    static int nextId = 1;
+//    std::set<int> usedIds;
+//    for (DriverNode* curr = head->next; curr; curr = curr->next)
+//        usedIds.insert(curr->id);
+//    while (usedIds.count(nextId)) nextId++;
+//    return nextId;
+//}
+//
+//void DriverTable::parseLine(const std::string& line) {
+//    if (line.empty()) return;
+//
+//    std::istringstream iss(line);
+//    int id, cityId;
+//    std::string fullName, birthDate;
+//
+//    iss >> id >> std::quoted(fullName) >> std::quoted(birthDate) >> cityId;
+//
+//    DriverNode* newNode = new DriverNode(id, fullName, birthDate, cityId, head->next);
+//    head->next = newNode;
+//    idToDriverMap.insert(id, newNode);
+//    nameToIdMap[fullName] = id;
+//}
+//
+//void DriverTable::clearList() {
+//    DriverNode* current = head->next;
+//    while (current) {
+//        DriverNode* temp = current;
+//        current = current->next;
+//        delete temp;
+//    }
+//    head->next = nullptr;
+//    idToDriverMap.clear();
+//    nameToIdMap.clear();
+//}
+//
+//void DriverTable::loadFromFile() {
+//    std::ifstream file(filename);
+//    if (!file.is_open()) return;
+//
+//    clearList();
+//    std::string line;
+//    while (std::getline(file, line))
+//        parseLine(line);
+//}
+//
+//void DriverTable::saveToFile() {
+//    std::ofstream file(filename);
+//    for (DriverNode* curr = head->next; curr; curr = curr->next) {
+//        file << std::setw(5) << std::left << curr->id
+//            << std::quoted(curr->fullName) << " "
+//            << std::quoted(curr->birthDate) << " "
+//            << curr->cityId << "\n";
+//    }
+//}
+//
+//void DriverTable::addDriver(const std::string& fullName,
+//    const std::string& birthDate,
+//    int cityId) {
+//    const int& newId = generateNextId();
+//    DriverNode* newNode = new DriverNode(newId, fullName, birthDate, cityId, head->next);
+//    head->next = newNode;
+//    idToDriverMap.insert(newId, newNode);
+//    nameToIdMap[fullName] = newId;
+//    saveToFile();
+//}
+//
+//void DriverTable::deleteDriver(const std::string& name) {
+//    auto it = nameToIdMap.find(name);
+//    if (it == nameToIdMap.end()) return;
+//
+//    const int& targetId = it->second;
+//    DriverNode* prev = head;
+//    DriverNode* current = head->next;
+//    while (current) {
+//        if (current->id == targetId) {
+//            prev->next = current->next;
+//            idToDriverMap.remove(targetId);
+//            nameToIdMap.erase(current->fullName);
+//            delete current;
+//            saveToFile();
+//            return;
+//        }
+//        prev = current;
+//        current = current->next;
+//    }
+//}
+//
+//DriverTable::DriverInfo DriverTable::getDriverInfo(const std::string& name) const {
+//    DriverInfo info;
+//    const int& id = getDriverId(name);
+//    if (id == -1) return info;
+//
+//    void* data;
+//    if (idToDriverMap.get(id, data)) {
+//        DriverNode* driver = static_cast<DriverNode*>(data);
+//        info.fullName = driver->fullName;
+//        info.birthDate = driver->birthDate;
+//        info.cityId = driver->cityId;
+//    }
+//    return info;
+//}
+//
+//DriverTable::DriverInfo DriverTable::getDriverInfoById(int driverId) const {
+//    DriverInfo info;
+//    void* data;
+//    if (idToDriverMap.get(driverId, data)) {
+//        DriverNode* driver = static_cast<DriverNode*>(data);
+//        info.fullName = driver->fullName;
+//        info.birthDate = driver->birthDate;
+//        info.cityId = driver->cityId;
+//    }
+//    return info;
+//}
+//
+//int DriverTable::getCityIdForDriver(const std::string& name) const {
+//    const int& driverId = getDriverId(name);
+//    if (driverId == -1) return -1;
+//
+//    void* data;
+//    if (idToDriverMap.get(driverId, data)) {
+//        DriverNode* driver = static_cast<DriverNode*>(data);
+//        return driver->cityId;
+//    }
+//    return -1;
+//}
+//
+//void DriverTable::updateCityReferences(int oldCityId) {
+//    DriverNode* current = head->next;
+//    while (current) {
+//        if (current->cityId == oldCityId) {
+//            current->cityId = -1;
+//        }
+//        current = current->next;
+//    }
+//    saveToFile();
+//}
+//
+//void DriverTable::driverIteratorReset() const {
+//    currentIterator = head->next;
+//}
+//
+//bool DriverTable::driverIteratorHasNext() const {
+//    return currentIterator != nullptr;
+//}
+//
+//DriverTable::DriverInfo DriverTable::driverIteratorNext() const {
+//    DriverInfo info;
+//    if (!currentIterator) return info;
+//
+//    info.id = currentIterator->id;
+//    info.fullName = currentIterator->fullName;
+//    info.birthDate = currentIterator->birthDate;
+//    info.cityId = currentIterator->cityId;
+//
+//    currentIterator = currentIterator->next;
+//    return info;
+//}
+//
+//const int& DriverTable::getDriverId(const std::string& name) const {
+//    static const int invalidId = -1;
+//    auto it = nameToIdMap.find(name);
+//    return (it != nameToIdMap.end()) ? it->second : invalidId;
+//}
+
 #include "DriverTable.h"
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <set>
 
+// Конструктор: инициализация заголовочного узла и загрузка данных
 DriverTable::DriverTable()
     : head(new DriverNode(-1, "", "", -1, nullptr)),
     currentIterator(nullptr) {
     loadFromFile();
 }
 
+// Деструктор: очистка списка и освобождение памяти
 DriverTable::~DriverTable() {
     clearList();
     delete head;
 }
 
+// Генерация уникального ID для нового водителя
 const int& DriverTable::generateNextId() {
     static int nextId = 1;
     std::set<int> usedIds;
-    for (DriverNode* curr = head->next; curr; curr = curr->next)
+    for (DriverNode* curr = head->next; curr; curr = curr->next) {
         usedIds.insert(curr->id);
+    }
     while (usedIds.count(nextId)) nextId++;
     return nextId;
 }
 
+// Парсинг строки из файла в объект DriverNode
 void DriverTable::parseLine(const std::string& line) {
     if (line.empty()) return;
 
@@ -361,12 +549,14 @@ void DriverTable::parseLine(const std::string& line) {
 
     iss >> id >> std::quoted(fullName) >> std::quoted(birthDate) >> cityId;
 
+    // Создание нового узла и добавление в список
     DriverNode* newNode = new DriverNode(id, fullName, birthDate, cityId, head->next);
     head->next = newNode;
     idToDriverMap.insert(id, newNode);
     nameToIdMap[fullName] = id;
 }
 
+// Очистка списка водителей
 void DriverTable::clearList() {
     DriverNode* current = head->next;
     while (current) {
@@ -379,16 +569,19 @@ void DriverTable::clearList() {
     nameToIdMap.clear();
 }
 
+// Загрузка данных из файла drivers.txt
 void DriverTable::loadFromFile() {
     std::ifstream file(filename);
     if (!file.is_open()) return;
 
     clearList();
     std::string line;
-    while (std::getline(file, line))
+    while (std::getline(file, line)) {
         parseLine(line);
+    }
 }
 
+// Сохранение данных в файл drivers.txt
 void DriverTable::saveToFile() {
     std::ofstream file(filename);
     for (DriverNode* curr = head->next; curr; curr = curr->next) {
@@ -399,6 +592,7 @@ void DriverTable::saveToFile() {
     }
 }
 
+// Добавление нового водителя
 void DriverTable::addDriver(const std::string& fullName,
     const std::string& birthDate,
     int cityId) {
@@ -410,11 +604,15 @@ void DriverTable::addDriver(const std::string& fullName,
     saveToFile();
 }
 
+// Удаление водителя по имени
 void DriverTable::deleteDriver(const std::string& name) {
     auto it = nameToIdMap.find(name);
-    if (it == nameToIdMap.end()) return;
+    if (it == nameToIdMap.end()) {
+        std::cerr << "Водитель не найден!\n";
+        return;
+    }
 
-    const int& targetId = it->second;
+    const int targetId = it->second;
     DriverNode* prev = head;
     DriverNode* current = head->next;
     while (current) {
@@ -424,6 +622,7 @@ void DriverTable::deleteDriver(const std::string& name) {
             nameToIdMap.erase(current->fullName);
             delete current;
             saveToFile();
+            std::cout << "Водитель удален!\n";
             return;
         }
         prev = current;
@@ -431,13 +630,14 @@ void DriverTable::deleteDriver(const std::string& name) {
     }
 }
 
+// Получение информации о водителе по имени
 DriverTable::DriverInfo DriverTable::getDriverInfo(const std::string& name) const {
     DriverInfo info;
-    const int& id = getDriverId(name);
-    if (id == -1) return info;
+    auto it = nameToIdMap.find(name);
+    if (it == nameToIdMap.end()) return info;
 
     void* data;
-    if (idToDriverMap.get(id, data)) {
+    if (idToDriverMap.get(it->second, data)) {
         DriverNode* driver = static_cast<DriverNode*>(data);
         info.fullName = driver->fullName;
         info.birthDate = driver->birthDate;
@@ -446,49 +646,46 @@ DriverTable::DriverInfo DriverTable::getDriverInfo(const std::string& name) cons
     return info;
 }
 
-DriverTable::DriverInfo DriverTable::getDriverInfoById(int driverId) const {
-    DriverInfo info;
-    void* data;
-    if (idToDriverMap.get(driverId, data)) {
-        DriverNode* driver = static_cast<DriverNode*>(data);
-        info.fullName = driver->fullName;
-        info.birthDate = driver->birthDate;
-        info.cityId = driver->cityId;
-    }
-    return info;
+// Получение ID водителя по имени
+int DriverTable::getDriverId(const std::string& name) const {
+    auto it = nameToIdMap.find(name);
+    return (it != nameToIdMap.end()) ? it->second : -1;
 }
 
+// Получение ID города, связанного с водителем
 int DriverTable::getCityIdForDriver(const std::string& name) const {
-    const int& driverId = getDriverId(name);
-    if (driverId == -1) return -1;
+    auto it = nameToIdMap.find(name);
+    if (it == nameToIdMap.end()) return -1;
 
     void* data;
-    if (idToDriverMap.get(driverId, data)) {
+    if (idToDriverMap.get(it->second, data)) {
         DriverNode* driver = static_cast<DriverNode*>(data);
         return driver->cityId;
     }
     return -1;
 }
 
+// Обновление ссылок на город при его удалении
 void DriverTable::updateCityReferences(int oldCityId) {
-    DriverNode* current = head->next;
-    while (current) {
-        if (current->cityId == oldCityId) {
-            current->cityId = -1;
+    for (DriverNode* curr = head->next; curr; curr = curr->next) {
+        if (curr->cityId == oldCityId) {
+            curr->cityId = -1; // Сброс ID города
         }
-        current = current->next;
     }
     saveToFile();
 }
 
+// Итератор: сброс указателя на начало списка
 void DriverTable::driverIteratorReset() const {
     currentIterator = head->next;
 }
 
+// Проверка наличия следующего элемента
 bool DriverTable::driverIteratorHasNext() const {
     return currentIterator != nullptr;
 }
 
+// Получение следующего водителя
 DriverTable::DriverInfo DriverTable::driverIteratorNext() const {
     DriverInfo info;
     if (!currentIterator) return info;
@@ -502,8 +699,11 @@ DriverTable::DriverInfo DriverTable::driverIteratorNext() const {
     return info;
 }
 
-const int& DriverTable::getDriverId(const std::string& name) const {
-    static const int invalidId = -1;
-    auto it = nameToIdMap.find(name);
-    return (it != nameToIdMap.end()) ? it->second : invalidId;
+DriverTable::DriverInfo DriverTable::getDriverInfoById(int driverId) const {
+    void* data;
+    if (idToDriverMap.get(driverId, data)) {
+        DriverNode* driver = static_cast<DriverNode*>(data);
+        return { driver->id, driver->fullName, driver->birthDate, driver->cityId };
+    }
+    return {}; // Возвращаем пустую структуру, если водитель не найден
 }

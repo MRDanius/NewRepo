@@ -84,12 +84,56 @@
 //};
 
 
+//#pragma once
+//#include "CityTable.h"
+//#include "DriverTable.h"
+//#include "FineTable.h"
+//#include "FineRegistry.h"
+//#include <stdexcept>
+//
+//class DatabaseManager {
+//    CityTable cities;
+//    DriverTable drivers;
+//    FineTable fines;
+//    FineRegistry registry;
+//
+//public:
+//    void loadAll();
+//    void saveAll();
+//
+//    void addCity(const std::string& name, int population = 0,
+//        CityTable::PopulationGrade grade = CityTable::PopulationGrade::SMALL,
+//        CityTable::SettlementType type = CityTable::SettlementType::CITY);
+//
+//    void deleteCity(const std::string& name);
+//
+//    void addDriver(const std::string& fullName,
+//        const std::string& birthDate,
+//        const std::string& cityName);
+//
+//    void deleteDriver(const std::string& name);
+//
+//    void addFine(const std::string& type, double amount,
+//        FineTable::Severity severity = FineTable::Severity::LIGHT);
+//
+//    void addViolation(const std::string& driverName,
+//        const std::string& fineType,
+//        const std::string& date);
+//
+//    void markFineAsPaid(int recordId);
+//
+//    CityTable& getCities() { return cities; }
+//    DriverTable& getDrivers() { return drivers; }
+//    FineTable& getFines() { return fines; }
+//    FineRegistry& getRegistry() { return registry; }
+//};
+
 #pragma once
 #include "CityTable.h"
 #include "DriverTable.h"
 #include "FineTable.h"
 #include "FineRegistry.h"
-#include <stdexcept>
+#include <vector>
 
 class DatabaseManager {
     CityTable cities;
@@ -101,29 +145,38 @@ public:
     void loadAll();
     void saveAll();
 
-    void addCity(const std::string& name, int population = 0,
-        CityTable::PopulationGrade grade = CityTable::PopulationGrade::SMALL,
-        CityTable::SettlementType type = CityTable::SettlementType::CITY);
+    // Города
+    void addCity(const std::string& name, int population,
+        CityTable::PopulationGrade grade,
+        CityTable::SettlementType type);
 
     void deleteCity(const std::string& name);
 
-    void addDriver(const std::string& fullName,
+    // Водители
+    void addDriver(const std::string& name,
         const std::string& birthDate,
-        const std::string& cityName);
+        const std::string& city);
 
     void deleteDriver(const std::string& name);
+    void markFineAsPaid(int recordId);
 
-    void addFine(const std::string& type, double amount,
-        FineTable::Severity severity = FineTable::Severity::LIGHT);
+    // Штрафы
+    void addFine(const std::string& type,
+        double amount,
+        FineTable::Severity severity);
 
+    // Нарушения
     void addViolation(const std::string& driverName,
         const std::string& fineType,
         const std::string& date);
 
-    void markFineAsPaid(int recordId);
 
+
+    // Геттеры
     CityTable& getCities() { return cities; }
     DriverTable& getDrivers() { return drivers; }
     FineTable& getFines() { return fines; }
     FineRegistry& getRegistry() { return registry; }
+
+    std::vector<FineRegistry::ViolationInfo> getAllViolations();
 };

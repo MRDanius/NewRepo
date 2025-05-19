@@ -140,10 +140,10 @@
     <ClInclude Include="CityTable.h" />
     <ClInclude Include="DataBaseManager.h" />
     <ClInclude Include="DriverTable.h" />
-    <ClInclude Include="Enums.h" />
     <ClInclude Include="FineRegistry.h" />
     <ClInclude Include="FineTable.h" />
     <ClInclude Include="IntHashMap.h" />
+    <ClInclude Include="TableFormatter.h" />
     <ClInclude Include="UserInterface.h" />
   </ItemGroup>
   <ItemGroup>

@@ -96,7 +96,7 @@
 //    registry.saveToFile();
 //}
 //
-//void DatabaseManager::addCity(const std::string& name) {
+//void DatabaseManager::addCity(coùàñnst std::string& name) {
 //    cities.addCity(name);
 //}
 //
@@ -173,7 +173,7 @@
 
 
 #include "DatabaseManager.h"
-
+#include <stdexcept> 
 void DatabaseManager::loadAll() {
     cities.loadFromFile();
     drivers.loadFromFile();
@@ -243,6 +243,19 @@ void DatabaseManager::addViolation(const std::string& driverName,
 
 void DatabaseManager::markFineAsPaid(int recordId) {
     registry.markAsPaid(recordId);
+}
+
+std::vector<FineRegistry::ViolationInfo> DatabaseManager::getAllViolations() {
+    std::vector<FineRegistry::ViolationInfo> violations;
+    registry.violationIteratorReset();
+    while (registry.violationIteratorHasNext()) {
+        violations.push_back(registry.violationIteratorNext(
+            drivers,
+            cities,
+            fines
+        ));
+    }
+    return violations;
 }
 
 
