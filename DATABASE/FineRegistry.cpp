@@ -627,13 +627,14 @@
 //    return info;
 //}
 
-
+#include "DatabaseManager.h"
 #include "FineRegistry.h"
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 #include <regex>
-
+#include <iostream>
 // Конструктор
 FineRegistry::FineRegistry()
     : head(new ViolationNode(-1, -1, -1, -1, "", false, nullptr)),
@@ -697,7 +698,9 @@ void FineRegistry::addViolationNode(int id, int driverId, int cityId,
 // Обновление ширины колонок
 void FineRegistry::updateColumnWidths() {
     ViolationNode* curr = head->next;
-    size_t maxDriverLen = 0, maxCityLen = 0, maxFineLen = 0;
+    size_t maxDriverLen = 0;
+    size_t maxCityLen = 0;
+    size_t maxFineLen = 0;
 
     while (curr) {
         maxDriverLen = std::max(maxDriverLen, getDriverName(curr).length());

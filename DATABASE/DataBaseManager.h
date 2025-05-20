@@ -182,63 +182,105 @@
 //};
 
 
-#include "DatabaseManager.h"
-#include <stdexcept>
+//#include "DatabaseManager.h"
+//#include <stdexcept>
+//
+//void DatabaseManager::loadAll() {
+//    cities.loadFromFile();
+//    drivers.loadFromFile();
+//    fines.loadFromFile();
+//    registry.loadFromFile();
+//}
+//
+//void DatabaseManager::saveAll() {
+//    cities.saveToFile();
+//    drivers.saveToFile();
+//    fines.saveToFile();
+//    registry.saveToFile();
+//}
+//
+//// Добавление города с автоматической синхронизацией
+//void DatabaseManager::addCity(const std::string& name, int population,
+//    CityTable::PopulationGrade grade, CityTable::SettlementType type)
+//{
+//    cities.addCity(name, population, grade, type);
+//    // Автоматическое обновление связанных данных
+//    drivers.updateCityReferences(cities.getCityIdByName(name));
+//}
+//
+//// Удаление города с каскадным обновлением
+//void DatabaseManager::deleteCity(const std::string& name) {
+//    const int cityId = cities.getCityIdByName(name);
+//    if (cityId == -1) throw std::invalid_argument("City not found");
+//
+//    cities.deleteCity(name);
+//    drivers.updateCityReferences(cityId);
+//    registry.updateCityReferences(cityId);
+//}
+//
+//// Добавление водителя с проверкой города
+//void DatabaseManager::addDriver(const std::string& fullName,
+//    const std::string& birthDate, const std::string& cityName)
+//{
+//    const int cityId = cities.getCityIdByName(cityName);
+//    if (cityId == -1) throw std::invalid_argument("Invalid city");
+//
+//    drivers.addDriver(fullName, birthDate, cityId);
+//}
+//
+//// Полная цепочка добавления нарушения
+//void DatabaseManager::addViolation(const std::string& driverName,
+//    const std::string& fineType, const std::string& date)
+//{
+//    const int driverId = drivers.getDriverId(driverName);
+//    const int cityId = drivers.getCityIdForDriver(driverName);
+//    const int fineId = fines.getFineIdByType(fineType);
+//
+//    if (driverId == -1 || cityId == -1 || fineId == -1) {
+//        throw std::invalid_argument("Invalid violation data");
+//    }
+//
+//    registry.addViolation(driverId, cityId, fineId, date);
+//}
 
-void DatabaseManager::loadAll() {
-    cities.loadFromFile();
-    drivers.loadFromFile();
-    fines.loadFromFile();
-    registry.loadFromFile();
-}
+#pragma once
+#include <string>
+#include "CityTable.h"
+#include "DriverTable.h"
+#include "FineTable.h"
+#include "FineRegistry.h"
 
-void DatabaseManager::saveAll() {
-    cities.saveToFile();
-    drivers.saveToFile();
-    fines.saveToFile();
-    registry.saveToFile();
-}
+// Предварительные объявления вместо #include
+class CityTable;
+class DriverTable;
+class FineTable;
+class FineRegistry;
 
-// Добавление города с автоматической синхронизацией
-void DatabaseManager::addCity(const std::string& name, int population,
-    CityTable::PopulationGrade grade, CityTable::SettlementType type)
-{
-    cities.addCity(name, population, grade, type);
-    // Автоматическое обновление связанных данных
-    drivers.updateCityReferences(cities.getCityIdByName(name));
-}
+class DatabaseManager {
+public:
+    CityTable cities;
+    DriverTable drivers;
+    FineTable fines;
+    FineRegistry registry;
 
-// Удаление города с каскадным обновлением
-void DatabaseManager::deleteCity(const std::string& name) {
-    const int cityId = cities.getCityIdByName(name);
-    if (cityId == -1) throw std::invalid_argument("City not found");
+    void loadAll();
+    void saveAll();
 
-    cities.deleteCity(name);
-    drivers.updateCityReferences(cityId);
-    registry.updateCityReferences(cityId);
-}
+    // Объявления методов без реализации
+    void addCity(const std::string& name, int population,
+        CityTable::PopulationGrade grade,
+        CityTable::SettlementType type);
 
-// Добавление водителя с проверкой города
-void DatabaseManager::addDriver(const std::string& fullName,
-    const std::string& birthDate, const std::string& cityName)
-{
-    const int cityId = cities.getCityIdByName(cityName);
-    if (cityId == -1) throw std::invalid_argument("Invalid city");
-
-    drivers.addDriver(fullName, birthDate, cityId);
-}
-
-// Полная цепочка добавления нарушения
-void DatabaseManager::addViolation(const std::string& driverName,
-    const std::string& fineType, const std::string& date)
-{
-    const int driverId = drivers.getDriverId(driverName);
-    const int cityId = drivers.getCityIdForDriver(driverName);
-    const int fineId = fines.getFineIdByType(fineType);
-
-    if (driverId == -1 || cityId == -1 || fineId == -1) {
-        throw std::invalid_argument("Invalid violation data");
-    }
-
-    registry.addViolation(driverId, cityId, fineId, date);
-}
+    std::vector<FineRegistry::ViolationInfo> getAllViolations();
+    void deleteCity(const std::string& name);
+    void addDriver(const std::string& fullName,
+        const std::string& birthDate,
+        const std::string& cityName);
+    void deleteDriver(const std::string& name);
+    void addFine(const std::string& type, double amount,
+        FineTable::Severity severity);
+    void addViolation(const std::string& driverName,
+        const std::string& fineType,
+        const std::string& date);
+    void markFineAsPaid(int recordId);
+};

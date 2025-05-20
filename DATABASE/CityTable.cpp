@@ -597,6 +597,8 @@
 //    return info;
 //}
 
+
+#include <iostream>
 #include "CityTable.h"
 #include <fstream>
 #include <sstream>

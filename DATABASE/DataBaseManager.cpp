@@ -173,7 +173,12 @@
 
 
 #include "DatabaseManager.h"
+#include "CityTable.h"     // Реальные включения здесь
+#include "DriverTable.h"
+#include "FineTable.h"
+#include "FineRegistry.h"
 #include <stdexcept> 
+#include <vector>
 void DatabaseManager::loadAll() {
     cities.loadFromFile();
     drivers.loadFromFile();

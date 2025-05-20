@@ -238,7 +238,7 @@ public:
         std::string birthDate;
         int cityId;
     };
-
+    void clearList();
 private:
     // Узел списка водителей
     struct DriverNode {
@@ -267,6 +267,7 @@ private:
     IntHashMap idToDriverMap;  // Хеш-таблица для поиска по ID
     std::map<std::string, int> nameToIdMap; // Карта имя -> ID
     Filter* currentFilter;     // Активные фильтры
+    const std::string filename = "drivers.txt";
 
     // Настройки отображения
     mutable DriverNode* currentIterator; // Текущая позиция итератора
@@ -296,7 +297,7 @@ public:
         const std::string& birthDate,
         int cityId);
     void deleteDriver(const std::string& name);
-
+    void updateCityReferences(int oldCityId);
     // Управление фильтрами
     void addFilter(const std::string& field, const std::string& pattern);
     void clearFilters();

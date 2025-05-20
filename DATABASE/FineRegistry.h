@@ -256,7 +256,7 @@ public:
         double amount;
         bool paid;
     };
-
+    void clearList();
 private:
     struct ViolationNode {
         int id; // Внутренний ID (не отображается)
@@ -284,6 +284,7 @@ private:
     ViolationNode* head;
     IntHashMap idToViolationMap;
     Filter* currentFilter;
+    const std::string filename = "fines.txt";
 
     mutable ViolationNode* currentIterator;
     int driverNameWidth;
@@ -310,7 +311,8 @@ public:
     void saveToFile() const;
     void addViolation(int driverId, int cityId, int fineId, const std::string& date);
     void markAsPaid(int recordId);
-
+    void updateCityReferences(int oldCityId);
+    void updateDriverReferences(int driverId);
     void addFilter(const std::string& field, const std::string& pattern);
     void clearFilters();
     ViolationNode* applyFilters() const;
@@ -321,4 +323,9 @@ public:
     void violationIteratorReset(ViolationNode* start = nullptr) const;
     bool violationIteratorHasNext() const;
     ViolationInfo violationIteratorNext() const;
+
+    std::string getDriverName(const ViolationNode* node) const;
+    std::string getCityName(const ViolationNode* node) const;
+    std::string getFineType(const ViolationNode* node) const;
+    double getFineAmount(const ViolationNode* node) const;
 };

@@ -233,7 +233,7 @@ public:
         PopulationGrade grade;
         SettlementType type;
     };
-
+    void clearList();
 private:
     // Узел списка городов
     struct CityNode {
@@ -263,6 +263,7 @@ private:
     IntHashMap idToCityMap;             // Хеш-таблица для быстрого поиска по ID
     std::map<std::string, int> nameToIdMap; // Карта для поиска ID по названию
     Filter* currentFilter;              // Цепочка активных фильтров
+    const std::string filename = "cities.txt";
 
     // Настройки отображения
     mutable CityNode* currentIterator;  // Текущая позиция итератора

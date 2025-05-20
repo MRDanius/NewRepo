@@ -455,7 +455,7 @@
 //    return info;
 //}
 
-
+#include "DatabaseManager.h"
 #include "FineTable.h"
 #include <fstream>
 #include <sstream>
