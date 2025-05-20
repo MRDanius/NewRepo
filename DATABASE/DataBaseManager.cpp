@@ -1,4 +1,4 @@
-//#include "DataBaseManager.h"
+п»ї//#include "DataBaseManager.h"
 //
 //void DatabaseManager::loadAll() {
 //    cities.load();
@@ -30,7 +30,7 @@
 //        drivers.addDriver(fullName, birthDate, cityId);
 //    }
 //    else {
-//        throw std::invalid_argument("Неверный ID города");
+//        throw std::invalid_argument("РќРµРІРµСЂРЅС‹Р№ ID РіРѕСЂРѕРґР°");
 //    }
 //}
 //
@@ -46,7 +46,7 @@
 //
 //void DatabaseManager::addViolation(int driverId, int fineId, const std::string& violationDate) {
 //    if (!isValidDriver(driverId) || !isValidFine(fineId)) {
-//        throw std::invalid_argument("Неверные данные");
+//        throw std::invalid_argument("РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ");
 //    }
 //
 //
@@ -72,7 +72,7 @@
 //}
 //
 //bool DatabaseManager::isValidCity(int cityId) {
-//    return cities.getCityName(cityId) != "Неизвестный_город";
+//    return cities.getCityName(cityId) != "РќРµРёР·РІРµСЃС‚РЅС‹Р№_РіРѕСЂРѕРґ";
 //}
 //
 //bool DatabaseManager::isValidFine(int fineId) {
@@ -96,7 +96,7 @@
 //    registry.saveToFile();
 //}
 //
-//void DatabaseManager::addCity(coщасnst std::string& name) {
+//void DatabaseManager::addCity(coС‰Р°СЃnst std::string& name) {
 //    cities.addCity(name);
 //}
 //
@@ -115,7 +115,7 @@
 //    const std::string& cityName) {
 //    const int& cityId = cities.getCityIdByName(cityName);
 //    if (cityId == -1)
-//        throw std::invalid_argument("Неверный город");
+//        throw std::invalid_argument("РќРµРІРµСЂРЅС‹Р№ РіРѕСЂРѕРґ");
 //
 //    drivers.addDriver(fullName, birthDate, cityId);
 //}
@@ -141,7 +141,7 @@
 //    const int& fineId = fines.getFineIdByType(fineType);
 //
 //    if (driverId == -1 || cityId == -1 || fineId == -1)
-//        throw std::invalid_argument("Неверные данные");
+//        throw std::invalid_argument("РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ");
 //
 //    registry.addViolation(driverId, cityId, fineId, date);
 //}
@@ -165,20 +165,17 @@
 //void DriverTable::updateCityReferences(const int& cityId) {
 //    for (DriverNode* curr = head->next; curr; curr = curr->next) {
 //        if (curr->cityId == cityId) {
-//            curr->cityId = -1; // Устанавливаем недействительный ID города
+//            curr->cityId = -1; // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РЅРµРґРµР№СЃС‚РІРёС‚РµР»СЊРЅС‹Р№ ID РіРѕСЂРѕРґР°
 //        }
 //    }
-//    saveToFile(); // Сохраняем изменения в файл
+//    saveToFile(); // РЎРѕС…СЂР°РЅСЏРµРј РёР·РјРµРЅРµРЅРёСЏ РІ С„Р°Р№Р»
 //}
 
+// DataBaseManager.cpp
 
-#include "DatabaseManager.h"
-#include "CityTable.h"     // Реальные включения здесь
-#include "DriverTable.h"
-#include "FineTable.h"
-#include "FineRegistry.h"
-#include <stdexcept> 
-#include <vector>
+#include "DataBaseManager.h"
+#include <stdexcept>
+
 void DatabaseManager::loadAll() {
     cities.loadFromFile();
     drivers.loadFromFile();
@@ -193,14 +190,16 @@ void DatabaseManager::saveAll() {
     registry.saveToFile();
 }
 
-void DatabaseManager::addCity(const std::string& name, int population,
+void DatabaseManager::addCity(const std::string& name,
+    int population,
     CityTable::PopulationGrade grade,
-    CityTable::SettlementType type) {
+    CityTable::SettlementType type)
+{
     cities.addCity(name, population, grade, type);
 }
 
 void DatabaseManager::deleteCity(const std::string& name) {
-    const int& cityId = cities.getCityIdByName(name);
+    int cityId = cities.getCityIdByName(name);
     if (cityId == -1) return;
 
     cities.deleteCity(name);
@@ -211,16 +210,17 @@ void DatabaseManager::deleteCity(const std::string& name) {
 
 void DatabaseManager::addDriver(const std::string& fullName,
     const std::string& birthDate,
-    const std::string& cityName) {
-    const int& cityId = cities.getCityIdByName(cityName);
+    const std::string& cityName)
+{
+    int cityId = cities.getCityIdByName(cityName);
     if (cityId == -1)
-        throw std::invalid_argument("Город не найден");
+        throw std::invalid_argument("Р“РѕСЂРѕРґ РЅРµ РЅР°Р№РґРµРЅ");
 
     drivers.addDriver(fullName, birthDate, cityId);
 }
 
 void DatabaseManager::deleteDriver(const std::string& name) {
-    const int& driverId = drivers.getDriverId(name);
+    int driverId = drivers.getDriverId(name);
     if (driverId == -1) return;
 
     drivers.deleteDriver(name);
@@ -228,20 +228,23 @@ void DatabaseManager::deleteDriver(const std::string& name) {
     saveAll();
 }
 
-void DatabaseManager::addFine(const std::string& type, double amount,
-    FineTable::Severity severity) {
+void DatabaseManager::addFine(const std::string& type,
+    double amount,
+    FineTable::Severity severity)
+{
     fines.addFine(type, amount, severity);
 }
 
 void DatabaseManager::addViolation(const std::string& driverName,
     const std::string& fineType,
-    const std::string& date) {
-    const int& driverId = drivers.getDriverId(driverName);
-    const int& cityId = drivers.getCityIdForDriver(driverName);
-    const int& fineId = fines.getFineIdByType(fineType);
+    const std::string& date)
+{
+    int driverId = drivers.getDriverId(driverName);
+    int cityId = drivers.getCityIdForDriver(driverName);
+    int fineId = fines.getFineIdByType(fineType);
 
     if (driverId == -1 || cityId == -1 || fineId == -1)
-        throw std::invalid_argument("Неверные данные");
+        throw std::invalid_argument("РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ РґР»СЏ РЅР°СЂСѓС€РµРЅРёСЏ");
 
     registry.addViolation(driverId, cityId, fineId, date);
 }
@@ -254,13 +257,9 @@ std::vector<FineRegistry::ViolationInfo> DatabaseManager::getAllViolations() {
     std::vector<FineRegistry::ViolationInfo> violations;
     registry.violationIteratorReset();
     while (registry.violationIteratorHasNext()) {
-        violations.push_back(registry.violationIteratorNext(
-            drivers,
-            cities,
-            fines
-        ));
+        violations.push_back(
+            registry.violationIteratorNext(drivers, cities, fines)
+        );
     }
     return violations;
 }
-
-

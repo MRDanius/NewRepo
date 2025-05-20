@@ -1,4 +1,4 @@
-//// DriverTable.cpp
+п»ї//// DriverTable.cpp
 //#include "DriverTable.h"
 //#include <fstream>
 //#include <sstream>
@@ -50,8 +50,8 @@
 //    int id = stoi(id_str);
 //
 //    string data = line.substr(ID_LENGTH);
-//    size_t last_space = data.rfind(' '); // Последний пробел (перед cityId)
-//    size_t prev_space = data.rfind(' ', last_space - 1); // Предпоследний пробел (перед birthDate)
+//    size_t last_space = data.rfind(' '); // РџРѕСЃР»РµРґРЅРёР№ РїСЂРѕР±РµР» (РїРµСЂРµРґ cityId)
+//    size_t prev_space = data.rfind(' ', last_space - 1); // РџСЂРµРґРїРѕСЃР»РµРґРЅРёР№ РїСЂРѕР±РµР» (РїРµСЂРµРґ birthDate)
 //
 //    if (last_space == string::npos || prev_space == string::npos) return;
 //
@@ -59,7 +59,7 @@
 //    string birthDate = data.substr(prev_space + 1, last_space - prev_space - 1);
 //    int cityId = stoi(data.substr(last_space + 1));
 //
-//    // Удаляем лишние пробелы
+//    // РЈРґР°Р»СЏРµРј Р»РёС€РЅРёРµ РїСЂРѕР±РµР»С‹
 //    fullName.erase(0, fullName.find_first_not_of(' '));
 //    fullName.erase(fullName.find_last_not_of(' ') + 1);
 //    birthDate.erase(0, birthDate.find_first_not_of(' '));
@@ -73,11 +73,11 @@
 //void DriverTable::load() {
 //    ifstream file(filename);
 //    if (!file.is_open()) {
-//        cerr << "Файл не найден, будет создан новый." << endl;
+//        cerr << "Р¤Р°Р№Р» РЅРµ РЅР°Р№РґРµРЅ, Р±СѓРґРµС‚ СЃРѕР·РґР°РЅ РЅРѕРІС‹Р№." << endl;
 //        return;
 //    }
 //
-//    clear(); // Очищаем текущие данные перед загрузкой
+//    clear(); // РћС‡РёС‰Р°РµРј С‚РµРєСѓС‰РёРµ РґР°РЅРЅС‹Рµ РїРµСЂРµРґ Р·Р°РіСЂСѓР·РєРѕР№
 //
 //    string line;
 //    while (getline(file, line)) {
@@ -89,7 +89,7 @@
 //void DriverTable::save() {
 //    ofstream file(filename);
 //    if (!file.is_open()) {
-//        cerr << "Ошибка открытия файла для сохранения!" << endl;
+//        cerr << "РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р° РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ!" << endl;
 //        return;
 //    }
 //
@@ -109,19 +109,19 @@
 //    int newId = getNextId();
 //    Driver* newDriver = new Driver{ newId, fullName, birthDate, cityId, head->next };
 //    head->next = newDriver;
-//    idToDriverMap.insert(newId, newDriver);  // <- Добавить
+//    idToDriverMap.insert(newId, newDriver);  // <- Р”РѕР±Р°РІРёС‚СЊ
 //}
 //
 //string DriverTable::getDriverInfo(int driverId) {
 //    void* driverPtr;
-//    if (idToDriverMap.get(driverId, driverPtr)) {  // <- Заменить поиск
+//    if (idToDriverMap.get(driverId, driverPtr)) {  // <- Р—Р°РјРµРЅРёС‚СЊ РїРѕРёСЃРє
 //        Driver* driver = static_cast<Driver*>(driverPtr);
 //        return "ID: " + to_string(driver->id) +
-//            ", ФИО: " + driver->fullName +
-//            ", Дата рождения: " + driver->birthDate +
-//            ", Город ID: " + to_string(driver->cityId);
+//            ", Р¤РРћ: " + driver->fullName +
+//            ", Р”Р°С‚Р° СЂРѕР¶РґРµРЅРёСЏ: " + driver->birthDate +
+//            ", Р“РѕСЂРѕРґ ID: " + to_string(driver->cityId);
 //    }
-//    return "Водитель не найден";
+//    return "Р’РѕРґРёС‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ";
 //}
 //
 //DriverTable::Driver* DriverTable::getAllDrivers() {
@@ -515,20 +515,20 @@
 //#include <iomanip>
 //#include <set>
 //
-//// Конструктор: инициализация заголовочного узла и загрузка данных
+//// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ: РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р·Р°РіРѕР»РѕРІРѕС‡РЅРѕРіРѕ СѓР·Р»Р° Рё Р·Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С…
 //DriverTable::DriverTable()
 //    : head(new DriverNode(-1, "", "", -1, nullptr)),
 //    currentIterator(nullptr) {
 //    loadFromFile();
 //}
 //
-//// Деструктор: очистка списка и освобождение памяти
+//// Р”РµСЃС‚СЂСѓРєС‚РѕСЂ: РѕС‡РёСЃС‚РєР° СЃРїРёСЃРєР° Рё РѕСЃРІРѕР±РѕР¶РґРµРЅРёРµ РїР°РјСЏС‚Рё
 //DriverTable::~DriverTable() {
 //    clearList();
 //    delete head;
 //}
 //
-//// Генерация уникального ID для нового водителя
+//// Р“РµРЅРµСЂР°С†РёСЏ СѓРЅРёРєР°Р»СЊРЅРѕРіРѕ ID РґР»СЏ РЅРѕРІРѕРіРѕ РІРѕРґРёС‚РµР»СЏ
 //const int& DriverTable::generateNextId() {
 //    static int nextId = 1;
 //    std::set<int> usedIds;
@@ -539,7 +539,7 @@
 //    return nextId;
 //}
 //
-//// Парсинг строки из файла в объект DriverNode
+//// РџР°СЂСЃРёРЅРі СЃС‚СЂРѕРєРё РёР· С„Р°Р№Р»Р° РІ РѕР±СЉРµРєС‚ DriverNode
 //void DriverTable::parseLine(const std::string& line) {
 //    if (line.empty()) return;
 //
@@ -549,14 +549,14 @@
 //
 //    iss >> id >> std::quoted(fullName) >> std::quoted(birthDate) >> cityId;
 //
-//    // Создание нового узла и добавление в список
+//    // РЎРѕР·РґР°РЅРёРµ РЅРѕРІРѕРіРѕ СѓР·Р»Р° Рё РґРѕР±Р°РІР»РµРЅРёРµ РІ СЃРїРёСЃРѕРє
 //    DriverNode* newNode = new DriverNode(id, fullName, birthDate, cityId, head->next);
 //    head->next = newNode;
 //    idToDriverMap.insert(id, newNode);
 //    nameToIdMap[fullName] = id;
 //}
 //
-//// Очистка списка водителей
+//// РћС‡РёСЃС‚РєР° СЃРїРёСЃРєР° РІРѕРґРёС‚РµР»РµР№
 //void DriverTable::clearList() {
 //    DriverNode* current = head->next;
 //    while (current) {
@@ -569,7 +569,7 @@
 //    nameToIdMap.clear();
 //}
 //
-//// Загрузка данных из файла drivers.txt
+//// Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р° drivers.txt
 //void DriverTable::loadFromFile() {
 //    std::ifstream file(filename);
 //    if (!file.is_open()) return;
@@ -581,7 +581,7 @@
 //    }
 //}
 //
-//// Сохранение данных в файл drivers.txt
+//// РЎРѕС…СЂР°РЅРµРЅРёРµ РґР°РЅРЅС‹С… РІ С„Р°Р№Р» drivers.txt
 //void DriverTable::saveToFile() {
 //    std::ofstream file(filename);
 //    for (DriverNode* curr = head->next; curr; curr = curr->next) {
@@ -592,7 +592,7 @@
 //    }
 //}
 //
-//// Добавление нового водителя
+//// Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ РІРѕРґРёС‚РµР»СЏ
 //void DriverTable::addDriver(const std::string& fullName,
 //    const std::string& birthDate,
 //    int cityId) {
@@ -604,11 +604,11 @@
 //    saveToFile();
 //}
 //
-//// Удаление водителя по имени
+//// РЈРґР°Р»РµРЅРёРµ РІРѕРґРёС‚РµР»СЏ РїРѕ РёРјРµРЅРё
 //void DriverTable::deleteDriver(const std::string& name) {
 //    auto it = nameToIdMap.find(name);
 //    if (it == nameToIdMap.end()) {
-//        std::cerr << "Водитель не найден!\n";
+//        std::cerr << "Р’РѕРґРёС‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ!\n";
 //        return;
 //    }
 //
@@ -622,7 +622,7 @@
 //            nameToIdMap.erase(current->fullName);
 //            delete current;
 //            saveToFile();
-//            std::cout << "Водитель удален!\n";
+//            std::cout << "Р’РѕРґРёС‚РµР»СЊ СѓРґР°Р»РµРЅ!\n";
 //            return;
 //        }
 //        prev = current;
@@ -630,7 +630,7 @@
 //    }
 //}
 //
-//// Получение информации о водителе по имени
+//// РџРѕР»СѓС‡РµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё Рѕ РІРѕРґРёС‚РµР»Рµ РїРѕ РёРјРµРЅРё
 //DriverTable::DriverInfo DriverTable::getDriverInfo(const std::string& name) const {
 //    DriverInfo info;
 //    auto it = nameToIdMap.find(name);
@@ -646,13 +646,13 @@
 //    return info;
 //}
 //
-//// Получение ID водителя по имени
+//// РџРѕР»СѓС‡РµРЅРёРµ ID РІРѕРґРёС‚РµР»СЏ РїРѕ РёРјРµРЅРё
 //int DriverTable::getDriverId(const std::string& name) const {
 //    auto it = nameToIdMap.find(name);
 //    return (it != nameToIdMap.end()) ? it->second : -1;
 //}
 //
-//// Получение ID города, связанного с водителем
+//// РџРѕР»СѓС‡РµРЅРёРµ ID РіРѕСЂРѕРґР°, СЃРІСЏР·Р°РЅРЅРѕРіРѕ СЃ РІРѕРґРёС‚РµР»РµРј
 //int DriverTable::getCityIdForDriver(const std::string& name) const {
 //    auto it = nameToIdMap.find(name);
 //    if (it == nameToIdMap.end()) return -1;
@@ -665,27 +665,27 @@
 //    return -1;
 //}
 //
-//// Обновление ссылок на город при его удалении
+//// РћР±РЅРѕРІР»РµРЅРёРµ СЃСЃС‹Р»РѕРє РЅР° РіРѕСЂРѕРґ РїСЂРё РµРіРѕ СѓРґР°Р»РµРЅРёРё
 //void DriverTable::updateCityReferences(int oldCityId) {
 //    for (DriverNode* curr = head->next; curr; curr = curr->next) {
 //        if (curr->cityId == oldCityId) {
-//            curr->cityId = -1; // Сброс ID города
+//            curr->cityId = -1; // РЎР±СЂРѕСЃ ID РіРѕСЂРѕРґР°
 //        }
 //    }
 //    saveToFile();
 //}
 //
-//// Итератор: сброс указателя на начало списка
+//// РС‚РµСЂР°С‚РѕСЂ: СЃР±СЂРѕСЃ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° РЅР°С‡Р°Р»Рѕ СЃРїРёСЃРєР°
 //void DriverTable::driverIteratorReset() const {
 //    currentIterator = head->next;
 //}
 //
-//// Проверка наличия следующего элемента
+//// РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ СЃР»РµРґСѓСЋС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р°
 //bool DriverTable::driverIteratorHasNext() const {
 //    return currentIterator != nullptr;
 //}
 //
-//// Получение следующего водителя
+//// РџРѕР»СѓС‡РµРЅРёРµ СЃР»РµРґСѓСЋС‰РµРіРѕ РІРѕРґРёС‚РµР»СЏ
 //DriverTable::DriverInfo DriverTable::driverIteratorNext() const {
 //    DriverInfo info;
 //    if (!currentIterator) return info;
@@ -705,62 +705,80 @@
 //        DriverNode* driver = static_cast<DriverNode*>(data);
 //        return { driver->id, driver->fullName, driver->birthDate, driver->cityId };
 //    }
-//    return {}; // Возвращаем пустую структуру, если водитель не найден
+//    return {}; // Р’РѕР·РІСЂР°С‰Р°РµРј РїСѓСЃС‚СѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ, РµСЃР»Рё РІРѕРґРёС‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ
 //}
+
+// DriverTable.cpp
 
 #include "DriverTable.h"
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 #include <iomanip>
-#include <regex>
-#include <iostream>
-// Конструктор: инициализация заголовочного узла и загрузка данных
+using namespace std;
+
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ: РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р·Р°РіРѕР»РѕРІРѕС‡РЅРѕРіРѕ СѓР·Р»Р° Рё Р·Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С…
 DriverTable::DriverTable()
     : head(new DriverNode(-1, "", "", -1, nullptr)),
-    currentFilter(nullptr),
+    currentIterator(nullptr),
     idWidth(5),
-    nameWidth(25),
+    nameWidth(30),
     birthDateWidth(12),
-    cityIdWidth(8)
+    cityIdWidth(5)
 {
     loadFromFile();
-    updateColumnWidths();
 }
 
-// Деструктор
+// Р”РµСЃС‚СЂСѓРєС‚РѕСЂ: РѕС‡РёСЃС‚РєР° СЃРїРёСЃРєР° Рё С…РµС€-С‚Р°Р±Р»РёС†С‹
 DriverTable::~DriverTable() {
-    clearList();
-    clearFilters();
+    DriverNode* current = head->next;
+    while (current) {
+        DriverNode* temp = current;
+        current = current->next;
+        delete temp;
+    }
     delete head;
+    idToDriverMap.clear();
+    nameToIdMap.clear();
 }
 
-// Загрузка данных из файла
+// Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р°
 void DriverTable::loadFromFile() {
-    std::ifstream file(filename);
-    if (!file) {
-        std::cerr << "Error opening drivers file!" << std::endl;
+    ifstream file("drivers.txt");
+    if (!file.is_open()) {
+        cerr << "Error opening drivers file!" << endl;
         return;
     }
+    // РћС‡РёС‰Р°РµРј СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРµ РґР°РЅРЅС‹Рµ
+    DriverNode* current = head->next;
+    while (current) {
+        DriverNode* temp = current;
+        current = current->next;
+        delete temp;
+    }
+    head->next = nullptr;
+    idToDriverMap.clear();
+    nameToIdMap.clear();
 
-    clearList();
-    std::string line;
-    while (std::getline(file, line)) {
+    string line;
+    while (getline(file, line)) {
         parseLine(line);
     }
-    updateColumnWidths();
+    file.close();
 }
 
-// Парсинг строки файла
+// РџР°СЂСЃРёРЅРі СЃС‚СЂРѕРєРё: "id \"fullName\" \"birthDate\" cityId"
 void DriverTable::parseLine(const std::string& line) {
-    std::istringstream iss(line);
+    if (line.empty()) return;
+    istringstream iss(line);
     int id, cityId;
-    std::string fullName, birthDate;
+    string fullName, birthDate;
+    iss >> id >> quoted(fullName) >> quoted(birthDate) >> cityId;
 
-    iss >> id >> std::quoted(fullName) >> std::quoted(birthDate) >> cityId;
     addDriverNode(id, fullName, birthDate, cityId);
 }
 
-// Добавление узла
+// Р”РѕР±Р°РІР»РµРЅРёРµ СѓР·Р»Р° РІ СЃРїРёСЃРѕРє Рё РІ С…РµС€-С‚Р°Р±Р»РёС†Сѓ
 void DriverTable::addDriverNode(int id, const std::string& fullName,
     const std::string& birthDate, int cityId)
 {
@@ -770,130 +788,118 @@ void DriverTable::addDriverNode(int id, const std::string& fullName,
     nameToIdMap[fullName] = id;
 }
 
-// Обновление ширины колонок
-void DriverTable::updateColumnWidths() {
-    DriverNode* curr = head->next;
-    int maxIdLen = 1;
-    size_t maxNameLen = 0;
-
-    while (curr) {
-        maxIdLen = std::max(maxIdLen, (int)std::to_string(curr->id).length());
-        maxNameLen = std::max(maxNameLen, curr->fullName.length());
-        curr = curr->next;
-    }
-
-    idWidth = maxIdLen + 2;
-    nameWidth = maxNameLen + 4;
-    cityIdWidth = 10; // Фиксированная ширина для ID города
+// Р’Р°Р»РёРґР°С†РёСЏ Р¤РРћ (С‚РѕР»СЊРєРѕ Р±СѓРєРІС‹ Рё РїСЂРѕР±РµР»С‹)
+bool DriverTable::validateName(const std::string& name) const {
+    static const regex pattern("^[Рђ-РЇР°-СЏA-Za-z\\s]+$");
+    return regex_match(name, pattern);
 }
 
-// Форматирование строки
-std::string DriverTable::formatNode(const DriverNode* node) const {
-    std::ostringstream oss;
-    oss << std::left
-        << std::setw(idWidth) << node->id
-        << std::setw(nameWidth) << node->fullName
-        << std::setw(birthDateWidth) << node->birthDate
-        << std::setw(cityIdWidth) << node->cityId;
-    return oss.str();
+// Р’Р°Р»РёРґР°С†РёСЏ РґР°С‚С‹ (С„РѕСЂРјР°С‚ Р”Р”.MM.Р“Р“Р“Р“)
+bool DriverTable::validateDate(const std::string& date) const {
+    static const regex pattern("^\\d{2}\\.\\d{2}\\.\\d{4}$");
+    return regex_match(date, pattern);
 }
 
-// Добавление фильтра
-void DriverTable::addFilter(const std::string& field, const std::string& pattern) {
-    Filter* newFilter = new Filter{ field, pattern, nullptr };
-
-    if (!currentFilter) {
-        currentFilter = newFilter;
-    }
-    else {
-        Filter* temp = currentFilter;
-        while (temp->next) temp = temp->next;
-        temp->next = newFilter;
-    }
-}
-
-// Применение фильтров
-DriverTable::DriverNode* DriverTable::applyFilters() const {
-    DriverNode* filteredHead = new DriverNode(-1, "", "", -1, nullptr);
-    DriverNode* tail = filteredHead;
-
-    DriverNode* curr = head->next;
-    while (curr) {
-        bool match = true;
-        Filter* filter = currentFilter;
-
-        while (filter) {
-            if (!matchField(curr, filter->field, filter->pattern)) {
-                match = false;
-                break;
-            }
-            filter = filter->next;
-        }
-
-        if (match) {
-            DriverNode* newNode = cloneNode(curr);
-            tail->next = newNode;
-            tail = newNode;
-        }
-        curr = curr->next;
-    }
-
-    return filteredHead->next;
-}
-
-// Проверка соответствия фильтру
-bool DriverTable::matchField(const DriverNode* node, const std::string& field,
-    const std::string& pattern) const
+// Р”РѕР±Р°РІР»РµРЅРёРµ РІРѕРґРёС‚РµР»СЏ (СЃ РІР°Р»РёРґР°С†РёРµР№)
+void DriverTable::addDriver(const std::string& fullName,
+    const std::string& birthDate, int cityId)
 {
-    if (field == "name") {
-        return std::regex_match(node->fullName, std::regex(pattern));
+    if (!validateName(fullName))
+        throw invalid_argument("РќРµРґРѕРїСѓСЃС‚РёРјС‹Рµ СЃРёРјРІРѕР»С‹ РІ Р¤РРћ");
+    if (!validateDate(birthDate))
+        throw invalid_argument("РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ С„РѕСЂРјР°С‚ РґР°С‚С‹");
+
+    // Р“РµРЅРµСЂР°С†РёСЏ ID: РјР°РєСЃРёРјСѓРј СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ +1
+    int newId = 1;
+    for (auto pair : nameToIdMap) {
+        if (pair.second >= newId) newId = pair.second + 1;
     }
-    else if (field == "city_id") {
-        return checkNumeric(node->cityId, pattern);
-    }
-    return false;
+
+    addDriverNode(newId, fullName, birthDate, cityId);
 }
 
-// Клонирование узла
-DriverTable::DriverNode* DriverTable::cloneNode(const DriverNode* src) const {
-    return new DriverNode(
-        src->id,
-        src->fullName,
-        src->birthDate,
-        src->cityId,
-        nullptr
-    );
+// РС‚РµСЂР°С‚РѕСЂ: СЃР±СЂРѕСЃ РЅР° РЅР°С‡Р°Р»Рѕ
+void DriverTable::driverIteratorReset() const {
+    currentIterator = head->next;
 }
 
-// Очистка фильтров
-void DriverTable::clearFilters() {
-    Filter* current = currentFilter;
-    while (current) {
-        Filter* next = current->next;
-        delete current;
-        current = next;
-    }
-    currentFilter = nullptr;
-}
-
-// Итератор
-void DriverTable::driverIteratorReset(DriverNode* start) const {
-    currentIterator = start ? start : head->next;
-}
-
+// Р•СЃС‚СЊ Р»Рё СЃР»РµРґСѓСЋС‰РёР№?
 bool DriverTable::driverIteratorHasNext() const {
     return currentIterator != nullptr;
 }
 
+// РџРѕР»СѓС‡РµРЅРёРµ СЃР»РµРґСѓСЋС‰РµРіРѕ
 DriverTable::DriverInfo DriverTable::driverIteratorNext() const {
     DriverInfo info;
     if (!currentIterator) return info;
-
     info.id = currentIterator->id;
     info.fullName = currentIterator->fullName;
     info.birthDate = currentIterator->birthDate;
     info.cityId = currentIterator->cityId;
-
     currentIterator = currentIterator->next;
     return info;
+}
+
+// Р“РµС‚С‚РµСЂ: РїРѕР»СѓС‡РёС‚СЊ ID РїРѕ Р¤РРћ
+int DriverTable::getDriverId(const std::string& fullName) const {
+    auto it = nameToIdMap.find(fullName);
+    return (it != nameToIdMap.end()) ? it->second : -1;
+}
+
+// Р“РµС‚С‚РµСЂ: РїРѕР»СѓС‡РёС‚СЊ ID РіРѕСЂРѕРґР° РґР»СЏ РІРѕРґРёС‚РµР»СЏ
+int DriverTable::getCityIdForDriver(const std::string& fullName) const {
+    int id = getDriverId(fullName);
+    if (id == -1) return -1;
+    DriverNode* node = idToDriverMap.find<DriverNode>(id);
+    return node ? node->cityId : -1;
+}
+
+// РЈРґР°Р»РµРЅРёРµ РІРѕРґРёС‚РµР»СЏ РїРѕ Р¤РРћ
+void DriverTable::deleteDriver(const std::string& fullName) {
+    auto it = nameToIdMap.find(fullName);
+    if (it == nameToIdMap.end()) return;
+
+    int id = it->second;
+    DriverNode* prev = head;
+    DriverNode* curr = head->next;
+    while (curr) {
+        if (curr->id == id) {
+            prev->next = curr->next;
+            idToDriverMap.remove(id);
+            nameToIdMap.erase(fullName);
+            delete curr;
+            return;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+}
+
+// РћР±РЅРѕРІР»РµРЅРёРµ СЃСЃС‹Р»РѕРє РїСЂРё СѓРґР°Р»РµРЅРёРё РіРѕСЂРѕРґР° (СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј cityId = -1)
+void DriverTable::updateCityReferences(int deletedCityId) {
+    DriverNode* curr = head->next;
+    while (curr) {
+        if (curr->cityId == deletedCityId) {
+            curr->cityId = -1;
+        }
+        curr = curr->next;
+    }
+}
+
+// РЎРѕС…СЂР°РЅРµРЅРёРµ РґР°РЅРЅС‹С… РІ С„Р°Р№Р»
+void DriverTable::saveToFile() const {
+    ofstream file("drivers.txt");
+    if (!file.is_open()) {
+        cerr << "Error opening drivers file for writing!" << endl;
+        return;
+    }
+    DriverNode* curr = head->next;
+    while (curr) {
+        file << curr->id << ' '
+            << quoted(curr->fullName) << ' '
+            << quoted(curr->birthDate) << ' '
+            << curr->cityId << '\n';
+        curr = curr->next;
+    }
+    file.close();
 }

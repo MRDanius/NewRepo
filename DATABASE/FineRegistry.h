@@ -241,91 +241,86 @@
 //        const FineTable& fines) const;
 //};
 
+// FineRegistry.h
+
 #pragma once
+
+#include <string>
+#include <iostream>
+#include <iomanip>
+#include <map>
+#include "IntHashMap.h"
 #include "DriverTable.h"
 #include "CityTable.h"
 #include "FineTable.h"
 
 class FineRegistry {
 public:
+    // Структура для передачи информации о нарушении
     struct ViolationInfo {
+        int    recordId;
+        int    driverId;
+        int    cityId;
+        int    fineId;
+        bool   paid;
+        std::string date;
+
+        // Детальная информация
         std::string driverName;
         std::string cityName;
         std::string fineType;
-        std::string date;
-        double amount;
-        bool paid;
-    };
-    void clearList();
-private:
-    struct ViolationNode {
-        int id; // Внутренний ID (не отображается)
-        int driverId;
-        int cityId;
-        int fineId;
-        std::string date;
-        bool paid;
-        ViolationNode* next;
-
-        ViolationNode(int id, int driverId, int cityId,
-            int fineId, const std::string& date,
-            bool paid, ViolationNode* next)
-            : id(id), driverId(driverId), cityId(cityId),
-            fineId(fineId), date(date), paid(paid), next(next) {
-        }
+        double fineAmount;
     };
 
-    struct Filter {
-        std::string field;
-        std::string pattern;
-        Filter* next;
-    };
-
-    ViolationNode* head;
-    IntHashMap idToViolationMap;
-    Filter* currentFilter;
-    const std::string filename = "fines.txt";
-
-    mutable ViolationNode* currentIterator;
-    int driverNameWidth;
-    int cityNameWidth;
-    int fineTypeWidth;
-    int dateWidth;
-    int amountWidth;
-    int statusWidth;
-
-    void parseLine(const std::string& line);
-    void addViolationNode(int id, int driverId, int cityId,
-        int fineId, const std::string& date, bool paid);
-    bool matchField(const ViolationNode* node, const std::string& field,
-        const std::string& pattern) const;
-    bool checkNumeric(double value, const std::string& pattern) const;
-    bool regexMatch(const std::string& value, const std::string& pattern) const;
-    ViolationNode* cloneNode(const ViolationNode* src) const;
-
-public:
+    // Конструктор / деструктор
     FineRegistry();
     ~FineRegistry();
 
+    // Основные операции
     void loadFromFile();
     void saveToFile() const;
     void addViolation(int driverId, int cityId, int fineId, const std::string& date);
     void markAsPaid(int recordId);
-    void updateCityReferences(int oldCityId);
-    void updateDriverReferences(int driverId);
-    void addFilter(const std::string& field, const std::string& pattern);
-    void clearFilters();
-    ViolationNode* applyFilters() const;
 
-    void updateColumnWidths();
-    std::string formatNode(const ViolationNode* node) const;
-
-    void violationIteratorReset(ViolationNode* start = nullptr) const;
+    // Итератор по списку нарушений (возвращает подробную информацию)
+    void violationIteratorReset() const;
     bool violationIteratorHasNext() const;
-    ViolationInfo violationIteratorNext() const;
+    ViolationInfo violationIteratorNext(const DriverTable& drivers,
+        const CityTable& cities,
+        const FineTable& fines) const;
 
-    std::string getDriverName(const ViolationNode* node) const;
-    std::string getCityName(const ViolationNode* node) const;
-    std::string getFineType(const ViolationNode* node) const;
-    double getFineAmount(const ViolationNode* node) const;
+    // Обновление ссылок при удалении водителя или города
+    void updateDriverReferences(int deletedDriverId);
+    void updateCityReferences(int deletedCityId);
+
+private:
+    // Узел списка нарушений
+    struct ViolationNode {
+        int    recordId;
+        int    driverId;
+        int    cityId;
+        int    fineId;
+        bool   paid;
+        std::string date;
+        ViolationNode* next;
+        ViolationNode(int recordId, int driverId, int cityId,
+            int fineId, bool paid, const std::string& date,
+            ViolationNode* next)
+            : recordId(recordId), driverId(driverId), cityId(cityId),
+            fineId(fineId), paid(paid), date(date), next(next) {
+        }
+    };
+
+    // Основные поля
+    ViolationNode* head;             // заголовочный узел
+    IntHashMap recordToNodeMap;      // хеш-таблица для быстрого поиска по recordId
+    mutable ViolationNode* currentIterator; // итератор
+
+    // Ширины колонок (для форматированного вывода)
+    int recordIdWidth, driverIdWidth, cityIdWidth, fineIdWidth, paidWidth, dateWidth;
+
+    // Вспомогательные методы
+    void parseLine(const std::string& line);
+    void addViolationNode(int recordId, int driverId, int cityId,
+        int fineId, bool paid, const std::string& date);
 };

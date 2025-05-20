@@ -1,4 +1,4 @@
-//// FineTable.cpp
+п»ї//// FineTable.cpp
 //#include "FineTable.h"
 //#include <fstream>
 //#include <sstream>
@@ -90,7 +90,7 @@
 //
 //FineTable::Fine* FineTable::getFineById(int fineId) {
 //    void* finePtr;
-//    if (idToFineMap.get(fineId, finePtr)) {  // <- Заменить поиск
+//    if (idToFineMap.get(fineId, finePtr)) {  // <- Р—Р°РјРµРЅРёС‚СЊ РїРѕРёСЃРє
 //        return static_cast<Fine*>(finePtr);
 //    }
 //    return nullptr;
@@ -156,8 +156,8 @@
 //    iss >> id >> std::quoted(type) >> amount >> std::quoted(severityStr);
 //
 //    Severity severity = Severity::LIGHT;
-//    if (severityStr == "Среднее") severity = Severity::MEDIUM;
-//    else if (severityStr == "Тяжелое") severity = Severity::HEAVY;
+//    if (severityStr == "РЎСЂРµРґРЅРµРµ") severity = Severity::MEDIUM;
+//    else if (severityStr == "РўСЏР¶РµР»РѕРµ") severity = Severity::HEAVY;
 //
 //    FineNode* newNode = new FineNode(id, type, amount, severity, head->next);
 //    head->next = newNode;
@@ -229,10 +229,10 @@
 //
 //std::string FineTable::severityToString(Severity severity) {
 //    switch (severity) {
-//    case Severity::LIGHT: return "Легкое";
-//    case Severity::MEDIUM: return "Среднее";
-//    case Severity::HEAVY: return "Тяжелое";
-//    default: return "Неизвестно";
+//    case Severity::LIGHT: return "Р›РµРіРєРѕРµ";
+//    case Severity::MEDIUM: return "РЎСЂРµРґРЅРµРµ";
+//    case Severity::HEAVY: return "РўСЏР¶РµР»РѕРµ";
+//    default: return "РќРµРёР·РІРµСЃС‚РЅРѕ";
 //    }
 //}
 //
@@ -282,20 +282,20 @@
 //#include <set>
 //#include <iostream>
 //
-//// Конструктор: инициализация списка и загрузка данных
+//// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ: РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЃРїРёСЃРєР° Рё Р·Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С…
 //FineTable::FineTable()
 //    : head(new FineNode(-1, "", 0.0, Severity::LIGHT, nullptr)),
 //    currentIterator(nullptr) {
 //    loadFromFile();
 //}
 //
-//// Деструктор: очистка списка и освобождение памяти
+//// Р”РµСЃС‚СЂСѓРєС‚РѕСЂ: РѕС‡РёСЃС‚РєР° СЃРїРёСЃРєР° Рё РѕСЃРІРѕР±РѕР¶РґРµРЅРёРµ РїР°РјСЏС‚Рё
 //FineTable::~FineTable() {
 //    clearList();
 //    delete head;
 //}
 //
-//// Генерация уникального ID для нового штрафа
+//// Р“РµРЅРµСЂР°С†РёСЏ СѓРЅРёРєР°Р»СЊРЅРѕРіРѕ ID РґР»СЏ РЅРѕРІРѕРіРѕ С€С‚СЂР°С„Р°
 //const int& FineTable::generateNextId() {
 //    static int nextId = 1;
 //    std::set<int> usedIds;
@@ -305,7 +305,7 @@
 //    return nextId;
 //}
 //
-//// Парсинг строки из файла в объект FineNode
+//// РџР°СЂСЃРёРЅРі СЃС‚СЂРѕРєРё РёР· С„Р°Р№Р»Р° РІ РѕР±СЉРµРєС‚ FineNode
 //void FineTable::parseLine(const std::string& line) {
 //    if (line.empty()) return;
 //
@@ -316,21 +316,21 @@
 //
 //    iss >> id >> std::quoted(type) >> amount >> std::quoted(severityStr);
 //
-//    // Конвертация строки в enum Severity
+//    // РљРѕРЅРІРµСЂС‚Р°С†РёСЏ СЃС‚СЂРѕРєРё РІ enum Severity
 //    Severity severity = Severity::LIGHT;
-//    if (severityStr == "Среднее")
+//    if (severityStr == "РЎСЂРµРґРЅРµРµ")
 //        severity = Severity::MEDIUM;
-//    else if (severityStr == "Тяжелое")
+//    else if (severityStr == "РўСЏР¶РµР»РѕРµ")
 //        severity = Severity::HEAVY;
 //
-//    // Создание узла и добавление в список
+//    // РЎРѕР·РґР°РЅРёРµ СѓР·Р»Р° Рё РґРѕР±Р°РІР»РµРЅРёРµ РІ СЃРїРёСЃРѕРє
 //    FineNode* newNode = new FineNode(id, type, amount, severity, head->next);
 //    head->next = newNode;
 //    idToFineMap.insert(id, newNode);
 //    typeToIdMap[type] = id;
 //}
 //
-//// Очистка списка штрафов
+//// РћС‡РёСЃС‚РєР° СЃРїРёСЃРєР° С€С‚СЂР°С„РѕРІ
 //void FineTable::clearList() {
 //    FineNode* current = head->next;
 //    while (current) {
@@ -343,7 +343,7 @@
 //    typeToIdMap.clear();
 //}
 //
-//// Загрузка данных из файла fines.txt
+//// Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р° fines.txt
 //void FineTable::loadFromFile() {
 //    std::ifstream file(filename);
 //    if (!file.is_open()) return;
@@ -355,7 +355,7 @@
 //    }
 //}
 //
-//// Сохранение данных в файл fines.txt
+//// РЎРѕС…СЂР°РЅРµРЅРёРµ РґР°РЅРЅС‹С… РІ С„Р°Р№Р» fines.txt
 //void FineTable::saveToFile() {
 //    std::ofstream file(filename);
 //    for (FineNode* curr = head->next; curr; curr = curr->next) {
@@ -366,7 +366,7 @@
 //    }
 //}
 //
-//// Добавление нового штрафа
+//// Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ С€С‚СЂР°С„Р°
 //void FineTable::addFine(const std::string& type, double amount, Severity severity) {
 //    const int& newId = generateNextId();
 //    FineNode* newNode = new FineNode(newId, type, amount, severity, head->next);
@@ -376,11 +376,11 @@
 //    saveToFile();
 //}
 //
-//// Удаление штрафа по типу
+//// РЈРґР°Р»РµРЅРёРµ С€С‚СЂР°С„Р° РїРѕ С‚РёРїСѓ
 //void FineTable::deleteFine(const std::string& type) {
 //    auto it = typeToIdMap.find(type);
 //    if (it == typeToIdMap.end()) {
-//        std::cerr << "Штраф не найден!\n";
+//        std::cerr << "РЁС‚СЂР°С„ РЅРµ РЅР°Р№РґРµРЅ!\n";
 //        return;
 //    }
 //
@@ -394,7 +394,7 @@
 //            typeToIdMap.erase(current->type);
 //            delete current;
 //            saveToFile();
-//            std::cout << "Штраф удален!\n";
+//            std::cout << "РЁС‚СЂР°С„ СѓРґР°Р»РµРЅ!\n";
 //            return;
 //        }
 //        prev = current;
@@ -402,24 +402,24 @@
 //    }
 //}
 //
-//// Преобразование Severity в строку
+//// РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ Severity РІ СЃС‚СЂРѕРєСѓ
 //std::string FineTable::severityToString(Severity severity) {
 //    switch (severity) {
-//    case Severity::LIGHT: return "Легкое";
-//    case Severity::MEDIUM: return "Среднее";
-//    case Severity::HEAVY: return "Тяжелое";
-//    default: return "Неизвестно";
+//    case Severity::LIGHT: return "Р›РµРіРєРѕРµ";
+//    case Severity::MEDIUM: return "РЎСЂРµРґРЅРµРµ";
+//    case Severity::HEAVY: return "РўСЏР¶РµР»РѕРµ";
+//    default: return "РќРµРёР·РІРµСЃС‚РЅРѕ";
 //    }
 //}
 //
-//// Получение ID штрафа по типу
+//// РџРѕР»СѓС‡РµРЅРёРµ ID С€С‚СЂР°С„Р° РїРѕ С‚РёРїСѓ
 //const int& FineTable::getFineIdByType(const std::string& type) const {
 //    static const int invalidId = -1;
 //    auto it = typeToIdMap.find(type);
 //    return (it != typeToIdMap.end()) ? it->second : invalidId;
 //}
 //
-//// Получение информации о штрафе по ID
+//// РџРѕР»СѓС‡РµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё Рѕ С€С‚СЂР°С„Рµ РїРѕ ID
 //FineTable::FineInfo FineTable::getFineInfoById(int fineId) const {
 //    FineInfo info;
 //    void* data;
@@ -432,17 +432,17 @@
 //    return info;
 //}
 //
-//// Итератор: сброс указателя на начало списка
+//// РС‚РµСЂР°С‚РѕСЂ: СЃР±СЂРѕСЃ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° РЅР°С‡Р°Р»Рѕ СЃРїРёСЃРєР°
 //void FineTable::fineIteratorReset() const {
 //    currentIterator = head->next;
 //}
 //
-//// Проверка наличия следующего элемента
+//// РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ СЃР»РµРґСѓСЋС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р°
 //bool FineTable::fineIteratorHasNext() const {
 //    return currentIterator != nullptr;
 //}
 //
-//// Получение следующего штрафа
+//// РџРѕР»СѓС‡РµРЅРёРµ СЃР»РµРґСѓСЋС‰РµРіРѕ С€С‚СЂР°С„Р°
 //FineTable::FineInfo FineTable::fineIteratorNext() const {
 //    FineInfo info;
 //    if (!currentIterator) return info;
@@ -455,206 +455,187 @@
 //    return info;
 //}
 
-#include "DatabaseManager.h"
+// FineTable.cpp
+
 #include "FineTable.h"
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 #include <iomanip>
-#include <regex>
+using namespace std;
 
-// Конструктор
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ: РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р·Р°РіРѕР»РѕРІРѕС‡РЅРѕРіРѕ СѓР·Р»Р° Рё Р·Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С…
 FineTable::FineTable()
-    : head(new FineNode(-1, "", 0.0, Severity::LIGHT, nullptr)),
-    currentFilter(nullptr),
-    typeWidth(25),
+    : head(new FineNode(-1, 0.0, "", Severity::LIGHT, nullptr)),
+    currentIterator(nullptr),
+    idWidth(5),
     amountWidth(10),
-    severityWidth(12)
+    typeWidth(30),
+    severityWidth(8)
 {
     loadFromFile();
-    updateColumnWidths();
 }
 
-// Деструктор
+// Р”РµСЃС‚СЂСѓРєС‚РѕСЂ: РѕС‡РёСЃС‚РєР° СЃРїРёСЃРєР° Рё С…РµС€-С‚Р°Р±Р»РёС†С‹
 FineTable::~FineTable() {
-    clearList();
-    clearFilters();
+    FineNode* current = head->next;
+    while (current) {
+        FineNode* temp = current;
+        current = current->next;
+        delete temp;
+    }
     delete head;
+    idToFineMap.clear();
+    typeToIdMap.clear();
 }
 
-// Загрузка данных
+// Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р°
 void FineTable::loadFromFile() {
-    std::ifstream file(filename);
-    if (!file) {
-        std::cerr << "Error opening fines file!" << std::endl;
+    ifstream file("fines.txt");
+    if (!file.is_open()) {
+        cerr << "Error opening fines file!" << endl;
         return;
     }
+    // РћС‡РёС‰Р°РµРј СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРµ РґР°РЅРЅС‹Рµ
+    FineNode* current = head->next;
+    while (current) {
+        FineNode* temp = current;
+        current = current->next;
+        delete temp;
+    }
+    head->next = nullptr;
+    idToFineMap.clear();
+    typeToIdMap.clear();
 
-    clearList();
-    std::string line;
-    while (std::getline(file, line)) {
+    string line;
+    while (getline(file, line)) {
         parseLine(line);
     }
-    updateColumnWidths();
+    file.close();
 }
 
-// Парсинг строки
+// РџР°СЂСЃРёРЅРі СЃС‚СЂРѕРєРё: "id amount \"type\" \"severity\""
 void FineTable::parseLine(const std::string& line) {
-    std::istringstream iss(line);
+    if (line.empty()) return;
+    istringstream iss(line);
     int id;
-    std::string type, severityStr;
     double amount;
-
-    iss >> id >> std::quoted(type) >> amount >> std::quoted(severityStr);
+    string type, severityStr;
+    iss >> id >> amount >> quoted(type) >> quoted(severityStr);
 
     Severity severity = Severity::LIGHT;
     if (severityStr == "Medium") severity = Severity::MEDIUM;
     else if (severityStr == "Heavy") severity = Severity::HEAVY;
 
-    addFineNode(id, type, amount, severity);
+    addFineNode(id, amount, type, severity);
 }
 
-// Добавление узла
-void FineTable::addFineNode(int id, const std::string& type,
-    double amount, Severity severity)
+// Р”РѕР±Р°РІР»РµРЅРёРµ СѓР·Р»Р° РІ СЃРїРёСЃРѕРє Рё РІ С…РµС€-С‚Р°Р±Р»РёС†Сѓ
+void FineTable::addFineNode(int id, double amount, const std::string& type,
+    Severity severity)
 {
-    FineNode* newNode = new FineNode(id, type, amount, severity, head->next);
+    FineNode* newNode = new FineNode(id, amount, type, severity, head->next);
     head->next = newNode;
-    typeToIdMap[type] = id;
     idToFineMap.insert(id, newNode);
+    typeToIdMap[type] = id;
 }
 
-// Обновление ширины колонок
-void FineTable::updateColumnWidths() {
-    FineNode* curr = head->next;
-    size_t maxTypeLen = 0;
-
-    while (curr) {
-        maxTypeLen = std::max(maxTypeLen, curr->type.length());
-        curr = curr->next;
-    }
-
-    typeWidth = maxTypeLen + 4;
-}
-
-// Форматирование строки (БЕЗ ID)
-std::string FineTable::formatNode(const FineNode* node) const {
-    std::ostringstream oss;
-    oss << std::left
-        << std::setw(typeWidth) << node->type
-        << std::setw(amountWidth) << std::fixed << std::setprecision(2) << node->amount
-        << std::setw(severityWidth) << severityToString(node->severity);
-    return oss.str();
-}
-
-// Добавление фильтра
-void FineTable::addFilter(const std::string& field, const std::string& pattern) {
-    Filter* newFilter = new Filter{ field, pattern, nullptr };
-
-    if (!currentFilter) {
-        currentFilter = newFilter;
-    }
-    else {
-        Filter* temp = currentFilter;
-        while (temp->next) temp = temp->next;
-        temp->next = newFilter;
-    }
-}
-
-// Применение фильтров
-FineTable::FineNode* FineTable::applyFilters() const {
-    FineNode* filteredHead = new FineNode(-1, "", 0.0, Severity::LIGHT, nullptr);
-    FineNode* tail = filteredHead;
-
-    FineNode* curr = head->next;
-    while (curr) {
-        bool match = true;
-        Filter* filter = currentFilter;
-
-        while (filter) {
-            if (!matchField(curr, filter->field, filter->pattern)) {
-                match = false;
-                break;
-            }
-            filter = filter->next;
-        }
-
-        if (match) {
-            FineNode* newNode = cloneNode(curr);
-            tail->next = newNode;
-            tail = newNode;
-        }
-        curr = curr->next;
-    }
-
-    return filteredHead->next;
-}
-
-// Проверка соответствия фильтру
-bool FineTable::matchField(const FineNode* node, const std::string& field,
-    const std::string& pattern) const
+// Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ С€С‚СЂР°С„Р° (СЃ РіРµРЅРµСЂР°С†РёРµР№ ID)
+void FineTable::addFine(const std::string& type, double amount,
+    Severity severity)
 {
-    if (field == "type") {
-        return std::regex_match(node->type, std::regex(pattern, std::regex::icase));
+    if (typeToIdMap.count(type))
+        throw invalid_argument("РЁС‚СЂР°С„ СЃ С‚Р°РєРёРј С‚РёРїРѕРј СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
+
+    // Р“РµРЅРµСЂР°С†РёСЏ ID: РјР°РєСЃРёРјСѓРј СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ +1
+    int newId = 1;
+    for (const auto& pair : typeToIdMap) {
+        if (pair.second >= newId) newId = pair.second + 1;
     }
-    else if (field == "amount") {
-        return checkNumeric(node->amount, pattern);
-    }
-    else if (field == "severity") {
-        return std::regex_match(severityToString(node->severity),
-            std::regex(pattern, std::regex::icase));
-    }
-    return false;
+
+    addFineNode(newId, amount, type, severity);
 }
 
-// Клонирование узла
-FineTable::FineNode* FineTable::cloneNode(const FineNode* src) const {
-    return new FineNode(
-        src->id,
-        src->type,
-        src->amount,
-        src->severity,
-        nullptr
-    );
+// РС‚РµСЂР°С‚РѕСЂ: СЃР±СЂРѕСЃ РЅР° РЅР°С‡Р°Р»Рѕ
+void FineTable::fineIteratorReset() const {
+    currentIterator = head->next;
 }
 
-// Очистка фильтров
-void FineTable::clearFilters() {
-    Filter* current = currentFilter;
-    while (current) {
-        Filter* next = current->next;
-        delete current;
-        current = next;
-    }
-    currentFilter = nullptr;
-}
-
-// Преобразование Severity в строку
-std::string FineTable::severityToString(Severity severity) {
-    switch (severity) {
-    case Severity::LIGHT: return "Light";
-    case Severity::MEDIUM: return "Medium";
-    case Severity::HEAVY: return "Heavy";
-    default: return "Unknown";
-    }
-}
-
-// Итератор
-void FineTable::fineIteratorReset(FineNode* start) const {
-    currentIterator = start ? start : head->next;
-}
-
+// Р•СЃС‚СЊ Р»Рё СЃР»РµРґСѓСЋС‰РёР№?
 bool FineTable::fineIteratorHasNext() const {
     return currentIterator != nullptr;
 }
 
+// РџРѕР»СѓС‡РµРЅРёРµ СЃР»РµРґСѓСЋС‰РµРіРѕ
 FineTable::FineInfo FineTable::fineIteratorNext() const {
     FineInfo info;
     if (!currentIterator) return info;
-
-    info.type = currentIterator->type;
+    info.id = currentIterator->id;
     info.amount = currentIterator->amount;
+    info.type = currentIterator->type;
     info.severity = currentIterator->severity;
-
     currentIterator = currentIterator->next;
     return info;
+}
+
+// Р“РµС‚С‚РµСЂ: РїРѕР»СѓС‡РёС‚СЊ ID РїРѕ С‚РёРїСѓ С€С‚СЂР°С„Р°
+int FineTable::getFineIdByType(const std::string& type) const {
+    auto it = typeToIdMap.find(type);
+    return (it != typeToIdMap.end()) ? it->second : -1;
+}
+
+// Р“РµС‚С‚РµСЂ: РїРѕР»СѓС‡РёС‚СЊ СЃСѓРјРјСѓ РїРѕ ID
+double FineTable::getAmountById(int id) const {
+    FineNode* node = idToFineMap.find<FineNode>(id);
+    return node ? node->amount : 0.0;
+}
+
+// РЈРґР°Р»РµРЅРёРµ С€С‚СЂР°С„Р° РїРѕ С‚РёРїСѓ (С‚РѕР»СЊРєРѕ РїСЂРё РѕС‚СЃСѓС‚СЃС‚РІРёРё СЃРІСЏР·Р°РЅРЅС‹С… РЅР°СЂСѓС€РµРЅРёР№)
+void FineTable::deleteFine(const std::string& type) {
+    auto it = typeToIdMap.find(type);
+    if (it == typeToIdMap.end()) return;
+
+    int id = it->second;
+    FineNode* prev = head;
+    FineNode* curr = head->next;
+    while (curr) {
+        if (curr->id == id) {
+            prev->next = curr->next;
+            idToFineMap.remove(id);
+            typeToIdMap.erase(type);
+            delete curr;
+            return;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+}
+
+// РЎРѕС…СЂР°РЅРµРЅРёРµ РґР°РЅРЅС‹С… РІ С„Р°Р№Р»
+void FineTable::saveToFile() const {
+    ofstream file("fines.txt");
+    if (!file.is_open()) {
+        cerr << "Error opening fines file for writing!" << endl;
+        return;
+    }
+    FineNode* curr = head->next;
+    while (curr) {
+        file << curr->id << ' '
+            << curr->amount << ' '
+            << quoted(curr->type) << ' '
+            << quoted(severityToString(curr->severity))
+            << '\n';
+        curr = curr->next;
+    }
+    file.close();
+}
+
+// РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ Severity РІ СЃС‚СЂРѕРєСѓ
+std::string FineTable::severityToString(Severity severity) {
+    switch (severity) {
+    case Severity::LIGHT:  return "Light";
+    case Severity::MEDIUM: return "Medium";
+    case Severity::HEAVY:  return "Heavy";
+    default:               return "Unknown";
+    }
 }

@@ -1,0 +1,4 @@
+4 "Smallville" 50000 "Small" "Town"
+3 "Kazan" 1243500 "Medium" "City"
+2 "SaintPetersburg" 5351935 "Large" "City"
+1 "Moscow" 12692466 "Large" "City"

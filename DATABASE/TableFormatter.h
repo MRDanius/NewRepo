@@ -41,49 +41,16 @@
 //};
 
 
+// TableFormatter.h
+
 #pragma once
-#include <iostream>
-#include <vector>
+
 #include <string>
-#include <algorithm>
-#include <iostream>
-#include <iomanip>
+#include <vector>
+#include <sstream>
+
 class TableFormatter {
 public:
-    // Структура для динамической маски колонок
-    struct ColumnConfig {
-        size_t width;
-        bool isNumeric;
-        std::string filterPattern;
-    };
-
-    // Генерация шапки таблицы
-    static void printHeader(const std::vector<ColumnConfig>& columns) {
-        std::cout << "\n";
-        for (const auto& col : columns) {
-            std::cout << "| " << std::left << std::setw(col.width)
-                << std::string(col.width - 2, '-') << " ";
-        }
-        std::cout << "|\n";
-    }
-
-    // Форматирование строки данных
-    static std::string formatRow(
-        const std::vector<std::string>& values,
-        const std::vector<ColumnConfig>& columns
-    ) {
-        std::stringstream ss;
-        for (size_t i = 0; i < values.size(); ++i) {
-            if (columns[i].isNumeric) {
-                ss << "| " << std::right << std::setw(columns[i].width)
-                    << values[i] << " ";
-            }
-            else {
-                ss << "| " << std::left << std::setw(columns[i].width)
-                    << values[i] << " ";
-            }
-        }
-        ss << "|";
-        return ss.str();
-    }
+    // Форматирует двумерный вектор строк в отформатированную ASCII-таблицу
+    static std::string format(const std::vector<std::vector<std::string>>& rows);
 };

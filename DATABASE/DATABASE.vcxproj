@@ -127,16 +127,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CityTable.cpp" />
-    <ClCompile Include="DATABASE.cpp" />
-    <ClCompile Include="DataBaseManager.cpp" />
-    <ClCompile Include="DriverTable.cpp" />
-    <ClCompile Include="FineRegistry.cpp" />
-    <ClCompile Include="FineTable.cpp" />
-    <ClCompile Include="HashMapInt.cpp" />
-    <ClCompile Include="UserInterface.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="CityTable.h" />
     <ClInclude Include="DataBaseManager.h" />
     <ClInclude Include="DriverTable.h" />
@@ -155,6 +145,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CityTable.cpp" />
+    <ClCompile Include="DATABASE.cpp" />
+    <ClCompile Include="DataBaseManager.cpp" />
+    <ClCompile Include="DriverTable.cpp" />
+    <ClCompile Include="FineRegistry.cpp" />
+    <ClCompile Include="FineTable.cpp" />
+    <ClCompile Include="HashMapInt.cpp" />
+    <ClCompile Include="TableFormatter.cpp" />
+    <ClCompile Include="UserInterface.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

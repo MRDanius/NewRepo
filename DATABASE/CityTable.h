@@ -1,4 +1,4 @@
-//// CityTable.h
+п»ї//// CityTable.h
 //#pragma once
 //#include <string>
 //#include "IntHashMap.h"
@@ -62,21 +62,21 @@
 //    void clearList();
 //
 //public:
-//    // Конструктор/деструктор
+//    // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ/РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 //    CityTable();
 //    ~CityTable();
 //
-//    // Основной функционал
+//    // РћСЃРЅРѕРІРЅРѕР№ С„СѓРЅРєС†РёРѕРЅР°Р»
 //    void loadFromFile();
 //    void saveToFile();
 //    void addCity(const std::string& name);
 //    void deleteCity(const std::string& name);
 //
-//    // Методы доступа к данным
+//    // РњРµС‚РѕРґС‹ РґРѕСЃС‚СѓРїР° Рє РґР°РЅРЅС‹Рј
 //    std::string getCityNameById(const int& id) const;
 //    const int& getCityIdByName(const std::string& name) const;
 //
-//    // Итераторы
+//    // РС‚РµСЂР°С‚РѕСЂС‹
 //    void cityIteratorReset() const;
 //    bool cityIteratorHasNext() const;
 //    std::string cityIteratorNext();
@@ -214,36 +214,27 @@
 //};
 
 
+// CityTable.h
+
 #pragma once
 #include <string>
-#include <map>
+#include <iostream>
+#include <iomanip>
 #include "IntHashMap.h"
+#include <map>
 
 class CityTable {
 public:
-    // Перечисления
-    enum class PopulationGrade { SMALL, MEDIUM, LARGE };
-    enum class SettlementType { CITY, TOWN, VILLAGE };
-
-    // Структура для передачи информации о городе
-    struct CityInfo {
-        int id;
-        std::string name;
-        int population;
-        PopulationGrade grade;
-        SettlementType type;
-    };
-    void clearList();
-private:
-    // Узел списка городов
+    // РЈР·РµР» СЃРїРёСЃРєР° РіРѕСЂРѕРґРѕРІ (СЃРґРµР»Р°РЅ РїСѓР±Р»РёС‡РЅС‹Рј РґР»СЏ РґРѕСЃС‚СѓРїР° РёР· UI)
     struct CityNode {
-        int id;
+        int    id;
         std::string name;
-        int population;
+        int    population;
+        enum class PopulationGrade { SMALL, MEDIUM, LARGE };
+        enum class SettlementType { CITY, TOWN, VILLAGE };
         PopulationGrade grade;
-        SettlementType type;
+        SettlementType  type;
         CityNode* next;
-
         CityNode(int id, const std::string& name, int population,
             PopulationGrade grade, SettlementType type, CityNode* next)
             : id(id), name(name), population(population),
@@ -251,65 +242,77 @@ private:
         }
     };
 
-    // Структура фильтра
-    struct Filter {
-        std::string field;
-        std::string pattern;
-        Filter* next;
+    // РџРµСЂРµС‡РёСЃР»РµРЅРёСЏ
+    using PopulationGrade = CityNode::PopulationGrade;
+    using SettlementType = CityNode::SettlementType;
+
+    // РЎС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ РїРµСЂРµРґР°С‡Рё РёРЅС„РѕСЂРјР°С†РёРё Рѕ РіРѕСЂРѕРґРµ
+    struct CityInfo {
+        int    id;
+        std::string name;
+        int    population;
+        PopulationGrade grade;
+        SettlementType  type;
     };
 
-    // Основные поля класса
-    CityNode* head;                     // Заголовочный узел
-    IntHashMap idToCityMap;             // Хеш-таблица для быстрого поиска по ID
-    std::map<std::string, int> nameToIdMap; // Карта для поиска ID по названию
-    Filter* currentFilter;              // Цепочка активных фильтров
-    const std::string filename = "cities.txt";
-
-    // Настройки отображения
-    mutable CityNode* currentIterator;  // Текущая позиция итератора
-    int idWidth;                        // Ширина колонки ID
-    int nameWidth;                      // Ширина колонки названия
-    int populationWidth;                // Ширина колонки населения
-    int typeWidth;                      // Ширина колонки типа
-
-    // Вспомогательные методы
-    void parseLine(const std::string& line);
-    void addCityNode(int id, const std::string& name, int population,
-        PopulationGrade grade, SettlementType type);
-    bool matchField(const CityNode* node, const std::string& field,
-        const std::string& pattern) const;
-    bool checkNumeric(int value, const std::string& pattern) const;
-    CityNode* cloneNode(const CityNode* src) const;
-
-public:
-    // Конструктор/деструктор
+    // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ / РґРµСЃС‚СЂСѓРєС‚РѕСЂ
     CityTable();
     ~CityTable();
 
-    // Основные операции
+    // РћСЃРЅРѕРІРЅС‹Рµ РѕРїРµСЂР°С†РёРё
     void loadFromFile();
     void saveToFile() const;
     void addCity(const std::string& name, int population,
         PopulationGrade grade, SettlementType type);
     void deleteCity(const std::string& name);
 
-    // Работа с фильтрами
+    // Р Р°Р±РѕС‚Р° СЃ С„РёР»СЊС‚СЂР°РјРё
     void addFilter(const std::string& field, const std::string& pattern);
     void clearFilters();
     CityNode* applyFilters() const;
 
-    // Вспомогательные методы
+    // РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РїРµСЂРµС‡РёСЃР»РµРЅРёР№ РІ СЃС‚СЂРѕРєСѓ
     static std::string populationGradeToString(PopulationGrade grade);
     static std::string settlementTypeToString(SettlementType type);
+
+    // РћР±РЅРѕРІР»РµРЅРёРµ С€РёСЂРёРЅС‹ РєРѕР»РѕРЅРѕРє (РїРѕСЃР»Рµ Р·Р°РіСЂСѓР·РєРё)
     void updateColumnWidths();
     std::string formatNode(const CityNode* node) const;
 
-    // Итераторы
+    // РС‚РµСЂР°С‚РѕСЂ РїРѕ СЃРїРёСЃРєСѓ РіРѕСЂРѕРґРѕРІ
     void cityIteratorReset(CityNode* start = nullptr) const;
     bool cityIteratorHasNext() const;
     CityInfo cityIteratorNext() const;
 
-    // Геттеры
+    // Р“РµС‚С‚РµСЂС‹
     std::string getCityNameById(int id) const;
-    int getCityIdByName(const std::string& name) const;
+    int         getCityIdByName(const std::string& name) const;
+
+private:
+    // РЎС‚СЂСѓРєС‚СѓСЂР° С„РёР»СЊС‚СЂР° РґР»СЏ РїРѕРёСЃРєР°
+    struct Filter {
+        std::string field;
+        std::string pattern;
+        Filter* next;
+    };
+
+    // РћСЃРЅРѕРІРЅС‹Рµ РїРѕР»СЏ
+    CityNode* head;           // Р·Р°РіРѕР»РѕРІРѕС‡РЅС‹Р№ СѓР·РµР»
+    IntHashMap     idToCityMap;    // С…РµС€-С‚Р°Р±Р»РёС†Р° РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ РїРѕРёСЃРєР° РїРѕ ID
+    std::map<std::string, int> nameToIdMap; // РєР°СЂС‚Р° В«РёРјСЏ в†’ IDВ»
+    Filter* currentFilter;  // С†РµРїРѕС‡РєР° Р°РєС‚РёРІРЅС‹С… С„РёР»СЊС‚СЂРѕРІ
+    mutable CityNode* currentIterator; // С‚РµРєСѓС‰Р°СЏ РїРѕР·РёС†РёСЏ РёС‚РµСЂР°С‚РѕСЂР°
+
+    // РЁРёСЂРёРЅС‹ РєРѕР»РѕРЅРѕРє (РґР»СЏ С„РѕСЂРјР°С‚РёСЂРѕРІР°РЅРЅРѕРіРѕ РІС‹РІРѕРґР°)
+    int idWidth, nameWidth, populationWidth, typeWidth;
+
+    // Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РјРµС‚РѕРґС‹
+    void parseLine(const std::string& line);
+    void addCityNode(int id, const std::string& name, int population,
+        PopulationGrade grade, SettlementType type);
+    bool matchField(const CityNode* node,
+        const std::string& field,
+        const std::string& pattern) const;
+    bool checkNumeric(int value, const std::string& pattern) const;
+    CityNode* cloneNode(const CityNode* src) const;
 };

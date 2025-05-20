@@ -85,56 +85,51 @@
 //    void showStatisticsMenu();
 //};
 
+// UserInterface.h
+
 #pragma once
-#include "DatabaseManager.h"
-#include "TableFormatter.h"
-#include <vector>
+
+#include "DataBaseManager.h"
 #include <string>
-#include <ctime>
 
 class UserInterface {
 public:
-    struct FilterCondition {
-        std::string field;
-        std::string value;
-        bool is_range = false;
-        std::string range_from;
-        std::string range_to;
-    };
-
-private:
-    DatabaseManager db;
-    std::vector<FilterCondition> active_filters;
-
-    // Валидация
-    bool validateDate(const std::string& date);
-    bool validateName(const std::string& name) const;
-    tm parseDate(const std::string& dateStr);
-
-    // Работа с данными
-    std::vector<std::vector<std::string>> prepareViolationData(FineRegistry::ViolationNode* violations = nullptr);
-    bool matchesFilters(const FineRegistry::ViolationInfo& violation) const;
-
-    // Фильтрация
-    void handleFilterMenu(FineRegistry::ViolationNode*& filtered);
-    void applyFilters();
-    void resetFilters();
-
-    // Меню
-    void showMainMenu();
-    void showCityMenu();
-    void showDriverMenu();
-    void showFineMenu();
-    void showViolationMenu();
-    void showStatisticsMenu();
-
-public:
-    UserInterface() = default;
     void run();
 
-    // Форматирование таблиц
-    static void printDynamicTable(
-        const std::vector<std::string>& headers,
-        const std::vector<std::vector<std::string>>& data
-    );
+private:
+    DatabaseManager dbManager;
+
+    void mainMenu();
+    void citiesMenu();
+    void driversMenu();
+    void finesMenu();
+    void registryMenu();
+    void statisticsMenu();
+
+    // Методы для каждой опции меню
+    void listCities();
+    void addCity();
+    void deleteCity();
+    void filterCities();
+    void clearCityFilters();
+
+    void listDrivers();
+    void addDriver();
+    void deleteDriver();
+
+    void listFines();
+    void addFine();
+    void deleteFine();
+
+    void listViolations();
+    void addViolation();
+    void markViolationPaid();
+
+    void showViolationsByCity();
+    void showTopDrivers();
+
+    // Утилиты ввода/вывода
+    int readInt(const std::string& prompt);
+    double readDouble(const std::string& prompt);
+    std::string readString(const std::string& prompt);
 };
