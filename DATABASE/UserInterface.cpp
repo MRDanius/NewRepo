@@ -807,30 +807,716 @@
 //    } while (choice != 3);
 //}
 
+
+
+//#include "UserInterface.h"
+//#include <sstream>
+//#include <iostream>
+//#include <iomanip>
+//#include <clocale>
+//#include <limits>
+//#include <algorithm>
+//#include <regex>
+//#include <Windows.h>
+//#include <ctime>
+//#define NOMINMAX
+//
+//using namespace std;
+//
+//// ==================== ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ====================
+//
+//bool UserInterface::validateDate(const string& date) {
+//    regex pattern(R"(^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.\d{4}$)");
+//    return regex_match(date, pattern);
+//}
+//
+//bool UserInterface::validateName(const std::string& name) const {
+//    return std::all_of(name.begin(), name.end(), [](char c) {
+//        return std::isalpha(c) || c == ' ' || c == '-';
+//        });
+//}
+//
+//tm UserInterface::parseDate(const string& dateStr) {
+//    tm date = {};
+//    istringstream ss(dateStr);
+//    ss >> get_time(&date, "%d.%m.%Y");
+//    return date;
+//}
+//
+//// ==================== ФОРМАТИРОВАНИЕ ТАБЛИЦ ====================
+//
+//vector<vector<string>> UserInterface::prepareViolationData() {
+//    vector<vector<string>> data;
+//    db.getRegistry().violationIteratorReset();
+//    while (db.getRegistry().violationIteratorHasNext()) {
+//        auto violation = db.getRegistry().violationIteratorNext(
+//            db.getDrivers(), db.getCities(), db.getFines()
+//        );
+//        data.push_back({
+//            violation.driverName,
+//            violation.cityName,
+//            violation.fineType,
+//            violation.date,
+//            to_string(violation.amount) + " руб.",
+//            violation.paid ? "Оплачено" : "Не оплачено"
+//            });
+//    }
+//    return data;
+//}
+//
+//void UserInterface::printDynamicTable(
+//    const vector<string>& headers,
+//    const vector<vector<string>>& data
+//) {
+//    vector<int> widths = TableFormatter::calculateColumnWidths(headers, data);
+//
+//    // Шапка таблицы
+//    cout << "\n";
+//    for (size_t i = 0; i < headers.size(); ++i) {
+//        cout << "| " << left << setw(widths[i]) << headers[i] << " ";
+//    }
+//    cout << "|\n" << string(accumulate(widths.begin(), widths.end(), 0) + headers.size() * 3, '-') << "\n";
+//
+//    // Данные
+//    for (const auto& row : data) {
+//        for (size_t i = 0; i < row.size(); ++i) {
+//            cout << "| " << left << setw(widths[i]) << row[i] << " ";
+//        }
+//        cout << "|\n";
+//    }
+//}
+//
+//// ==================== ФИЛЬТРАЦИЯ ====================
+//
+//bool UserInterface::matchesFilters(const FineRegistry::ViolationInfo& violation) {
+//    for (const auto& filter : active_filters) {
+//        if (filter.field == "city" && violation.cityName != filter.value)
+//            return false;
+//
+//        if (filter.field == "дата") {
+//            tm violDate = parseDate(violation.date);
+//            if (filter.is_range) {
+//                tm from = parseDate(filter.range_from);
+//                tm to = parseDate(filter.range_to);
+//                if (difftime(mktime(&violDate), mktime(&from)) < 0 ||
+//                    difftime(mktime(&violDate), mktime(&to)) > 0) return false;
+//            }
+//            else if (violation.date != filter.value) {
+//                return false;
+//            }
+//        }
+//
+//        if (filter.field == "сумма") {
+//            double amount = violation.amount;
+//            if (filter.is_range) {
+//                double from = stod(filter.range_from);
+//                double to = stod(filter.range_to);
+//                if (amount < from || amount > to) return false;
+//            }
+//            else if (amount != stod(filter.value)) {
+//                return false;
+//            }
+//        }
+//    }
+//    return true;
+//}
+//
+//void UserInterface::applyFilters() {
+//    vector<vector<string>> filteredData;
+//    auto violations = db.getAllViolations();
+//
+//    for (const auto& violation : violations) {
+//        if (matchesFilters(violation)) {
+//            filteredData.push_back({
+//                violation.driverName,
+//                violation.cityName,
+//                violation.fineType,
+//                violation.date,
+//                to_string(violation.amount) + " руб.",
+//                violation.paid ? "Оплачено" : "Не оплачено"
+//                });
+//        }
+//    }
+//
+//    printDynamicTable({ "Водитель", "Город", "Штраф", "Дата", "Сумма", "Статус" }, filteredData);
+//}
+//
+//void UserInterface::filterMenu() {
+//    int choice;
+//    do {
+//        cout << "\n=== УПРАВЛЕНИЕ ФИЛЬТРАМИ ==="
+//            << "\n1. Добавить фильтр"
+//            << "\n2. Сбросить фильтры"
+//            << "\n3. Назад"
+//            << "\nВыберите: ";
+//        cin >> choice;
+//        cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//
+//        switch (choice) {
+//        case 1:
+//            addFilterCondition();
+//            break;
+//        case 2:
+//            resetFilters();
+//            applyFilters();
+//            break;
+//        case 3:
+//            return;
+//        default:
+//            cout << "Неверный выбор!\n";
+//        }
+//    } while (true);
+//}
+//
+//void UserInterface::addFilterCondition() {
+//    FilterCondition cond;
+//
+//    cout << "\nДоступные поля: город, дата, штраф, сумма, статус: ";
+//    getline(cin, cond.field);
+//
+//    if (cond.field != "city" && cond.field != "data" &&
+//        cond.field != "fine" && cond.field != "sum" && cond.field != "state") {
+//        cout << "Некорректное поле!\n";
+//        return;
+//    }
+//
+//    cout << "Тип фильтра (1-точное значение, 2-диапазон): ";
+//    int type;
+//    cin >> type;
+//    cin.ignore();
+//
+//    if (type == 2 && (cond.field == "дата" || cond.field == "сумма")) {
+//        cond.is_range = true;
+//        cout << "Начало диапазона: ";
+//        getline(cin, cond.range_from);
+//        cout << "Конец диапазона: ";
+//        getline(cin, cond.range_to);
+//    }
+//    else if (type == 1) {
+//        cout << "Значение: ";
+//        getline(cin, cond.value);
+//    }
+//    else {
+//        cout << "Недопустимый тип фильтра!\n";
+//        return;
+//    }
+//
+//    active_filters.push_back(cond);
+//    applyFilters();
+//
+//    cout << "Добавить ещё условие? (1-да/0-нет): ";
+//    cin >> type;
+//    if (type == 1)
+//        addFilterCondition();
+//}
+//
+//void UserInterface::resetFilters() {
+//    active_filters.clear();
+//    cout << "Фильтры сброшены!\n";
+//}
+//
+//// ==================== ОСНОВНЫЕ МЕНЮ ====================
+//
+//void UserInterface::run() {
+//    setlocale(LC_ALL, "Russian");
+//    SetConsoleOutputCP(CP_UTF8);
+//    db.loadAll();
+//    showMainMenu();
+//    db.saveAll();
+//}
+//
+//void UserInterface::showMainMenu() {
+//    int choice;
+//    do {
+//        cout << "\n========== ГЛАВНОЕ МЕНЮ ==========\n"
+//            << "1. Управление городами\n"
+//            << "2. Управление водителями\n"
+//            << "3. Управление штрафами\n"
+//            << "4. Управление нарушениями\n"
+//            << "5. Статистика\n"
+//            << "6. Выход\n"
+//            << "Выберите опцию: ";
+//        cin >> choice;
+//
+//        switch (choice) {
+//        case 1: showCityMenu(); break;
+//        case 2: showDriverMenu(); break;
+//        case 3: showFineMenu(); break;
+//        case 4: showViolationMenu(); break;
+//        case 5: showStatisticsMenu(); break;
+//        case 6: cout << "Сохранение данных...\n"; break;
+//        default:
+//            cin.clear();
+//            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//            cout << "Неверный ввод!\n";
+//        }
+//    } while (choice != 6);
+//}
+//
+//// ----------- Управление городами -----------
+//void UserInterface::showCityMenu() {
+//    int choice;
+//    do {
+//        cout << "\n========== УПРАВЛЕНИЕ ГОРОДАМИ ==========\n"
+//            << "1. Список городов\n"
+//            << "2. Добавить город\n"
+//            << "3. Удалить город\n"
+//            << "4. Назад\n"
+//            << "Выберите опцию: ";
+//        cin >> choice;
+//
+//        switch (choice) {
+//        case 1: {
+//            vector<vector<string>> cityData;
+//            db.getCities().cityIteratorReset();
+//            while (db.getCities().cityIteratorHasNext()) {
+//                auto city = db.getCities().cityIteratorNext();
+//                cityData.push_back({
+//                    city.name,
+//                    to_string(city.population) + " чел.",
+//                    CityTable::settlementTypeToString(city.type),
+//                    CityTable::populationGradeToString(city.grade)
+//                    });
+//            }
+//            printDynamicTable({ "Название", "Население", "Тип", "Градация" }, cityData);
+//            break;
+//        }
+//        case 2: {
+//            string name;
+//            int population, gradeChoice, typeChoice;
+//
+//            cout << "Введите название города: ";
+//            cin.ignore();
+//            getline(cin, name);
+//
+//            cout << "Введите население: ";
+//            while (!(cin >> population) || population < 0) {
+//                cin.clear();
+//                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//                cout << "Ошибка! Введите положительное число: ";
+//            }
+//
+//            cout << "Градация населения (1-Малый, 2-Средний, 3-Крупный): ";
+//            while (!(cin >> gradeChoice) || gradeChoice < 1 || gradeChoice > 3) {
+//                cin.clear();
+//                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//                cout << "Ошибка! Введите 1-3: ";
+//            }
+//
+//            cout << "Тип поселения (1-Город, 2-Посёлок, 3-Деревня): ";
+//            while (!(cin >> typeChoice) || typeChoice < 1 || typeChoice > 3) {
+//                cin.clear();
+//                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//                cout << "Ошибка! Введите 1-3: ";
+//            }
+//
+//            try {
+//                db.addCity(
+//                    name,
+//                    population,
+//                    static_cast<CityTable::PopulationGrade>(gradeChoice - 1),
+//                    static_cast<CityTable::SettlementType>(typeChoice - 1)
+//                );
+//                cout << "Город добавлен!\n";
+//            }
+//            catch (const exception& e) {
+//                cout << "Ошибка: " << e.what() << endl;
+//            }
+//            break;
+//        }
+//        case 3: {
+//            string name;
+//            cout << "Введите название города: ";
+//            cin.ignore();
+//            getline(cin, name);
+//            try {
+//                db.deleteCity(name);
+//                cout << "Город удален!\n";
+//            }
+//            catch (const exception& e) {
+//                cout << "Ошибка: " << e.what() << endl;
+//            }
+//            break;
+//        }
+//        case 4: return;
+//        default:
+//            cin.clear();
+//            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//            cout << "Неверный выбор!\n";
+//        }
+//    } while (true);
+//}
+//
+//// ----------- Управление водителями -----------
+//void UserInterface::showDriverMenu() {
+//    int choice;
+//    do {
+//        cout << "\n========== УПРАВЛЕНИЕ ВОДИТЕЛЯМИ ==========\n"
+//            << "1. Список водителей\n"
+//            << "2. Добавить водителя\n"
+//            << "3. Удалить водителя\n"
+//            << "4. Назад\n"
+//            << "Выберите опцию: ";
+//        cin >> choice;
+//
+//        switch (choice) {
+//        case 1: {
+//            vector<vector<string>> driverData;
+//            db.getDrivers().driverIteratorReset();
+//            while (db.getDrivers().driverIteratorHasNext()) {
+//                auto driver = db.getDrivers().driverIteratorNext();
+//                driverData.push_back({
+//                    driver.fullName,
+//                    driver.birthDate,
+//                    db.getCities().getCityNameById(driver.cityId)
+//                    });
+//            }
+//            printDynamicTable({ "ФИО", "Дата рождения", "Город" }, driverData);
+//            break;
+//        }
+//        case 2: {
+//            string name, birthDate, cityName;
+//            bool isValid = false;
+//
+//            do {
+//                cout << "Введите ФИО: ";
+//                cin.ignore();
+//                getline(cin, name);
+//                isValid = validateName(name);
+//                if (!isValid) cout << "Некорректное имя! Только буквы, пробелы и дефисы.\n";
+//            } while (!isValid);
+//
+//            do {
+//                cout << "Введите дату рождения (ДД.ММ.ГГГГ): ";
+//                getline(cin, birthDate);
+//                isValid = validateDate(birthDate);
+//                if (!isValid) cout << "Некорректный формат даты!\n";
+//            } while (!isValid);
+//
+//            cout << "Доступные города:\n";
+//            db.getCities().cityIteratorReset();
+//            while (db.getCities().cityIteratorHasNext()) {
+//                auto city = db.getCities().cityIteratorNext();
+//                cout << "• " << city.name << endl;
+//            }
+//
+//            cout << "Введите название города: ";
+//            getline(cin, cityName);
+//
+//            try {
+//                db.addDriver(name, birthDate, cityName);
+//                cout << "Водитель добавлен!\n";
+//            }
+//            catch (const exception& e) {
+//                cout << "Ошибка: " << e.what() << endl;
+//            }
+//            break;
+//        }
+//        case 3: {
+//            string name;
+//            cout << "Введите ФИО водителя: ";
+//            cin.ignore();
+//            getline(cin, name);
+//            try {
+//                db.deleteDriver(name);
+//                cout << "Водитель удален!\n";
+//            }
+//            catch (const exception& e) {
+//                cout << "Ошибка: " << e.what() << endl;
+//            }
+//            break;
+//        }
+//        case 4: return;
+//        default:
+//            cin.clear();
+//            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//            cout << "Неверный выбор!\n";
+//        }
+//    } while (true);
+//}
+//
+//// ----------- Управление штрафами -----------
+//void UserInterface::showFineMenu() {
+//    int choice;
+//    do {
+//        cout << "\n========== УПРАВЛЕНИЕ ШТРАФАМИ ==========\n"
+//            << "1. Список штрафов\n"
+//            << "2. Добавить штраф\n"
+//            << "3. Удалить штраф\n"
+//            << "4. Назад\n"
+//            << "Выберите опцию: ";
+//        cin >> choice;
+//
+//        switch (choice) {
+//        case 1: {
+//            vector<vector<string>> fineData;
+//            db.getFines().fineIteratorReset();
+//            while (db.getFines().fineIteratorHasNext()) {
+//                auto fine = db.getFines().fineIteratorNext();
+//                fineData.push_back({
+//                    fine.type,
+//                    to_string(fine.amount) + " руб.",
+//                    FineTable::severityToString(fine.severity)
+//                    });
+//            }
+//            printDynamicTable({ "Тип", "Сумма", "Тяжесть" }, fineData);
+//            break;
+//        }
+//        case 2: {
+//            string type;
+//            double amount;
+//            int severity;
+//
+//            cout << "Введите тип нарушения: ";
+//            cin.ignore();
+//            getline(cin, type);
+//
+//            cout << "Введите сумму штрафа: ";
+//            while (!(cin >> amount) || amount < 0) {
+//                cin.clear();
+//                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//                cout << "Ошибка! Введите положительное число: ";
+//            }
+//
+//            cout << "Выберите тяжесть (1-Легкое, 2-Среднее, 3-Тяжелое): ";
+//            while (!(cin >> severity) || severity < 1 || severity > 3) {
+//                cin.clear();
+//                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//                cout << "Ошибка! Введите 1-3: ";
+//            }
+//
+//            try {
+//                db.addFine(type, amount, static_cast<FineTable::Severity>(severity - 1));
+//                cout << "Штраф добавлен!\n";
+//            }
+//            catch (const exception& e) {
+//                cout << "Ошибка: " << e.what() << endl;
+//            }
+//            break;
+//        }
+//        case 3: {
+//            string type;
+//            cout << "Введите тип штрафа: ";
+//            cin.ignore();
+//            getline(cin, type);
+//            try {
+//                db.getFines().deleteFine(type);
+//                cout << "Штраф удален!\n";
+//            }
+//            catch (const exception& e) {
+//                cout << "Ошибка: " << e.what() << endl;
+//            }
+//            break;
+//        }
+//        case 4: return;
+//        default:
+//            cin.clear();
+//            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//            cout << "Неверный выбор!\n";
+//        }
+//    } while (true);
+//}
+//
+//// ----------- Управление нарушениями -----------
+//void UserInterface::showViolationMenu() {
+//    int choice;
+//    do {
+//        cout << "\n========== УПРАВЛЕНИЕ НАРУШЕНИЯМИ ==========\n"
+//            << "1. Все нарушения\n"
+//            << "2. Добавить нарушение\n"
+//            << "3. Отметить как оплаченное\n"
+//            << "4. Фильтровать нарушения\n"
+//            << "5. Назад\n"
+//            << "Выберите опцию: ";
+//        cin >> choice;
+//
+//        switch (choice) {
+//        case 1: {
+//            auto data = prepareViolationData();
+//            printDynamicTable({ "Водитель", "Город", "Штраф", "Дата", "Сумма", "Статус" }, data);
+//            break;
+//        }
+//        case 2: {
+//            string driverName, fineType, date;
+//            bool isValid = false;
+//
+//            cout << "\nСписок водителей:\n";
+//            db.getDrivers().driverIteratorReset();
+//            while (db.getDrivers().driverIteratorHasNext()) {
+//                auto driver = db.getDrivers().driverIteratorNext();
+//                cout << "• " << driver.fullName << endl;
+//            }
+//
+//            do {
+//                cout << "Введите ФИО водителя: ";
+//                cin.ignore();
+//                getline(cin, driverName);
+//                isValid = db.getDrivers().getDriverId(driverName) != -1;
+//                if (!isValid) cout << "Водитель не найден!\n";
+//            } while (!isValid);
+//
+//            cout << "\nСписок штрафов:\n";
+//            db.getFines().fineIteratorReset();
+//            while (db.getFines().fineIteratorHasNext()) {
+//                auto fine = db.getFines().fineIteratorNext();
+//                cout << "• " << fine.type << " (" << fine.amount << " руб.)\n";
+//            }
+//
+//            do {
+//                cout << "Введите тип штрафа: ";
+//                getline(cin, fineType);
+//                isValid = db.getFines().getFineIdByType(fineType) != -1;
+//                if (!isValid) cout << "Штраф не найден!\n";
+//            } while (!isValid);
+//
+//            do {
+//                cout << "Введите дату нарушения (ДД.ММ.ГГГГ): ";
+//                getline(cin, date);
+//                isValid = validateDate(date);
+//                if (!isValid) cout << "Некорректная дата!\n";
+//            } while (!isValid);
+//
+//            try {
+//                db.addViolation(driverName, fineType, date);
+//                cout << "Нарушение добавлено!\n";
+//            }
+//            catch (const exception& e) {
+//                cout << "Ошибка: " << e.what() << endl;
+//            }
+//            break;
+//        }
+//        case 3: {
+//            int recordId;
+//            cout << "Введите ID нарушения: ";
+//            while (!(cin >> recordId) || recordId < 1) {
+//                cin.clear();
+//                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//                cout << "Ошибка! Введите положительное число: ";
+//            }
+//            try {
+//                db.markFineAsPaid(recordId);
+//                cout << "Статус обновлен!\n";
+//            }
+//            catch (const exception& e) {
+//                cout << "Ошибка: " << e.what() << endl;
+//            }
+//            break;
+//        }
+//        case 4:
+//            filterMenu();
+//            break;
+//        case 5:
+//            return;
+//        default:
+//            cin.clear();
+//            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//            cout << "Неверный выбор!\n";
+//        }
+//    } while (true);
+//}
+//
+//// ----------- Статистика -----------
+//void UserInterface::showStatisticsMenu() {
+//    int choice;
+//    do {
+//        cout << "\n========== СТАТИСТИКА ==========\n"
+//            << "1. Нарушения по городам\n"
+//            << "2. Топ нарушителей\n"
+//            << "3. Назад\n"
+//            << "Выберите опцию: ";
+//        cin >> choice;
+//
+//        switch (choice) {
+//        case 1: {
+//            map<string, int> cityStats;
+//            db.getCities().cityIteratorReset();
+//            while (db.getCities().cityIteratorHasNext()) {
+//                auto city = db.getCities().cityIteratorNext();
+//                cityStats[city.name] = 0;
+//            }
+//
+//            db.getRegistry().violationIteratorReset();
+//            while (db.getRegistry().violationIteratorHasNext()) {
+//                auto violation = db.getRegistry().violationIteratorNext(
+//                    db.getDrivers(), db.getCities(), db.getFines()
+//                );
+//                cityStats[violation.cityName]++;
+//            }
+//
+//            vector<vector<string>> statsData;
+//            for (const auto& entry : cityStats) { // Используем entry вместо [city, count]
+//                statsData.push_back({
+//                    entry.first,                // Город (ключ)
+//                    std::to_string(entry.second) // Количество нарушений (значение)
+//                    });
+//            }
+//            printDynamicTable({ "Город", "Нарушений" }, statsData);
+//            break;
+//        }
+//        case 2: {
+//            map<string, int> driverStats;
+//            db.getDrivers().driverIteratorReset();
+//            while (db.getDrivers().driverIteratorHasNext()) {
+//                auto driver = db.getDrivers().driverIteratorNext();
+//                driverStats[driver.fullName] = 0;
+//            }
+//
+//            db.getRegistry().violationIteratorReset();
+//            while (db.getRegistry().violationIteratorHasNext()) {
+//                auto violation = db.getRegistry().violationIteratorNext(
+//                    db.getDrivers(), db.getCities(), db.getFines()
+//                );
+//                driverStats[violation.driverName]++;
+//            }
+//
+//            vector<pair<string, int>> sortedStats(
+//                driverStats.begin(), driverStats.end()
+//            );
+//            sort(sortedStats.begin(), sortedStats.end(),
+//                [](auto& a, auto& b) { return a.second > b.second; });
+//
+//            vector<vector<string>> topData;
+//            for (size_t i = 0; i < min(5, (int)sortedStats.size()); ++i) {
+//                topData.push_back({
+//                    to_string(i + 1),
+//                    sortedStats[i].first,
+//                    to_string(sortedStats[i].second)
+//                    });
+//            }
+//            printDynamicTable({ "Место", "Водитель", "Нарушений" }, topData);
+//            break;
+//        }
+//        case 3:
+//            return;
+//        default:
+//            cin.clear();
+//            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+//            cout << "Неверный выбор!\n";
+//        }
+//    } while (true);
+//}
+
+
+#include <iostream>
+
 #include "UserInterface.h"
-#include <sstream>
 #include <iostream>
 #include <iomanip>
-#include <clocale>
 #include <limits>
-#include <algorithm>
 #include <regex>
 #include <Windows.h>
-#include <ctime>
-#define NOMINMAX
 
 using namespace std;
 
-// ==================== ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ====================
-
+// ==================== ВАЛИДАЦИЯ ДАННЫХ ====================
 bool UserInterface::validateDate(const string& date) {
     regex pattern(R"(^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.\d{4}$)");
     return regex_match(date, pattern);
 }
 
-bool UserInterface::validateName(const std::string& name) const {
-    return std::all_of(name.begin(), name.end(), [](char c) {
-        return std::isalpha(c) || c == ' ' || c == '-';
+bool UserInterface::validateName(const string& name) const {
+    return all_of(name.begin(), name.end(), [](char c) {
+        return isalpha(c) || c == ' ' || c == '-';
         });
 }
 
@@ -842,21 +1528,22 @@ tm UserInterface::parseDate(const string& dateStr) {
 }
 
 // ==================== ФОРМАТИРОВАНИЕ ТАБЛИЦ ====================
-
 vector<vector<string>> UserInterface::prepareViolationData() {
     vector<vector<string>> data;
     db.getRegistry().violationIteratorReset();
     while (db.getRegistry().violationIteratorHasNext()) {
         auto violation = db.getRegistry().violationIteratorNext(
-            db.getDrivers(), db.getCities(), db.getFines()
+            db.getDrivers(),
+            db.getCities(),
+            db.getFines()
         );
         data.push_back({
             violation.driverName,
             violation.cityName,
             violation.fineType,
             violation.date,
-            to_string(violation.amount) + " руб.",
-            violation.paid ? "Оплачено" : "Не оплачено"
+            to_string(violation.amount) + " USD",
+            violation.paid ? "Paid" : "Unpaid"
             });
     }
     return data;
@@ -866,16 +1553,27 @@ void UserInterface::printDynamicTable(
     const vector<string>& headers,
     const vector<vector<string>>& data
 ) {
-    vector<int> widths = TableFormatter::calculateColumnWidths(headers, data);
+    vector<int> widths(headers.size(), 0);
 
-    // Шапка таблицы
+    // Расчет ширины колонок
+    for (size_t i = 0; i < headers.size(); ++i) {
+        widths[i] = headers[i].length();
+        for (const auto& row : data) {
+            if (i < row.size() && row[i].length() > widths[i]) {
+                widths[i] = row[i].length();
+            }
+        }
+        widths[i] += 2; // Добавляем отступ
+    }
+
+    // Вывод шапки
     cout << "\n";
     for (size_t i = 0; i < headers.size(); ++i) {
         cout << "| " << left << setw(widths[i]) << headers[i] << " ";
     }
     cout << "|\n" << string(accumulate(widths.begin(), widths.end(), 0) + headers.size() * 3, '-') << "\n";
 
-    // Данные
+    // Вывод данных
     for (const auto& row : data) {
         for (size_t i = 0; i < row.size(); ++i) {
             cout << "| " << left << setw(widths[i]) << row[i] << " ";
@@ -884,139 +1582,8 @@ void UserInterface::printDynamicTable(
     }
 }
 
-// ==================== ФИЛЬТРАЦИЯ ====================
-
-bool UserInterface::matchesFilters(const FineRegistry::ViolationInfo& violation) {
-    for (const auto& filter : active_filters) {
-        if (filter.field == "city" && violation.cityName != filter.value)
-            return false;
-
-        if (filter.field == "дата") {
-            tm violDate = parseDate(violation.date);
-            if (filter.is_range) {
-                tm from = parseDate(filter.range_from);
-                tm to = parseDate(filter.range_to);
-                if (difftime(mktime(&violDate), mktime(&from)) < 0 ||
-                    difftime(mktime(&violDate), mktime(&to)) > 0) return false;
-            }
-            else if (violation.date != filter.value) {
-                return false;
-            }
-        }
-
-        if (filter.field == "сумма") {
-            double amount = violation.amount;
-            if (filter.is_range) {
-                double from = stod(filter.range_from);
-                double to = stod(filter.range_to);
-                if (amount < from || amount > to) return false;
-            }
-            else if (amount != stod(filter.value)) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-void UserInterface::applyFilters() {
-    vector<vector<string>> filteredData;
-    auto violations = db.getAllViolations();
-
-    for (const auto& violation : violations) {
-        if (matchesFilters(violation)) {
-            filteredData.push_back({
-                violation.driverName,
-                violation.cityName,
-                violation.fineType,
-                violation.date,
-                to_string(violation.amount) + " руб.",
-                violation.paid ? "Оплачено" : "Не оплачено"
-                });
-        }
-    }
-
-    printDynamicTable({ "Водитель", "Город", "Штраф", "Дата", "Сумма", "Статус" }, filteredData);
-}
-
-void UserInterface::filterMenu() {
-    int choice;
-    do {
-        cout << "\n=== УПРАВЛЕНИЕ ФИЛЬТРАМИ ==="
-            << "\n1. Добавить фильтр"
-            << "\n2. Сбросить фильтры"
-            << "\n3. Назад"
-            << "\nВыберите: ";
-        cin >> choice;
-        cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-
-        switch (choice) {
-        case 1:
-            addFilterCondition();
-            break;
-        case 2:
-            resetFilters();
-            applyFilters();
-            break;
-        case 3:
-            return;
-        default:
-            cout << "Неверный выбор!\n";
-        }
-    } while (true);
-}
-
-void UserInterface::addFilterCondition() {
-    FilterCondition cond;
-
-    cout << "\nДоступные поля: город, дата, штраф, сумма, статус: ";
-    getline(cin, cond.field);
-
-    if (cond.field != "city" && cond.field != "data" &&
-        cond.field != "fine" && cond.field != "sum" && cond.field != "state") {
-        cout << "Некорректное поле!\n";
-        return;
-    }
-
-    cout << "Тип фильтра (1-точное значение, 2-диапазон): ";
-    int type;
-    cin >> type;
-    cin.ignore();
-
-    if (type == 2 && (cond.field == "дата" || cond.field == "сумма")) {
-        cond.is_range = true;
-        cout << "Начало диапазона: ";
-        getline(cin, cond.range_from);
-        cout << "Конец диапазона: ";
-        getline(cin, cond.range_to);
-    }
-    else if (type == 1) {
-        cout << "Значение: ";
-        getline(cin, cond.value);
-    }
-    else {
-        cout << "Недопустимый тип фильтра!\n";
-        return;
-    }
-
-    active_filters.push_back(cond);
-    applyFilters();
-
-    cout << "Добавить ещё условие? (1-да/0-нет): ";
-    cin >> type;
-    if (type == 1)
-        addFilterCondition();
-}
-
-void UserInterface::resetFilters() {
-    active_filters.clear();
-    cout << "Фильтры сброшены!\n";
-}
-
-// ==================== ОСНОВНЫЕ МЕНЮ ====================
-
+// ==================== ОСНОВНЫЕ МЕТОДЫ ====================
 void UserInterface::run() {
-    setlocale(LC_ALL, "Russian");
     SetConsoleOutputCP(CP_UTF8);
     db.loadAll();
     showMainMenu();
@@ -1026,15 +1593,21 @@ void UserInterface::run() {
 void UserInterface::showMainMenu() {
     int choice;
     do {
-        cout << "\n========== ГЛАВНОЕ МЕНЮ ==========\n"
-            << "1. Управление городами\n"
-            << "2. Управление водителями\n"
-            << "3. Управление штрафами\n"
-            << "4. Управление нарушениями\n"
-            << "5. Статистика\n"
-            << "6. Выход\n"
-            << "Выберите опцию: ";
-        cin >> choice;
+        cout << "\n========== MAIN MENU ==========\n"
+            << "1. Cities Management\n"
+            << "2. Drivers Management\n"
+            << "3. Fines Management\n"
+            << "4. Violations Management\n"
+            << "5. Statistics\n"
+            << "6. Exit\n"
+            << "Enter choice: ";
+
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input!\n";
+            continue;
+        }
 
         switch (choice) {
         case 1: showCityMenu(); break;
@@ -1042,222 +1615,294 @@ void UserInterface::showMainMenu() {
         case 3: showFineMenu(); break;
         case 4: showViolationMenu(); break;
         case 5: showStatisticsMenu(); break;
-        case 6: cout << "Сохранение данных...\n"; break;
-        default:
-            cin.clear();
-            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-            cout << "Неверный ввод!\n";
+        case 6: cout << "Saving data...\n"; break;
+        default: cout << "Invalid choice!\n";
         }
     } while (choice != 6);
 }
 
-// ----------- Управление городами -----------
-void UserInterface::showCityMenu() {
+// ==================== МЕНЮ НАРУШЕНИЙ ====================
+void UserInterface::showViolationMenu() {
     int choice;
     do {
-        cout << "\n========== УПРАВЛЕНИЕ ГОРОДАМИ ==========\n"
-            << "1. Список городов\n"
-            << "2. Добавить город\n"
-            << "3. Удалить город\n"
-            << "4. Назад\n"
-            << "Выберите опцию: ";
+        cout << "\n========== VIOLATIONS MANAGEMENT ==========\n"
+            << "1. Show All Violations\n"
+            << "2. Add Violation\n"
+            << "3. Mark as Paid\n"
+            << "4. Apply Filters\n"
+            << "5. Clear Filters\n"
+            << "6. Back\n"
+            << "Enter choice: ";
+
         cin >> choice;
+        cin.ignore();
 
         switch (choice) {
         case 1: {
-            vector<vector<string>> cityData;
-            db.getCities().cityIteratorReset();
-            while (db.getCities().cityIteratorHasNext()) {
-                auto city = db.getCities().cityIteratorNext();
+            auto data = prepareViolationData();
+            printDynamicTable(
+                { "Driver", "City", "Fine Type", "Date", "Amount", "Status" },
+                data
+            );
+            break;
+        }
+        case 4:
+            handleFilterMenu();
+            break;
+        case 5:
+            db.getRegistry().clearFilters();
+            cout << "Filters cleared!\n";
+            break;
+            // Обработка других кейсов...
+        }
+    } while (choice != 6);
+}
+
+// ==================== ФИЛЬТРАЦИЯ ====================
+void UserInterface::handleFilterMenu() {
+    int choice;
+    do {
+        cout << "\n=== FILTER CRITERIA ===\n"
+            << "1. By Driver Name\n"
+            << "2. By City\n"
+            << "3. By Fine Type\n"
+            << "4. By Date\n"
+            << "5. By Amount\n"
+            << "6. By Payment Status\n"
+            << "7. Apply Filters\n"
+            << "8. Back\n"
+            << "Enter choice: ";
+
+        cin >> choice;
+        cin.ignore();
+
+        string pattern;
+        auto& registry = db.getRegistry();
+
+        switch (choice) {
+        case 1: {
+            cout << "Enter driver name pattern (use * and ?): ";
+            getline(cin, pattern);
+            registry.addFilter("driver", pattern);
+            break;
+        }
+        case 5: {
+            cout << "Enter amount condition (>500, <1000, 200-500): ";
+            getline(cin, pattern);
+            registry.addFilter("amount", pattern);
+            break;
+        }
+        case 7: {
+            cout << "Applying filters...\n";
+            break;
+        }
+        }
+    } while (choice != 8);
+}
+
+// ==================== МЕНЮ ГОРОДОВ ====================
+void UserInterface::showCityMenu() {
+    int choice;
+    do {
+        cout << "\n========== CITIES MANAGEMENT ==========\n"
+            << "1. List Cities\n"
+            << "2. Add City\n"
+            << "3. Delete City\n"
+            << "4. Back\n"
+            << "Enter choice: ";
+
+        cin >> choice;
+        cin.ignore();
+
+        auto& cities = db.getCities();
+        vector<vector<string>> cityData;
+
+        switch (choice) {
+        case 1: {
+            cities.cityIteratorReset();
+            while (cities.cityIteratorHasNext()) {
+                auto city = cities.cityIteratorNext();
                 cityData.push_back({
                     city.name,
-                    to_string(city.population) + " чел.",
+                    to_string(city.population) + " people",
                     CityTable::settlementTypeToString(city.type),
                     CityTable::populationGradeToString(city.grade)
                     });
             }
-            printDynamicTable({ "Название", "Население", "Тип", "Градация" }, cityData);
+            printDynamicTable(
+                { "Name", "Population", "Type", "Grade" },
+                cityData
+            );
             break;
         }
         case 2: {
             string name;
-            int population, gradeChoice, typeChoice;
+            int population;
+            int typeChoice, gradeChoice;
 
-            cout << "Введите название города: ";
-            cin.ignore();
-            getline(cin, name);
+            do {
+                cout << "Enter city name: ";
+                getline(cin, name);
+            } while (!validateName(name));
 
-            cout << "Введите население: ";
+            cout << "Enter population: ";
             while (!(cin >> population) || population < 0) {
                 cin.clear();
-                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-                cout << "Ошибка! Введите положительное число: ";
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid input! Enter positive number: ";
             }
 
-            cout << "Градация населения (1-Малый, 2-Средний, 3-Крупный): ";
-            while (!(cin >> gradeChoice) || gradeChoice < 1 || gradeChoice > 3) {
-                cin.clear();
-                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-                cout << "Ошибка! Введите 1-3: ";
-            }
+            cout << "Select settlement type:\n"
+                << "1. City\n2. Town\n3. Village\nChoice: ";
+            cin >> typeChoice;
+            auto type = static_cast<CityTable::SettlementType>(typeChoice - 1);
 
-            cout << "Тип поселения (1-Город, 2-Посёлок, 3-Деревня): ";
-            while (!(cin >> typeChoice) || typeChoice < 1 || typeChoice > 3) {
-                cin.clear();
-                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-                cout << "Ошибка! Введите 1-3: ";
-            }
+            cout << "Select population grade:\n"
+                << "1. Small\n2. Medium\n3. Large\nChoice: ";
+            cin >> gradeChoice;
+            auto grade = static_cast<CityTable::PopulationGrade>(gradeChoice - 1);
 
             try {
-                db.addCity(
-                    name,
-                    population,
-                    static_cast<CityTable::PopulationGrade>(gradeChoice - 1),
-                    static_cast<CityTable::SettlementType>(typeChoice - 1)
-                );
-                cout << "Город добавлен!\n";
+                db.addCity(name, population, grade, type);
+                cout << "City added successfully!\n";
             }
             catch (const exception& e) {
-                cout << "Ошибка: " << e.what() << endl;
+                cerr << "Error: " << e.what() << endl;
             }
             break;
         }
         case 3: {
             string name;
-            cout << "Введите название города: ";
-            cin.ignore();
+            cout << "Enter city name to delete: ";
             getline(cin, name);
             try {
                 db.deleteCity(name);
-                cout << "Город удален!\n";
+                cout << "City deleted!\n";
             }
             catch (const exception& e) {
-                cout << "Ошибка: " << e.what() << endl;
+                cerr << "Error: " << e.what() << endl;
             }
             break;
         }
-        case 4: return;
-        default:
-            cin.clear();
-            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-            cout << "Неверный выбор!\n";
         }
-    } while (true);
+    } while (choice != 4);
 }
 
-// ----------- Управление водителями -----------
+// ==================== МЕНЮ ВОДИТЕЛЕЙ ====================
 void UserInterface::showDriverMenu() {
     int choice;
     do {
-        cout << "\n========== УПРАВЛЕНИЕ ВОДИТЕЛЯМИ ==========\n"
-            << "1. Список водителей\n"
-            << "2. Добавить водителя\n"
-            << "3. Удалить водителя\n"
-            << "4. Назад\n"
-            << "Выберите опцию: ";
+        cout << "\n========== DRIVERS MANAGEMENT ==========\n"
+            << "1. List Drivers\n"
+            << "2. Add Driver\n"
+            << "3. Delete Driver\n"
+            << "4. Back\n"
+            << "Enter choice: ";
+
         cin >> choice;
+        cin.ignore();
+
+        auto& drivers = db.getDrivers();
+        vector<vector<string>> driverData;
 
         switch (choice) {
         case 1: {
-            vector<vector<string>> driverData;
-            db.getDrivers().driverIteratorReset();
-            while (db.getDrivers().driverIteratorHasNext()) {
-                auto driver = db.getDrivers().driverIteratorNext();
+            drivers.driverIteratorReset();
+            while (drivers.driverIteratorHasNext()) {
+                auto driver = drivers.driverIteratorNext();
                 driverData.push_back({
                     driver.fullName,
                     driver.birthDate,
                     db.getCities().getCityNameById(driver.cityId)
                     });
             }
-            printDynamicTable({ "ФИО", "Дата рождения", "Город" }, driverData);
+            printDynamicTable(
+                { "Name", "Birth Date", "City" },
+                driverData
+            );
             break;
         }
         case 2: {
             string name, birthDate, cityName;
-            bool isValid = false;
 
             do {
-                cout << "Введите ФИО: ";
-                cin.ignore();
+                cout << "Enter driver's full name: ";
                 getline(cin, name);
-                isValid = validateName(name);
-                if (!isValid) cout << "Некорректное имя! Только буквы, пробелы и дефисы.\n";
-            } while (!isValid);
+            } while (!validateName(name));
 
             do {
-                cout << "Введите дату рождения (ДД.ММ.ГГГГ): ";
+                cout << "Enter birth date (DD.MM.YYYY): ";
                 getline(cin, birthDate);
-                isValid = validateDate(birthDate);
-                if (!isValid) cout << "Некорректный формат даты!\n";
-            } while (!isValid);
+            } while (!validateDate(birthDate));
 
-            cout << "Доступные города:\n";
+            cout << "Available cities:\n";
             db.getCities().cityIteratorReset();
             while (db.getCities().cityIteratorHasNext()) {
                 auto city = db.getCities().cityIteratorNext();
-                cout << "• " << city.name << endl;
+                cout << " - " << city.name << "\n";
             }
 
-            cout << "Введите название города: ";
+            cout << "Enter city name: ";
             getline(cin, cityName);
 
             try {
                 db.addDriver(name, birthDate, cityName);
-                cout << "Водитель добавлен!\n";
+                cout << "Driver added!\n";
             }
             catch (const exception& e) {
-                cout << "Ошибка: " << e.what() << endl;
+                cerr << "Error: " << e.what() << endl;
             }
             break;
         }
         case 3: {
             string name;
-            cout << "Введите ФИО водителя: ";
-            cin.ignore();
+            cout << "Enter driver's name to delete: ";
             getline(cin, name);
             try {
                 db.deleteDriver(name);
-                cout << "Водитель удален!\n";
+                cout << "Driver deleted!\n";
             }
             catch (const exception& e) {
-                cout << "Ошибка: " << e.what() << endl;
+                cerr << "Error: " << e.what() << endl;
             }
             break;
         }
-        case 4: return;
-        default:
-            cin.clear();
-            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-            cout << "Неверный выбор!\n";
         }
-    } while (true);
+    } while (choice != 4);
 }
 
-// ----------- Управление штрафами -----------
+// ==================== МЕНЮ ШТРАФОВ ====================
 void UserInterface::showFineMenu() {
     int choice;
     do {
-        cout << "\n========== УПРАВЛЕНИЕ ШТРАФАМИ ==========\n"
-            << "1. Список штрафов\n"
-            << "2. Добавить штраф\n"
-            << "3. Удалить штраф\n"
-            << "4. Назад\n"
-            << "Выберите опцию: ";
+        cout << "\n========== FINES MANAGEMENT ==========\n"
+            << "1. List Fines\n"
+            << "2. Add Fine\n"
+            << "3. Delete Fine\n"
+            << "4. Back\n"
+            << "Enter choice: ";
+
         cin >> choice;
+        cin.ignore();
+
+        auto& fines = db.getFines();
+        vector<vector<string>> fineData;
 
         switch (choice) {
         case 1: {
-            vector<vector<string>> fineData;
-            db.getFines().fineIteratorReset();
-            while (db.getFines().fineIteratorHasNext()) {
-                auto fine = db.getFines().fineIteratorNext();
+            fines.fineIteratorReset();
+            while (fines.fineIteratorHasNext()) {
+                auto fine = fines.fineIteratorNext();
                 fineData.push_back({
                     fine.type,
-                    to_string(fine.amount) + " руб.",
+                    to_string(fine.amount) + " USD",
                     FineTable::severityToString(fine.severity)
                     });
             }
-            printDynamicTable({ "Тип", "Сумма", "Тяжесть" }, fineData);
+            printDynamicTable(
+                { "Type", "Amount", "Severity" },
+                fineData
+            );
             break;
         }
         case 2: {
@@ -1265,164 +1910,45 @@ void UserInterface::showFineMenu() {
             double amount;
             int severity;
 
-            cout << "Введите тип нарушения: ";
-            cin.ignore();
+            cout << "Enter fine type: ";
             getline(cin, type);
 
-            cout << "Введите сумму штрафа: ";
+            cout << "Enter amount: ";
             while (!(cin >> amount) || amount < 0) {
                 cin.clear();
-                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-                cout << "Ошибка! Введите положительное число: ";
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid input! Enter positive number: ";
             }
 
-            cout << "Выберите тяжесть (1-Легкое, 2-Среднее, 3-Тяжелое): ";
-            while (!(cin >> severity) || severity < 1 || severity > 3) {
-                cin.clear();
-                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-                cout << "Ошибка! Введите 1-3: ";
-            }
+            cout << "Select severity:\n"
+                << "1. Light\n2. Medium\n3. Heavy\nChoice: ";
+            cin >> severity;
 
             try {
                 db.addFine(type, amount, static_cast<FineTable::Severity>(severity - 1));
-                cout << "Штраф добавлен!\n";
+                cout << "Fine added!\n";
             }
             catch (const exception& e) {
-                cout << "Ошибка: " << e.what() << endl;
+                cerr << "Error: " << e.what() << endl;
             }
             break;
         }
-        case 3: {
-            string type;
-            cout << "Введите тип штрафа: ";
-            cin.ignore();
-            getline(cin, type);
-            try {
-                db.getFines().deleteFine(type);
-                cout << "Штраф удален!\n";
-            }
-            catch (const exception& e) {
-                cout << "Ошибка: " << e.what() << endl;
-            }
-            break;
         }
-        case 4: return;
-        default:
-            cin.clear();
-            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-            cout << "Неверный выбор!\n";
-        }
-    } while (true);
+    } while (choice != 4);
 }
 
-// ----------- Управление нарушениями -----------
-void UserInterface::showViolationMenu() {
-    int choice;
-    do {
-        cout << "\n========== УПРАВЛЕНИЕ НАРУШЕНИЯМИ ==========\n"
-            << "1. Все нарушения\n"
-            << "2. Добавить нарушение\n"
-            << "3. Отметить как оплаченное\n"
-            << "4. Фильтровать нарушения\n"
-            << "5. Назад\n"
-            << "Выберите опцию: ";
-        cin >> choice;
-
-        switch (choice) {
-        case 1: {
-            auto data = prepareViolationData();
-            printDynamicTable({ "Водитель", "Город", "Штраф", "Дата", "Сумма", "Статус" }, data);
-            break;
-        }
-        case 2: {
-            string driverName, fineType, date;
-            bool isValid = false;
-
-            cout << "\nСписок водителей:\n";
-            db.getDrivers().driverIteratorReset();
-            while (db.getDrivers().driverIteratorHasNext()) {
-                auto driver = db.getDrivers().driverIteratorNext();
-                cout << "• " << driver.fullName << endl;
-            }
-
-            do {
-                cout << "Введите ФИО водителя: ";
-                cin.ignore();
-                getline(cin, driverName);
-                isValid = db.getDrivers().getDriverId(driverName) != -1;
-                if (!isValid) cout << "Водитель не найден!\n";
-            } while (!isValid);
-
-            cout << "\nСписок штрафов:\n";
-            db.getFines().fineIteratorReset();
-            while (db.getFines().fineIteratorHasNext()) {
-                auto fine = db.getFines().fineIteratorNext();
-                cout << "• " << fine.type << " (" << fine.amount << " руб.)\n";
-            }
-
-            do {
-                cout << "Введите тип штрафа: ";
-                getline(cin, fineType);
-                isValid = db.getFines().getFineIdByType(fineType) != -1;
-                if (!isValid) cout << "Штраф не найден!\n";
-            } while (!isValid);
-
-            do {
-                cout << "Введите дату нарушения (ДД.ММ.ГГГГ): ";
-                getline(cin, date);
-                isValid = validateDate(date);
-                if (!isValid) cout << "Некорректная дата!\n";
-            } while (!isValid);
-
-            try {
-                db.addViolation(driverName, fineType, date);
-                cout << "Нарушение добавлено!\n";
-            }
-            catch (const exception& e) {
-                cout << "Ошибка: " << e.what() << endl;
-            }
-            break;
-        }
-        case 3: {
-            int recordId;
-            cout << "Введите ID нарушения: ";
-            while (!(cin >> recordId) || recordId < 1) {
-                cin.clear();
-                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-                cout << "Ошибка! Введите положительное число: ";
-            }
-            try {
-                db.markFineAsPaid(recordId);
-                cout << "Статус обновлен!\n";
-            }
-            catch (const exception& e) {
-                cout << "Ошибка: " << e.what() << endl;
-            }
-            break;
-        }
-        case 4:
-            filterMenu();
-            break;
-        case 5:
-            return;
-        default:
-            cin.clear();
-            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-            cout << "Неверный выбор!\n";
-        }
-    } while (true);
-}
-
-// ----------- Статистика -----------
+// ==================== МЕНЮ СТАТИСТИКИ ====================
 void UserInterface::showStatisticsMenu() {
     int choice;
     do {
-        cout << "\n========== СТАТИСТИКА ==========\n"
-            << "1. Нарушения по городам\n"
-            << "2. Топ нарушителей\n"
-            << "3. Назад\n"
-            << "Выберите опцию: ";
+        cout << "\n========== STATISTICS ==========\n"
+            << "1. Violations by City\n"
+            << "2. Top Violators\n"
+            << "3. Back\n"
+            << "Enter choice: ";
+
         cin >> choice;
+        cin.ignore();
 
         switch (choice) {
         case 1: {
@@ -1436,19 +1962,18 @@ void UserInterface::showStatisticsMenu() {
             db.getRegistry().violationIteratorReset();
             while (db.getRegistry().violationIteratorHasNext()) {
                 auto violation = db.getRegistry().violationIteratorNext(
-                    db.getDrivers(), db.getCities(), db.getFines()
+                    db.getDrivers(),
+                    db.getCities(),
+                    db.getFines()
                 );
                 cityStats[violation.cityName]++;
             }
 
             vector<vector<string>> statsData;
-            for (const auto& entry : cityStats) { // Используем entry вместо [city, count]
-                statsData.push_back({
-                    entry.first,                // Город (ключ)
-                    std::to_string(entry.second) // Количество нарушений (значение)
-                    });
+            for (const auto& [city, count] : cityStats) {
+                statsData.push_back({ city, to_string(count) });
             }
-            printDynamicTable({ "Город", "Нарушений" }, statsData);
+            printDynamicTable({ "City", "Violations" }, statsData);
             break;
         }
         case 2: {
@@ -1462,34 +1987,50 @@ void UserInterface::showStatisticsMenu() {
             db.getRegistry().violationIteratorReset();
             while (db.getRegistry().violationIteratorHasNext()) {
                 auto violation = db.getRegistry().violationIteratorNext(
-                    db.getDrivers(), db.getCities(), db.getFines()
+                    db.getDrivers(),
+                    db.getCities(),
+                    db.getFines()
                 );
                 driverStats[violation.driverName]++;
             }
 
-            vector<pair<string, int>> sortedStats(
-                driverStats.begin(), driverStats.end()
-            );
-            sort(sortedStats.begin(), sortedStats.end(),
+            vector<pair<string, int>> sorted(driverStats.begin(), driverStats.end());
+            sort(sorted.begin(), sorted.end(),
                 [](auto& a, auto& b) { return a.second > b.second; });
 
             vector<vector<string>> topData;
-            for (size_t i = 0; i < min(5, (int)sortedStats.size()); ++i) {
+            for (size_t i = 0; i < min(5, (int)sorted.size()); ++i) {
                 topData.push_back({
                     to_string(i + 1),
-                    sortedStats[i].first,
-                    to_string(sortedStats[i].second)
+                    sorted[i].first,
+                    to_string(sorted[i].second)
                     });
             }
-            printDynamicTable({ "Место", "Водитель", "Нарушений" }, topData);
+            printDynamicTable({ "Rank", "Driver", "Violations" }, topData);
             break;
         }
-        case 3:
-            return;
-        default:
-            cin.clear();
-            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-            cout << "Неверный выбор!\n";
         }
-    } while (true);
+    } while (choice != 3);
+}
+
+// ==================== ОБРАБОТКА ОШИБОК ====================
+void UserInterface::handleError(const exception& e) {
+    cerr << "\nError: " << e.what() << endl;
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+// ==================== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ====================
+void UserInterface::displayHelp() {
+    cout << "\nHelp:\n"
+        << " - Use '*' for any characters sequence\n"
+        << " - Use '?' for any single character\n"
+        << " - Date format: DD.MM.YYYY\n"
+        << " - Amount examples: >500, <1000, 200-500\n";
+}
+
+// ==================== ЗАВЕРШЕНИЕ РАБОТЫ ====================
+void UserInterface::cleanup() {
+    db.saveAll();
+    cout << "\nAll data saved successfully!\n";
 }

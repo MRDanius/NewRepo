@@ -1,3 +1,0 @@
-﻿3    "Bodya Bogdan Dol" "22.11.2005" 3
-2    "Goga Goga Goga" "06.12.2006" 2
-1    "Mikhailov Daniil" "08.11.2005" 2

@@ -40,16 +40,60 @@
 //    void run();
 //};
 
+//#pragma once
+//#include "DatabaseManager.h"
+//#include "TableFormatter.h"
+//#include <vector>
+//#include <string>
+//
+//class UserInterface {
+//    DatabaseManager db;
+//
+//    // Структура для хранения условий фильтрации
+//    struct FilterCondition {
+//        std::string field;
+//        std::string value;
+//        bool is_range = false;
+//        std::string range_from;
+//        std::string range_to;
+//    };
+//
+//    std::vector<FilterCondition> active_filters;
+//
+//    bool validateDate(const std::string& date);
+//    bool validateName(const std::string& name) const;
+//    tm parseDate(const std::string& dateStr);
+//    // Методы фильтрации
+//    void filterMenu();
+//    void addFilterCondition();
+//    void applyFilters();
+//    void resetFilters();
+//    bool matchesFilters(const FineRegistry::ViolationInfo& violation);
+//
+//    // Вспомогательные методы
+//    std::vector<std::vector<std::string>> prepareViolationData();
+//    void printDynamicTable(const std::vector<std::string>& headers,
+//        const std::vector<std::vector<std::string>>& data);
+//
+//public:
+//    void run();
+//    void showMainMenu();
+//    void showCityMenu();
+//    void showDriverMenu();
+//    void showFineMenu();
+//    void showViolationMenu();
+//    void showStatisticsMenu();
+//};
+
 #pragma once
 #include "DatabaseManager.h"
 #include "TableFormatter.h"
 #include <vector>
 #include <string>
+#include <ctime>
 
 class UserInterface {
-    DatabaseManager db;
-
-    // Структура для хранения условий фильтрации
+public:
     struct FilterCondition {
         std::string field;
         std::string value;
@@ -58,29 +102,39 @@ class UserInterface {
         std::string range_to;
     };
 
+private:
+    DatabaseManager db;
     std::vector<FilterCondition> active_filters;
 
+    // Валидация
     bool validateDate(const std::string& date);
     bool validateName(const std::string& name) const;
     tm parseDate(const std::string& dateStr);
-    // Методы фильтрации
-    void filterMenu();
-    void addFilterCondition();
+
+    // Работа с данными
+    std::vector<std::vector<std::string>> prepareViolationData(FineRegistry::ViolationNode* violations = nullptr);
+    bool matchesFilters(const FineRegistry::ViolationInfo& violation) const;
+
+    // Фильтрация
+    void handleFilterMenu(FineRegistry::ViolationNode*& filtered);
     void applyFilters();
     void resetFilters();
-    bool matchesFilters(const FineRegistry::ViolationInfo& violation);
 
-    // Вспомогательные методы
-    std::vector<std::vector<std::string>> prepareViolationData();
-    void printDynamicTable(const std::vector<std::string>& headers,
-        const std::vector<std::vector<std::string>>& data);
-
-public:
-    void run();
+    // Меню
     void showMainMenu();
     void showCityMenu();
     void showDriverMenu();
     void showFineMenu();
     void showViolationMenu();
     void showStatisticsMenu();
+
+public:
+    UserInterface() = default;
+    void run();
+
+    // Форматирование таблиц
+    static void printDynamicTable(
+        const std::vector<std::string>& headers,
+        const std::vector<std::vector<std::string>>& data
+    );
 };

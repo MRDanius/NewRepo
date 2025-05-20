@@ -149,6 +149,71 @@
 //};
 
 
+//#pragma once
+//#include <string>
+//#include <map>
+//#include "IntHashMap.h"
+//
+//class CityTable {
+//public:
+//    enum class PopulationGrade { SMALL, MEDIUM, LARGE };
+//    enum class SettlementType { CITY, TOWN, VILLAGE };
+//
+//    struct CityInfo {
+//        int id;
+//        std::string name;
+//        int population;
+//        PopulationGrade grade;
+//        SettlementType type;
+//    };
+//
+//private:
+//    struct CityNode {
+//        int id;
+//        std::string name;
+//        int population;
+//        PopulationGrade grade;
+//        SettlementType type;
+//        CityNode* next;
+//
+//        CityNode(int id, const std::string& name, int population,
+//            PopulationGrade grade, SettlementType type, CityNode* next)
+//            : id(id), name(name), population(population),
+//            grade(grade), type(type), next(next) {
+//        }
+//    };
+//
+//    CityNode* head;
+//    IntHashMap idToCityMap;
+//    std::map<std::string, int> nameToIdMap;
+//    const std::string filename = "cities.txt";
+//    mutable CityNode* currentIterator = nullptr;
+//
+//    const int& generateNextId();
+//    void parseLine(const std::string& line);
+//    void clearList();
+//
+//public:
+//    CityTable();
+//    ~CityTable();
+//
+//    void loadFromFile();
+//    void saveToFile();
+//    void addCity(const std::string& name, int population,
+//        PopulationGrade grade, SettlementType type);
+//    void deleteCity(const std::string& name);
+//
+//    std::string getCityNameById(int id) const;
+//    int getCityIdByName(const std::string& name) const;
+//    static std::string populationGradeToString(PopulationGrade grade);
+//    static std::string settlementTypeToString(SettlementType type);
+//
+//    void cityIteratorReset() const;
+//    bool cityIteratorHasNext() const;
+//    CityInfo cityIteratorNext() const;
+//};
+
+
 #pragma once
 #include <string>
 #include <map>
@@ -156,9 +221,11 @@
 
 class CityTable {
 public:
+    // Перечисления
     enum class PopulationGrade { SMALL, MEDIUM, LARGE };
     enum class SettlementType { CITY, TOWN, VILLAGE };
 
+    // Структура для передачи информации о городе
     struct CityInfo {
         int id;
         std::string name;
@@ -168,6 +235,7 @@ public:
     };
 
 private:
+    // Узел списка городов
     struct CityNode {
         int id;
         std::string name;
@@ -183,32 +251,64 @@ private:
         }
     };
 
-    CityNode* head;
-    IntHashMap idToCityMap;
-    std::map<std::string, int> nameToIdMap;
-    const std::string filename = "cities.txt";
-    mutable CityNode* currentIterator = nullptr;
+    // Структура фильтра
+    struct Filter {
+        std::string field;
+        std::string pattern;
+        Filter* next;
+    };
 
-    const int& generateNextId();
+    // Основные поля класса
+    CityNode* head;                     // Заголовочный узел
+    IntHashMap idToCityMap;             // Хеш-таблица для быстрого поиска по ID
+    std::map<std::string, int> nameToIdMap; // Карта для поиска ID по названию
+    Filter* currentFilter;              // Цепочка активных фильтров
+
+    // Настройки отображения
+    mutable CityNode* currentIterator;  // Текущая позиция итератора
+    int idWidth;                        // Ширина колонки ID
+    int nameWidth;                      // Ширина колонки названия
+    int populationWidth;                // Ширина колонки населения
+    int typeWidth;                      // Ширина колонки типа
+
+    // Вспомогательные методы
     void parseLine(const std::string& line);
-    void clearList();
+    void addCityNode(int id, const std::string& name, int population,
+        PopulationGrade grade, SettlementType type);
+    bool matchField(const CityNode* node, const std::string& field,
+        const std::string& pattern) const;
+    bool checkNumeric(int value, const std::string& pattern) const;
+    CityNode* cloneNode(const CityNode* src) const;
 
 public:
+    // Конструктор/деструктор
     CityTable();
     ~CityTable();
 
+    // Основные операции
     void loadFromFile();
-    void saveToFile();
+    void saveToFile() const;
     void addCity(const std::string& name, int population,
         PopulationGrade grade, SettlementType type);
     void deleteCity(const std::string& name);
 
-    std::string getCityNameById(int id) const;
-    int getCityIdByName(const std::string& name) const;
+    // Работа с фильтрами
+    void addFilter(const std::string& field, const std::string& pattern);
+    void clearFilters();
+    CityNode* applyFilters() const;
+
+    // Вспомогательные методы
     static std::string populationGradeToString(PopulationGrade grade);
     static std::string settlementTypeToString(SettlementType type);
+    void updateColumnWidths();
+    std::string formatNode(const CityNode* node) const;
 
-    void cityIteratorReset() const;
+    // Итераторы
+    void cityIteratorReset(CityNode* start = nullptr) const;
     bool cityIteratorHasNext() const;
     CityInfo cityIteratorNext() const;
+
+    // Геттеры
+    std::string getCityNameById(int id) const;
+    int getCityIdByName(const std::string& name) const;
 };

@@ -177,28 +177,89 @@
 //};
 
 
+//#pragma once
+//#include "DriverTable.h"
+//#include "CityTable.h"
+//#include "FineTable.h"
+//#include <vector>
+//
+//class FineRegistry {
+//public:
+//    struct ViolationInfo {
+//        int id;
+//        std::string driverName;
+//        std::string cityName;
+//        std::string fineType;
+//        std::string date;
+//        double amount;
+//        bool paid;
+//        FineTable::Severity severity;
+//    };
+//
+//private:
+//    struct ViolationNode {
+//        int id;
+//        int driverId;
+//        int cityId;
+//        int fineId;
+//        std::string date;
+//        bool paid;
+//        ViolationNode* next;
+//
+//        ViolationNode(int id, int driverId, int cityId,
+//            int fineId, const std::string& date,
+//            bool paid, ViolationNode* next)
+//            : id(id), driverId(driverId), cityId(cityId),
+//            fineId(fineId), date(date), paid(paid), next(next) {
+//        }
+//    };
+//
+//    ViolationNode* head;
+//    IntHashMap idToViolationMap;
+//    const std::string filename = "registry.txt";
+//    mutable ViolationNode* currentIterator = nullptr;
+//
+//    const int& generateNextId();
+//    void parseLine(const std::string& line);
+//    void clearList();
+//
+//public:
+//    FineRegistry();
+//    ~FineRegistry();
+//
+//    void loadFromFile();
+//    void saveToFile();
+//    void addViolation(int driverId, int cityId, int fineId, const std::string& date);
+//    void markAsPaid(int recordId);
+//    void updateDriverReferences(int driverId);
+//    void updateCityReferences(int cityId);
+//
+//    void violationIteratorReset() const;
+//    bool violationIteratorHasNext() const;
+//    ViolationInfo violationIteratorNext(const DriverTable& drivers,
+//        const CityTable& cities,
+//        const FineTable& fines) const;
+//};
+
 #pragma once
 #include "DriverTable.h"
 #include "CityTable.h"
 #include "FineTable.h"
-#include <vector>
 
 class FineRegistry {
 public:
     struct ViolationInfo {
-        int id;
         std::string driverName;
         std::string cityName;
         std::string fineType;
         std::string date;
         double amount;
         bool paid;
-        FineTable::Severity severity;
     };
 
 private:
     struct ViolationNode {
-        int id;
+        int id; // Внутренний ID (не отображается)
         int driverId;
         int cityId;
         int fineId;
@@ -214,29 +275,50 @@ private:
         }
     };
 
+    struct Filter {
+        std::string field;
+        std::string pattern;
+        Filter* next;
+    };
+
     ViolationNode* head;
     IntHashMap idToViolationMap;
-    const std::string filename = "registry.txt";
-    mutable ViolationNode* currentIterator = nullptr;
+    Filter* currentFilter;
 
-    const int& generateNextId();
+    mutable ViolationNode* currentIterator;
+    int driverNameWidth;
+    int cityNameWidth;
+    int fineTypeWidth;
+    int dateWidth;
+    int amountWidth;
+    int statusWidth;
+
     void parseLine(const std::string& line);
-    void clearList();
+    void addViolationNode(int id, int driverId, int cityId,
+        int fineId, const std::string& date, bool paid);
+    bool matchField(const ViolationNode* node, const std::string& field,
+        const std::string& pattern) const;
+    bool checkNumeric(double value, const std::string& pattern) const;
+    bool regexMatch(const std::string& value, const std::string& pattern) const;
+    ViolationNode* cloneNode(const ViolationNode* src) const;
 
 public:
     FineRegistry();
     ~FineRegistry();
 
     void loadFromFile();
-    void saveToFile();
+    void saveToFile() const;
     void addViolation(int driverId, int cityId, int fineId, const std::string& date);
     void markAsPaid(int recordId);
-    void updateDriverReferences(int driverId);
-    void updateCityReferences(int cityId);
 
-    void violationIteratorReset() const;
+    void addFilter(const std::string& field, const std::string& pattern);
+    void clearFilters();
+    ViolationNode* applyFilters() const;
+
+    void updateColumnWidths();
+    std::string formatNode(const ViolationNode* node) const;
+
+    void violationIteratorReset(ViolationNode* start = nullptr) const;
     bool violationIteratorHasNext() const;
-    ViolationInfo violationIteratorNext(const DriverTable& drivers,
-        const CityTable& cities,
-        const FineTable& fines) const;
+    ViolationInfo violationIteratorNext() const;
 };

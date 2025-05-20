@@ -161,14 +161,77 @@
 //};
 
 
+//#pragma once
+//#include <string>
+//#include <map>
+//#include "IntHashMap.h"
+//#include "CityTable.h"
+//
+//class DriverTable {
+//public:
+//    struct DriverInfo {
+//        int id;
+//        std::string fullName;
+//        std::string birthDate;
+//        int cityId;
+//    };
+//
+//    DriverInfo getDriverInfoById(int driverId) const;
+//private:
+//    struct DriverNode {
+//        int id;
+//        std::string fullName;
+//        std::string birthDate;
+//        int cityId;
+//        DriverNode* next;
+//
+//        DriverNode(int id, const std::string& fullName,
+//            const std::string& birthDate, int cityId, DriverNode* next)
+//            : id(id), fullName(fullName), birthDate(birthDate),
+//            cityId(cityId), next(next) {
+//        }
+//    };
+//
+//    DriverNode* head;
+//    IntHashMap idToDriverMap;
+//    std::map<std::string, int> nameToIdMap;
+//    const std::string filename = "drivers.txt";
+//    mutable DriverNode* currentIterator = nullptr;
+//
+//    const int& generateNextId();
+//    void parseLine(const std::string& line);
+//    void clearList();
+//
+//public:
+//    DriverTable();
+//    ~DriverTable();
+//
+//    void loadFromFile();
+//    void saveToFile();
+//    void addDriver(const std::string& fullName,
+//        const std::string& birthDate,
+//        int cityId);
+//    void deleteDriver(const std::string& name);
+//
+//    DriverInfo getDriverInfo(const std::string& name) const;
+//    int getDriverId(const std::string& name) const;
+//    int getCityIdForDriver(const std::string& name) const;
+//    void updateCityReferences(int oldCityId);
+//
+//
+//    void driverIteratorReset() const;
+//    bool driverIteratorHasNext() const;
+//    DriverInfo driverIteratorNext() const;
+//};
+
 #pragma once
 #include <string>
 #include <map>
 #include "IntHashMap.h"
-#include "CityTable.h"
 
 class DriverTable {
 public:
+    // Структура для информации о водителе
     struct DriverInfo {
         int id;
         std::string fullName;
@@ -176,8 +239,8 @@ public:
         int cityId;
     };
 
-    DriverInfo getDriverInfoById(int driverId) const;
 private:
+    // Узел списка водителей
     struct DriverNode {
         int id;
         std::string fullName;
@@ -192,34 +255,63 @@ private:
         }
     };
 
-    DriverNode* head;
-    IntHashMap idToDriverMap;
-    std::map<std::string, int> nameToIdMap;
-    const std::string filename = "drivers.txt";
-    mutable DriverNode* currentIterator = nullptr;
+    // Структура фильтра
+    struct Filter {
+        std::string field;    // Поле для фильтрации (name, city_id и т.д.)
+        std::string pattern;  // Шаблон/условие (например, "John*", ">100")
+        Filter* next;         // Следующий фильтр в цепочке
+    };
 
-    const int& generateNextId();
+    // Основные поля
+    DriverNode* head;          // Заголовочный узел
+    IntHashMap idToDriverMap;  // Хеш-таблица для поиска по ID
+    std::map<std::string, int> nameToIdMap; // Карта имя -> ID
+    Filter* currentFilter;     // Активные фильтры
+
+    // Настройки отображения
+    mutable DriverNode* currentIterator; // Текущая позиция итератора
+    int idWidth;              // Ширина колонки ID
+    int nameWidth;            // Ширина колонки имени
+    int birthDateWidth;       // Ширина колонки даты рождения
+    int cityIdWidth;          // Ширина колонки ID города
+
+    // Приватные методы
     void parseLine(const std::string& line);
-    void clearList();
+    void addDriverNode(int id, const std::string& fullName,
+        const std::string& birthDate, int cityId);
+    bool matchField(const DriverNode* node, const std::string& field,
+        const std::string& pattern) const;
+    bool checkNumeric(int value, const std::string& pattern) const;
+    DriverNode* cloneNode(const DriverNode* src) const;
 
 public:
+    // Конструктор/деструктор
     DriverTable();
     ~DriverTable();
 
+    // Основные операции
     void loadFromFile();
-    void saveToFile();
+    void saveToFile() const;
     void addDriver(const std::string& fullName,
         const std::string& birthDate,
         int cityId);
     void deleteDriver(const std::string& name);
 
-    DriverInfo getDriverInfo(const std::string& name) const;
-    int getDriverId(const std::string& name) const;
-    int getCityIdForDriver(const std::string& name) const;
-    void updateCityReferences(int oldCityId);
+    // Управление фильтрами
+    void addFilter(const std::string& field, const std::string& pattern);
+    void clearFilters();
+    DriverNode* applyFilters() const;
 
+    // Вспомогательные методы
+    void updateColumnWidths();
+    std::string formatNode(const DriverNode* node) const;
 
-    void driverIteratorReset() const;
+    // Итераторы
+    void driverIteratorReset(DriverNode* start = nullptr) const;
     bool driverIteratorHasNext() const;
     DriverInfo driverIteratorNext() const;
+
+    // Геттеры
+    int getDriverId(const std::string& name) const;
+    int getCityIdForDriver(const std::string& name) const;
 };
