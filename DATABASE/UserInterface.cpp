@@ -1796,8 +1796,68 @@ void UserInterface::addDriver() {
 
 void UserInterface::deleteDriver() {
     string name = readString("ФИО водителя для удаления: ");
-    dbManager.deleteDriver(name);
-    cout << "Водитель удалён (если существовал).\n";
+    // Собираем все водители с таким ФИО
+    auto& drivers = dbManager.getDrivers();
+    auto& cities = dbManager.getCities();
+    drivers.driverIteratorReset();
+    vector<DriverTable::DriverInfo> matchedByName;
+    while (drivers.driverIteratorHasNext()) {
+        auto di = drivers.driverIteratorNext();
+        if (di.fullName == name) {
+            matchedByName.push_back(di);
+        }
+    }
+    if (matchedByName.empty()) {
+        cout << "Водителей с таким ФИО не найдено.\n";
+        return;
+    }
+
+    // Если только один, удаляем сразу
+    if (matchedByName.size() == 1) {
+        dbManager.deleteDriverById(matchedByName[0].id);
+        cout << "Водитель удалён.\n";
+        return;
+    }
+
+    // Несколько совпадений: уточняем по дате рождения
+    vector<DriverTable::DriverInfo> matchedByDate;
+    string birthDate = readString("Несколько водителей с таким ФИО. Введите дату рождения (ДД.MM.ГГГГ): ");
+    for (auto& di : matchedByName) {
+        if (di.birthDate == birthDate) {
+            matchedByDate.push_back(di);
+        }
+    }
+    if (matchedByDate.empty()) {
+        cout << "Водителей с таким ФИО и датой рождения не найдено.\n";
+        return;
+    }
+
+    // Если после даты один, удаляем
+    if (matchedByDate.size() == 1) {
+        dbManager.deleteDriverById(matchedByDate[0].id);
+        cout << "Водитель удалён.\n";
+        return;
+    }
+
+    // Несколько совпадений по дате: уточняем по городу
+    vector<DriverTable::DriverInfo> matchedByCity;
+    string cityName = readString("Несколько водителей с таким ФИО и датой. Введите город: ");
+    for (auto& di : matchedByDate) {
+        string dCity = cities.getCityNameById(di.cityId);
+        if (dCity == cityName) {
+            matchedByCity.push_back(di);
+        }
+    }
+    if (matchedByCity.empty()) {
+        cout << "Водителей с такими ФИО, датой и городом не найдено.\n";
+        return;
+    }
+
+    // Если после всех фильтров несколько — удаляем их все
+    for (auto& di : matchedByCity) {
+        dbManager.deleteDriverById(di.id);
+    }
+    cout << "Удалено водителей с указанными данными: " << matchedByCity.size() << "\n";
 }
 
 void UserInterface::finesMenu() {
@@ -1895,78 +1955,24 @@ void UserInterface::addViolation() {
 
 void UserInterface::markViolationPaid() {
     string driverName = readString("ФИО водителя: ");
-    // Собираем все нарушения с таким ФИО
-    auto allViolations = dbManager.getAllViolations();
-    vector<FineRegistry::ViolationInfo> matchedByDriver;
-    for (auto& vi : allViolations) {
-        if (vi.driverName == driverName && !vi.paid) {
-            matchedByDriver.push_back(vi);
-        }
-    }
-    if (matchedByDriver.empty()) {
-        cout << "Нарушений для водителя \"" << driverName << "\" нет или они уже оплачены.\n";
-        return;
-    }
+    string fineType = readString("Тип нарушения: ");
+    string date = readString("Дата (ДД.MM.ГГГГ): ");
 
-    // Если больше одного — уточняем по типу штрафа
-    vector<FineRegistry::ViolationInfo> matchedByType;
-    if (matchedByDriver.size() > 1) {
-        string fineType = readString("У водителя несколько нарушений. Введите тип штрафа: ");
-        for (auto& vi : matchedByDriver) {
-            if (vi.fineType == fineType) {
-                matchedByType.push_back(vi);
-            }
+    auto violations = dbManager.getAllViolations();
+    int count = 0;
+    for (auto& vi : violations) {
+        if (vi.driverName == driverName && vi.fineType == fineType && vi.date == date && !vi.paid) {
+            dbManager.markFineAsPaid(vi.recordId);
+            ++count;
         }
-        if (matchedByType.empty()) {
-            cout << "Нарушений с таким типом не найдено.\n";
-            return;
-        }
+    }
+    if (count > 0) {
+        dbManager.saveAll();
+        cout << "Отмечено оплаченных нарушений: " << count << "\n";
     }
     else {
-        matchedByType = matchedByDriver;
+        cout << "Нарушений с такими данными не найдено или они уже оплачены.\n";
     }
-
-    // Если всё ещё больше одного — уточняем по дате
-    vector<FineRegistry::ViolationInfo> matchedByDate;
-    if (matchedByType.size() > 1) {
-        string date = readString("Нарушений несколько одного типа. Введите дату (ДД.MM.ГГГГ): ");
-        for (auto& vi : matchedByType) {
-            if (vi.date == date) {
-                matchedByDate.push_back(vi);
-            }
-        }
-        if (matchedByDate.empty()) {
-            cout << "Нарушений с такой датой не найдено.\n";
-            return;
-        }
-    }
-    else {
-        matchedByDate = matchedByType;
-    }
-
-    // Если всё ещё больше одного — уточняем по городу
-    vector<FineRegistry::ViolationInfo> matchedByCity;
-    if (matchedByDate.size() > 1) {
-        string city = readString("Пользователь имеет несколько нарушений в одну дату. Введите город: ");
-        for (auto& vi : matchedByDate) {
-            if (vi.cityName == city) {
-                matchedByCity.push_back(vi);
-            }
-        }
-        if (matchedByCity.empty()) {
-            cout << "Нарушений в этом городе не найдено.\n";
-            return;
-        }
-    }
-    else {
-        matchedByCity = matchedByDate;
-    }
-
-    // Теперь точно один элемент matchedByCity[0]
-    int recordId = matchedByCity[0].recordId;
-    dbManager.markFineAsPaid(recordId);
-    dbManager.saveAll();
-    cout << "Нарушение отмечено как оплаченное.\n";
 }
 
 void UserInterface::statisticsMenu() {

@@ -244,6 +244,7 @@
 //}
 
 // DataBaseManager.h
+// DataBaseManager.h
 
 #pragma once
 
@@ -275,6 +276,9 @@ public:
         const std::string& birthDate,
         const std::string& cityName);
     void deleteDriver(const std::string& name);
+
+    // Новый метод: удаление по ID
+    void deleteDriverById(int driverId);
 
     void addFine(const std::string& type,
         double amount,

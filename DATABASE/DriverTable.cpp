@@ -818,6 +818,23 @@ void DriverTable::addDriver(const std::string& fullName,
     addDriverNode(newId, fullName, birthDate, cityId);
 }
 
+// Новый метод: удаление водителя по ID
+void DriverTable::deleteDriverById(int id) {
+    DriverNode* prev = head;
+    DriverNode* curr = head->next;
+    while (curr) {
+        if (curr->id == id) {
+            prev->next = curr->next;
+            idToDriverMap.remove(id);
+            nameToIdMap.erase(curr->fullName);
+            delete curr;
+            return;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+}
+
 // Итератор: сброс на начало
 void DriverTable::driverIteratorReset() const {
     currentIterator = head->next;
@@ -860,19 +877,7 @@ void DriverTable::deleteDriver(const std::string& fullName) {
     if (it == nameToIdMap.end()) return;
 
     int id = it->second;
-    DriverNode* prev = head;
-    DriverNode* curr = head->next;
-    while (curr) {
-        if (curr->id == id) {
-            prev->next = curr->next;
-            idToDriverMap.remove(id);
-            nameToIdMap.erase(fullName);
-            delete curr;
-            return;
-        }
-        prev = curr;
-        curr = curr->next;
-    }
+    deleteDriverById(id);
 }
 
 // Обновление ссылок при удалении города (устанавливаем cityId = -1)

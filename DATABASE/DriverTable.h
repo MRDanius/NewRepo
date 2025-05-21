@@ -258,6 +258,9 @@ public:
         int cityId);
     void deleteDriver(const std::string& fullName);
 
+    // Новый метод: удаление по ID
+    void deleteDriverById(int id);
+
     // Итератор по списку водителей
     void driverIteratorReset() const;
     bool driverIteratorHasNext() const;

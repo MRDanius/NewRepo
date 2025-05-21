@@ -214,7 +214,6 @@ void DatabaseManager::addDriver(const std::string& fullName,
 {
     int cityId = cities.getCityIdByName(cityName);
     if (cityId == -1) {
-        // Если город не найден, выбрасываем исключение — UI возьмет на себя ввод данных о городе
         throw std::invalid_argument("Город отсутствует");
     }
 
@@ -227,6 +226,12 @@ void DatabaseManager::deleteDriver(const std::string& name) {
     if (driverId == -1) return;
 
     drivers.deleteDriver(name);
+    registry.updateDriverReferences(driverId);
+    saveAll();
+}
+
+void DatabaseManager::deleteDriverById(int driverId) {
+    drivers.deleteDriverById(driverId);
     registry.updateDriverReferences(driverId);
     saveAll();
 }
