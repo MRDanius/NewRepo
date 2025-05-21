@@ -1503,9 +1503,132 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
-#include <set>
 #include <clocale>
+#include <iomanip>
 using namespace std;
+
+// Ширины колонок (без ID)
+static constexpr int NAME_WIDTH = 20;
+static constexpr int POPULATION_WIDTH = 12;
+static constexpr int TYPE_WIDTH = 10;
+static constexpr int DRIVER_NAME_WIDTH = 25;
+static constexpr int BIRTH_WIDTH = 12;
+static constexpr int FINE_TYPE_WIDTH = 20;
+static constexpr int AMOUNT_WIDTH = 10;
+static constexpr int SEVERITY_WIDTH = 10;
+static constexpr int DATE_WIDTH = 12;
+static constexpr int PAID_WIDTH = 6;
+
+// Печать разделительной строки для таблицы городов
+static void printCitiesBorder() {
+    cout << '+'
+        << string(NAME_WIDTH + 2, '-') << '+'
+        << string(POPULATION_WIDTH + 2, '-') << '+'
+        << string(TYPE_WIDTH + 2, '-') << '+'
+        << "\n";
+}
+
+// Печать заголовка таблицы городов
+static void printCitiesHeader() {
+    printCitiesBorder();
+    cout << "| " << left << setw(NAME_WIDTH) << "Название" << " | "
+        << left << setw(POPULATION_WIDTH) << "Население" << " | "
+        << left << setw(TYPE_WIDTH) << "Тип" << " |\n";
+    printCitiesBorder();
+}
+
+// Печать строки с данными о городе
+static void printCityRow(const string& name, int population, const string& type) {
+    cout << "| " << left << setw(NAME_WIDTH) << name << " | "
+        << right << setw(POPULATION_WIDTH) << population << " | "
+        << left << setw(TYPE_WIDTH) << type << " |\n";
+}
+
+// Печать разделительной строки для таблицы водителей
+static void printDriversBorder() {
+    cout << '+'
+        << string(DRIVER_NAME_WIDTH + 2, '-') << '+'
+        << string(BIRTH_WIDTH + 2, '-') << '+'
+        << string(NAME_WIDTH + 2, '-') << '+'
+        << "\n";
+}
+
+// Печать заголовка таблицы водителей
+static void printDriversHeader() {
+    printDriversBorder();
+    cout << "| " << left << setw(DRIVER_NAME_WIDTH) << "ФИО" << " | "
+        << left << setw(BIRTH_WIDTH) << "Дата рождения" << " | "
+        << left << setw(NAME_WIDTH) << "Город" << " |\n";
+    printDriversBorder();
+}
+
+// Печать строки с данными о водителе
+static void printDriverRow(const string& fullName, const string& birthDate, const string& cityName) {
+    cout << "| " << left << setw(DRIVER_NAME_WIDTH) << fullName << " | "
+        << left << setw(BIRTH_WIDTH) << birthDate << " | "
+        << left << setw(NAME_WIDTH) << cityName << " |\n";
+}
+
+// Печать разделительной строки для таблицы штрафов
+static void printFinesBorder() {
+    cout << '+'
+        << string(FINE_TYPE_WIDTH + 2, '-') << '+'
+        << string(AMOUNT_WIDTH + 2, '-') << '+'
+        << string(SEVERITY_WIDTH + 2, '-') << '+'
+        << "\n";
+}
+
+// Печать заголовка таблицы штрафов
+static void printFinesHeader() {
+    printFinesBorder();
+    cout << "| " << left << setw(FINE_TYPE_WIDTH) << "Тип" << " | "
+        << right << setw(AMOUNT_WIDTH) << "Сумма" << " | "
+        << left << setw(SEVERITY_WIDTH) << "Уровень" << " |\n";
+    printFinesBorder();
+}
+
+// Печать строки с данными о штрафе
+static void printFineRow(const string& type, double amount, const string& severity) {
+    cout << "| " << left << setw(FINE_TYPE_WIDTH) << type << " | "
+        << right << setw(AMOUNT_WIDTH) << amount << " | "
+        << left << setw(SEVERITY_WIDTH) << severity << " |\n";
+}
+
+// Печать разделительной строки для таблицы нарушений
+static void printViolationsBorder() {
+    cout << '+'
+        << string(DRIVER_NAME_WIDTH + 2, '-') << '+'
+        << string(NAME_WIDTH + 2, '-') << '+'
+        << string(FINE_TYPE_WIDTH + 2, '-') << '+'
+        << string(AMOUNT_WIDTH + 2, '-') << '+'
+        << string(DATE_WIDTH + 2, '-') << '+'
+        << string(PAID_WIDTH + 2, '-') << '+'
+        << "\n";
+}
+
+// Печать заголовка таблицы нарушений
+static void printViolationsHeader() {
+    printViolationsBorder();
+    cout << "| " << left << setw(DRIVER_NAME_WIDTH) << "Водитель" << " | "
+        << left << setw(NAME_WIDTH) << "Город" << " | "
+        << left << setw(FINE_TYPE_WIDTH) << "Штраф" << " | "
+        << right << setw(AMOUNT_WIDTH) << "Сумма" << " | "
+        << left << setw(DATE_WIDTH) << "Дата" << " | "
+        << left << setw(PAID_WIDTH) << "Оплачен" << " |\n";
+    printViolationsBorder();
+}
+
+// Печать строки с данными о нарушении
+static void printViolationRow(const string& driverName, const string& cityName,
+    const string& fineType, double fineAmount,
+    const string& date, bool paid) {
+    cout << "| " << left << setw(DRIVER_NAME_WIDTH) << driverName << " | "
+        << left << setw(NAME_WIDTH) << cityName << " | "
+        << left << setw(FINE_TYPE_WIDTH) << fineType << " | "
+        << right << setw(AMOUNT_WIDTH) << fineAmount << " | "
+        << left << setw(DATE_WIDTH) << date << " | "
+        << left << setw(PAID_WIDTH) << (paid ? "Да" : "Нет") << " |\n";
+}
 
 void UserInterface::run() {
     setlocale(LC_ALL, ""); // Для корректного вывода кириллицы
@@ -1556,16 +1679,17 @@ void UserInterface::citiesMenu() {
 }
 
 void UserInterface::listCities() {
-    cout << "\nID   Название   Население   Тип\n";
+    printCitiesHeader();
     CityTable& cities = dbManager.getCities();
     CityTable::CityNode* filteredHead = cities.applyFilters();
     cities.cityIteratorReset(filteredHead);
     while (cities.cityIteratorHasNext()) {
         auto ci = cities.cityIteratorNext();
-        cout << ci.id << "   " << ci.name << "   "
-            << ci.population << "   "
-            << CityTable::settlementTypeToString(ci.type) << "\n";
+        printCityRow(ci.name, ci.population,
+            CityTable::settlementTypeToString(ci.type));
     }
+    printCitiesBorder();
+
     CityTable::CityNode* tmp = filteredHead;
     while (tmp) {
         CityTable::CityNode* next = tmp->next;
@@ -1577,11 +1701,16 @@ void UserInterface::listCities() {
 void UserInterface::addCity() {
     string name = readString("Название города: ");
     int population = readInt("Население: ");
-    cout << "Тип (0 - City, 1 - Town, 2 - Village): ";
-    int type = readInt("");
-    dbManager.addCity(name, population,
-        static_cast<CityTable::PopulationGrade>(0),
-        static_cast<CityTable::SettlementType>(type));
+    cout << "Градация населения (0 - Small, 1 - Medium, 2 - Large): ";
+    int gradeInput = readInt("");
+    auto grade = static_cast<CityTable::PopulationGrade>(gradeInput);
+
+    cout << "Тип поселения (0 - City, 1 - Town, 2 - Village): ";
+    int typeInput = readInt("");
+    auto type = static_cast<CityTable::SettlementType>(typeInput);
+
+    dbManager.addCity(name, population, grade, type);
+    dbManager.getCities().saveToFile();
     cout << "Город добавлен.\n";
 }
 
@@ -1622,25 +1751,46 @@ void UserInterface::driversMenu() {
 }
 
 void UserInterface::listDrivers() {
-    cout << "\nID   ФИО   Дата рождения   ID города\n";
-    dbManager.getDrivers().driverIteratorReset();
-    while (dbManager.getDrivers().driverIteratorHasNext()) {
-        auto di = dbManager.getDrivers().driverIteratorNext();
-        cout << di.id << "   " << di.fullName << "   "
-            << di.birthDate << "   " << di.cityId << "\n";
+    printDriversHeader();
+    auto& drivers = dbManager.getDrivers();
+    auto& cities = dbManager.getCities();
+    drivers.driverIteratorReset();
+    while (drivers.driverIteratorHasNext()) {
+        auto di = drivers.driverIteratorNext();
+        string cityName = cities.getCityNameById(di.cityId);
+        printDriverRow(di.fullName, di.birthDate, cityName);
     }
+    printDriversBorder();
 }
 
 void UserInterface::addDriver() {
     string fullName = readString("ФИО водителя: ");
     string birthDate = readString("Дата рождения (ДД.MM.ГГГГ): ");
     string cityName = readString("Город регистрации: ");
+
+    int cityId = dbManager.getCities().getCityIdByName(cityName);
+    if (cityId == -1) {
+        cout << "Город \"" << cityName << "\" не найден. Введите данные для нового города.\n";
+        int population = readInt("Население: ");
+        cout << "Градация населения (0 - Small, 1 - Medium, 2 - Large): ";
+        int gradeInput = readInt("");
+        auto grade = static_cast<CityTable::PopulationGrade>(gradeInput);
+
+        cout << "Тип поселения (0 - City, 1 - Town, 2 - Village): ";
+        int typeInput = readInt("");
+        auto type = static_cast<CityTable::SettlementType>(typeInput);
+
+        dbManager.addCity(cityName, population, grade, type);
+        dbManager.getCities().saveToFile();
+        cout << "Город \"" << cityName << "\" успешно добавлен.\n";
+    }
+
     try {
         dbManager.addDriver(fullName, birthDate, cityName);
         cout << "Водитель добавлен.\n";
     }
     catch (const exception& e) {
-        cout << "Ошибка: " << e.what() << "\n";
+        cout << "Ошибка при добавлении водителя: " << e.what() << "\n";
     }
 }
 
@@ -1667,14 +1817,14 @@ void UserInterface::finesMenu() {
 }
 
 void UserInterface::listFines() {
-    cout << "\nID   Сумма   Тип   Уровень\n";
-    dbManager.getFines().fineIteratorReset();
-    while (dbManager.getFines().fineIteratorHasNext()) {
-        auto fi = dbManager.getFines().fineIteratorNext();
-        cout << fi.id << "   " << fi.amount << "   "
-            << fi.type << "   "
-            << FineTable::severityToString(fi.severity) << "\n";
+    printFinesHeader();
+    auto& fines = dbManager.getFines();
+    fines.fineIteratorReset();
+    while (fines.fineIteratorHasNext()) {
+        auto fi = fines.fineIteratorNext();
+        printFineRow(fi.type, fi.amount, FineTable::severityToString(fi.severity));
     }
+    printFinesBorder();
 }
 
 void UserInterface::addFine() {
@@ -1702,7 +1852,7 @@ void UserInterface::registryMenu() {
     cout << "\n--- Нарушения ---\n";
     cout << "1. Список нарушений\n";
     cout << "2. Добавить нарушение\n";
-    cout << "3. Отметить оплату\n";
+    cout << "3. Отметить оплату по ФИО, типу и дате\n";
     cout << "4. Назад\n";
     int choice = readInt("Выберите пункт: ");
     switch (choice) {
@@ -1715,17 +1865,19 @@ void UserInterface::registryMenu() {
 }
 
 void UserInterface::listViolations() {
-    cout << "\nRecordID   Водитель   Город   Штраф   Сумма   Дата   Оплачен\n";
+    printViolationsHeader();
     auto violations = dbManager.getAllViolations();
     for (auto& vi : violations) {
-        cout << vi.recordId << "   "
-            << vi.driverName << "   "
-            << vi.cityName << "   "
-            << vi.fineType << "   "
-            << vi.fineAmount << "   "
-            << vi.date << "   "
-            << (vi.paid ? "Да" : "Нет") << "\n";
+        printViolationRow(
+            vi.driverName,
+            vi.cityName,
+            vi.fineType,
+            vi.fineAmount,
+            vi.date,
+            vi.paid
+        );
     }
+    printViolationsBorder();
 }
 
 void UserInterface::addViolation() {
@@ -1742,9 +1894,79 @@ void UserInterface::addViolation() {
 }
 
 void UserInterface::markViolationPaid() {
-    int recordId = readInt("RecordID нарушения: ");
+    string driverName = readString("ФИО водителя: ");
+    // Собираем все нарушения с таким ФИО
+    auto allViolations = dbManager.getAllViolations();
+    vector<FineRegistry::ViolationInfo> matchedByDriver;
+    for (auto& vi : allViolations) {
+        if (vi.driverName == driverName && !vi.paid) {
+            matchedByDriver.push_back(vi);
+        }
+    }
+    if (matchedByDriver.empty()) {
+        cout << "Нарушений для водителя \"" << driverName << "\" нет или они уже оплачены.\n";
+        return;
+    }
+
+    // Если больше одного — уточняем по типу штрафа
+    vector<FineRegistry::ViolationInfo> matchedByType;
+    if (matchedByDriver.size() > 1) {
+        string fineType = readString("У водителя несколько нарушений. Введите тип штрафа: ");
+        for (auto& vi : matchedByDriver) {
+            if (vi.fineType == fineType) {
+                matchedByType.push_back(vi);
+            }
+        }
+        if (matchedByType.empty()) {
+            cout << "Нарушений с таким типом не найдено.\n";
+            return;
+        }
+    }
+    else {
+        matchedByType = matchedByDriver;
+    }
+
+    // Если всё ещё больше одного — уточняем по дате
+    vector<FineRegistry::ViolationInfo> matchedByDate;
+    if (matchedByType.size() > 1) {
+        string date = readString("Нарушений несколько одного типа. Введите дату (ДД.MM.ГГГГ): ");
+        for (auto& vi : matchedByType) {
+            if (vi.date == date) {
+                matchedByDate.push_back(vi);
+            }
+        }
+        if (matchedByDate.empty()) {
+            cout << "Нарушений с такой датой не найдено.\n";
+            return;
+        }
+    }
+    else {
+        matchedByDate = matchedByType;
+    }
+
+    // Если всё ещё больше одного — уточняем по городу
+    vector<FineRegistry::ViolationInfo> matchedByCity;
+    if (matchedByDate.size() > 1) {
+        string city = readString("Пользователь имеет несколько нарушений в одну дату. Введите город: ");
+        for (auto& vi : matchedByDate) {
+            if (vi.cityName == city) {
+                matchedByCity.push_back(vi);
+            }
+        }
+        if (matchedByCity.empty()) {
+            cout << "Нарушений в этом городе не найдено.\n";
+            return;
+        }
+    }
+    else {
+        matchedByCity = matchedByDate;
+    }
+
+    // Теперь точно один элемент matchedByCity[0]
+    int recordId = matchedByCity[0].recordId;
     dbManager.markFineAsPaid(recordId);
-    cout << "Статус оплаты обновлен.\n";
+    dbManager.saveAll();
+    cout << "Нарушение отмечено как оплаченное.\n";
 }
 
 void UserInterface::statisticsMenu() {
