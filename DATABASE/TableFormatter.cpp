@@ -1,18 +1,47 @@
-// TableFormatter.cpp
+п»ї//#include "TableFormatter.h"
+//#include <algorithm>
+//#include <sstream>
+//#include <iomanip>
+//
+//// ГќГІГ  ГґГіГ­ГЄГ¶ГЁГї ГЇГ°ГҐГ®ГЎГ°Г Г§ГіГҐГІ Г­Г ГЎГ®Г° Г±ГІГ°Г®ГЄ Гў Г°Г®ГўГ­Г»ГҐ ГЄГ®Г«Г®Г­ГЄГЁ
+//std::string TableFormatter::format(const std::vector<std::vector<std::string>>& rows) {
+//    if (rows.empty()) return "";
+//
+//    size_t cols = rows[0].size();
+//    std::vector<size_t> widths(cols, 0);
+//
+//    // Г‚Г»Г·ГЁГ±Г«ГїГҐГ¬ Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­ГіГѕ ГёГЁГ°ГЁГ­Гі ГЄГ Г¦Г¤Г®ГЈГ® Г±ГІГ®Г«ГЎГ¶Г 
+//    for (const auto& row : rows) {
+//        for (size_t i = 0; i < cols; ++i) {
+//            if (row[i].length() > widths[i]) {
+//                widths[i] = row[i].length();
+//            }
+//        }
+//    }
+//
+//    std::ostringstream oss;
+//    // Г”Г®Г°Г¬ГЁГ°ГіГҐГ¬ Г±ГІГ°Г®ГЄГЁ
+//    for (const auto& row : rows) {
+//        for (size_t i = 0; i < cols; ++i) {
+//            oss << std::left << std::setw(widths[i] + 2) << row[i];
+//        }
+//        oss << "\n";
+//    }
+//    return oss.str();
+//}
 
+// TableFormatter.cpp
 #include "TableFormatter.h"
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
 
-// Эта функция преобразует набор строк в ровные колонки
 std::string TableFormatter::format(const std::vector<std::vector<std::string>>& rows) {
     if (rows.empty()) return "";
 
     size_t cols = rows[0].size();
     std::vector<size_t> widths(cols, 0);
 
-    // Вычисляем максимальную ширину каждого столбца
     for (const auto& row : rows) {
         for (size_t i = 0; i < cols; ++i) {
             if (row[i].length() > widths[i]) {
@@ -22,7 +51,6 @@ std::string TableFormatter::format(const std::vector<std::vector<std::string>>& 
     }
 
     std::ostringstream oss;
-    // Формируем строки
     for (const auto& row : rows) {
         for (size_t i = 0; i < cols; ++i) {
             oss << std::left << std::setw(widths[i] + 2) << row[i];

@@ -1,8 +1,98 @@
-// HashMapInt.cpp
+ï»¿//#include "IntHashMap.h"
+//#include <cmath>
+//#include <stdexcept>
+//
+//static bool isPrime(size_t n) {
+//    if (n < 2) return false;
+//    if (n % 2 == 0) return (n == 2);
+//    for (size_t i = 3; i * i <= n; i += 2)
+//        if (n % i == 0) return false;
+//    return true;
+//}
+//
+//static size_t nextPrime(size_t n) {
+//    while (!isPrime(n)) ++n;
+//    return n;
+//}
+//
+//IntHashMap::IntHashMap(size_t initialSize)
+//    : capacity(nextPrime(initialSize)), size(0)
+//{
+//    table.resize(capacity);
+//}
+//
+//IntHashMap::~IntHashMap() {
+//    // ÃÃ¨Ã·Ã¥Ã£Ã® Ã­Ã¥ Ã­Ã³Ã¦Ã­Ã® Ã®Ã±Ã¢Ã®Ã¡Ã®Ã¦Ã¤Ã Ã²Ã¼, Ã².Ãª. Ã¬Ã» Ã­Ã¥ Ã¢Ã«Ã Ã¤Ã¥Ã¥Ã¬ Ã³ÃªÃ Ã§Ã Ã²Ã¥Ã«Ã¿Ã¬Ã¨
+//}
+//
+//size_t IntHashMap::hashKey(int key) const {
+//    return std::hash<int>()(key);
+//}
+//
+//size_t IntHashMap::hashStep(int key) const {
+//    return 1 + (std::hash<int>()(key) % (capacity - 2));
+//}
+//
+//void IntHashMap::insert(int key, void* ptr) {
+//    if (size + 1 > capacity * 0.75) {
+//        rehash();
+//    }
+//    size_t index = hashKey(key) % capacity;
+//    size_t step = hashStep(key);
+//    while (table[index].inUse) {
+//        if (table[index].key == key) {
+//            table[index].ptr = ptr;
+//            return;
+//        }
+//        index = (index + step) % capacity;
+//    }
+//    table[index].inUse = true;
+//    table[index].key = key;
+//    table[index].ptr = ptr;
+//    ++size;
+//}
+//
+//void IntHashMap::remove(int key) {
+//    size_t index = hashKey(key) % capacity;
+//    size_t step = hashStep(key);
+//    while (table[index].inUse) {
+//        if (table[index].key == key) {
+//            table[index].inUse = false;
+//            table[index].ptr = nullptr;
+//            --size;
+//            return;
+//        }
+//        index = (index + step) % capacity;
+//    }
+//}
+//
+//void IntHashMap::clear() {
+//    for (auto& entry : table) {
+//        entry.inUse = false;
+//        entry.ptr = nullptr;
+//    }
+//    size = 0;
+//}
+//
+//void IntHashMap::rehash() {
+//    size_t newCapacity = nextPrime(capacity * 2);
+//    std::vector<Entry> oldTable = std::move(table);
+//
+//    table.clear();
+//    table.resize(newCapacity);
+//    capacity = newCapacity;
+//    size = 0;
+//
+//    for (auto& entry : oldTable) {
+//        if (entry.inUse) {
+//            insert(entry.key, entry.ptr);
+//        }
+//    }
+//}
 
+// IntHashMap.cpp
 #include "IntHashMap.h"
 #include <cmath>
-#include <stdexcept>
 
 static bool isPrime(size_t n) {
     if (n < 2) return false;
@@ -24,7 +114,7 @@ IntHashMap::IntHashMap(size_t initialSize)
 }
 
 IntHashMap::~IntHashMap() {
-    // Íè÷åãî íå íóæíî îñâîáîæäàòü, ò.ê. ìû íå âëàäååì óêàçàòåëÿìè
+    // ÐÐ¸Ñ‡ÐµÐ³Ð¾ Ð½Ðµ Ð½ÑƒÐ¶Ð½Ð¾ Ð¾ÑÐ²Ð¾Ð±Ð¾Ð¶Ð´Ð°Ñ‚ÑŒ, Ð¼Ñ‹ Ð½Ðµ Ð²Ð»Ð°Ð´ÐµÐµÐ¼ ptr Ð½Ð°Ð¿Ñ€ÑÐ¼ÑƒÑŽ
 }
 
 size_t IntHashMap::hashKey(int key) const {

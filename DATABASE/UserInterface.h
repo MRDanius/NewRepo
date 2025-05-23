@@ -1,94 +1,76 @@
-//#pragma once
-//#include "DatabaseManager.h"
-//
-//class UserInterface {
-//    DatabaseManager db;
-//
-//    void showMainMenu();
-//    void showCityMenu();
-//    void showDriverMenu();
-//    void showFineMenu();
-//    void showViolationMenu();
-//    void showStatisticsMenu();
-//
-//public:
-//    void run();
-//};
-
-//#pragma once
+п»ї//#pragma once
 //#include "DataBaseManager.h"
-//
-//class UserInterface {
-//    DatabaseManager db;
-//
-//    // Основные меню
-//    void showMainMenu();
-//    void showCityMenu();
-//    void showDriverMenu();
-//    void showFineMenu();
-//    void showViolationMenu();
-//    void showStatisticsMenu();
-//
-//    // Вспомогательные методы валидации
-//    static bool validateDate(const std::string& date);
-//    static bool validateName(const std::string& name);
-//
-//public:
-//    UserInterface() = default;
-//
-//    // Точка входа в приложение
-//    void run();
-//};
-
-//#pragma once
-//#include "DatabaseManager.h"
-//#include "TableFormatter.h"
-//#include <vector>
 //#include <string>
 //
 //class UserInterface {
-//    DatabaseManager db;
-//
-//    // Структура для хранения условий фильтрации
-//    struct FilterCondition {
-//        std::string field;
-//        std::string value;
-//        bool is_range = false;
-//        std::string range_from;
-//        std::string range_to;
-//    };
-//
-//    std::vector<FilterCondition> active_filters;
-//
-//    bool validateDate(const std::string& date);
-//    bool validateName(const std::string& name) const;
-//    tm parseDate(const std::string& dateStr);
-//    // Методы фильтрации
-//    void filterMenu();
-//    void addFilterCondition();
-//    void applyFilters();
-//    void resetFilters();
-//    bool matchesFilters(const FineRegistry::ViolationInfo& violation);
-//
-//    // Вспомогательные методы
-//    std::vector<std::vector<std::string>> prepareViolationData();
-//    void printDynamicTable(const std::vector<std::string>& headers,
-//        const std::vector<std::vector<std::string>>& data);
-//
 //public:
 //    void run();
-//    void showMainMenu();
-//    void showCityMenu();
-//    void showDriverMenu();
-//    void showFineMenu();
-//    void showViolationMenu();
-//    void showStatisticsMenu();
+//
+//private:
+//    struct Date {
+//        int day, month, year;
+//    };
+//
+//    static bool parseDate(const std::string& dateStr, Date& date);
+//    static bool isDateValid(const Date& date);
+//    static int calculateAge(const Date& birthDate, const Date& violationDate);
+//    static bool isDriverAdult(const std::string& birthDateStr,
+//        const std::string& violationDateStr);
+//
+//    static const int MAX_CITIES = 100;
+//    static const int MAX_VIOLATIONS_PER_CITY = 1000;
+//
+//    struct CityViolations {
+//        std::string name;
+//        int violationIds[MAX_VIOLATIONS_PER_CITY] = { 0 };
+//        int count = 0;
+//    };
+//
+//    void editDriverCity();
+//
+//    void collectCityStats(CityViolations* stats, int& cityCount);
+//    void printCityViolations(CityViolations* stats, int cityCount);
+//    static int compareCityStats(const void* a, const void* b);
+//
+//    DatabaseManager dbManager;
+//
+//    void mainMenu();
+//    void citiesMenu();
+//    void driversMenu();
+//    void finesMenu();
+//    void registryMenu();
+//    void statisticsMenu();
+//
+//    // ГЊГҐГІГ®Г¤Г» Г¤Г«Гї ГЄГ Г¦Г¤Г®Г© Г®ГЇГ¶ГЁГЁ Г¬ГҐГ­Гѕ
+//    void listCities();
+//    void addCity();
+//    void deleteCity();
+//    void filterCities();
+//    void clearCityFilters();
+//
+//    void listDrivers();
+//    void addDriver();
+//    void deleteDriver();
+//
+//    void listFines();
+//    void addFine();
+//    void deleteFine();
+//
+//    void listViolations();
+//    void addViolation();
+//    void markViolationPaid();
+//
+//    void showViolationsByCity();
+//    void showTopDrivers();
+//
+//    // Г“ГІГЁГ«ГЁГІГ» ГўГўГ®Г¤Г /ГўГ»ГўГ®Г¤Г 
+//    int readInt(const std::string& prompt);
+//    double readDouble(const std::string& prompt);
+//    std::string readString(const std::string& prompt);
 //};
 
 // UserInterface.h
-
 #pragma once
-
 #include "DataBaseManager.h"
 #include <string>
 
@@ -97,6 +79,29 @@ public:
     void run();
 
 private:
+    struct Date {
+        int day, month, year;
+    };
+
+    static bool parseDate(const std::string& dateStr, Date& date);
+    static bool isDateValid(const Date& date);
+    static int calculateAge(const Date& birthDate, const Date& violationDate);
+    static bool isDriverAdult(const std::string& birthDateStr,
+        const std::string& violationDateStr);
+
+    static const int MAX_CITIES = 100;
+    static const int MAX_VIOLATIONS_PER_CITY = 1000;
+
+    struct CityViolations {
+        std::string name;
+        int violationIds[MAX_VIOLATIONS_PER_CITY] = { 0 };
+        int count = 0;
+    };
+
+    void collectCityStats(CityViolations* stats, int& cityCount);
+    void printCityViolations(CityViolations* stats, int cityCount);
+    static int compareCityStats(const void* a, const void* b);
+
     DatabaseManager dbManager;
 
     void mainMenu();
@@ -106,29 +111,31 @@ private:
     void registryMenu();
     void statisticsMenu();
 
-    // Методы для каждой опции меню
     void listCities();
     void addCity();
     void deleteCity();
     void filterCities();
     void clearCityFilters();
+    void editCity();
 
     void listDrivers();
     void addDriver();
     void deleteDriver();
+    void editDriver();
 
     void listFines();
     void addFine();
     void deleteFine();
+    void editFine();
 
     void listViolations();
     void addViolation();
     void markViolationPaid();
+    void editViolation();
 
     void showViolationsByCity();
     void showTopDrivers();
 
-    // Утилиты ввода/вывода
     int readInt(const std::string& prompt);
     double readDouble(const std::string& prompt);
     std::string readString(const std::string& prompt);
