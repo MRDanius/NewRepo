@@ -3668,23 +3668,82 @@ void UserInterface::listDrivers() {
     auto& drivers = dbManager.getDrivers();
     int count = 0;
     DriverTable::DriverInfo* filtered = drivers.applyFilters(count);
-    cout << "+------------------------------+------------+----------------------+\n";
-    cout << "| Full Name                    | Birth Date | City                 |\n";
-    cout << "+------------------------------+------------+----------------------+\n";
+
+    // Определяем динамические ширины колонок на основе данных и заголовков:
+    const std::string headerName = "Full Name";
+    const std::string headerBirth = "Birth Date";
+    const std::string headerCity = "City";
+
+    int birthDateWidth = static_cast<int>(headerBirth.length()); // формат ДД.MM.YYYY всегда 10 символов, но пусть будет минимум под заголовок
+    if (birthDateWidth < 10) birthDateWidth = 10;
+
+    int fullNameWidth = static_cast<int>(headerName.length());
+    int cityNameWidth = static_cast<int>(headerCity.length());
+
+    // Сначала определяем максимальную длину "Full Name" и "City" среди отфильтрованных записей:
     if (filtered) {
         for (int i = 0; i < count; ++i) {
-            auto& di = filtered[i];
-            string cityName = dbManager.getCities().getCityNameById(di.cityId);
-            ostringstream oss;
-            oss << "| " << left << setw(28) << di.fullName << " | "
-                << left << setw(10) << di.birthDate << " | "
-                << left << setw(20) << cityName << " |";
-            cout << oss.str() << "\n";
+            const auto& di = filtered[i];
+            if (static_cast<int>(di.fullName.length()) > fullNameWidth) {
+                fullNameWidth = static_cast<int>(di.fullName.length());
+            }
+            // Получаем имя города по cityId
+            std::string cityName = dbManager.getCities().getCityNameById(di.cityId);
+            if (static_cast<int>(cityName.length()) > cityNameWidth) {
+                cityNameWidth = static_cast<int>(cityName.length());
+            }
+        }
+    }
+
+    // Добавляем небольшой отступ (по 2 пробела) для читаемости
+    fullNameWidth += 2;
+    birthDateWidth += 2;
+    cityNameWidth += 2;
+
+    // Выводим верхнюю границу таблицы
+    std::cout << "+"
+        << std::string(fullNameWidth + 1, '-') << "+"
+        << std::string(birthDateWidth + 1, '-') << "+"
+        << std::string(cityNameWidth + 1, '-') << "+"
+        << "\n";
+
+    // Заголовок
+    std::cout << "| " << std::left << std::setw(fullNameWidth) << headerName
+        << "| " << std::left << std::setw(birthDateWidth) << headerBirth
+        << "| " << std::left << std::setw(cityNameWidth) << headerCity
+        << "|\n";
+
+    // Разделитель после заголовка
+    std::cout << "+"
+        << std::string(fullNameWidth + 1, '-') << "+"
+        << std::string(birthDateWidth + 1, '-') << "+"
+        << std::string(cityNameWidth + 1, '-') << "+"
+        << "\n";
+
+    // Строки с данными
+    if (filtered) {
+        for (int i = 0; i < count; ++i) {
+            const auto& di = filtered[i];
+            std::string cityName = dbManager.getCities().getCityNameById(di.cityId);
+
+            std::ostringstream oss;
+            oss << "| " << std::left << std::setw(fullNameWidth) << di.fullName
+                << "| " << std::left << std::setw(birthDateWidth) << di.birthDate
+                << "| " << std::left << std::setw(cityNameWidth) << cityName
+                << "|";
+            std::cout << oss.str() << "\n";
         }
         delete[] filtered;
     }
-    cout << "+------------------------------+------------+----------------------+\n";
+
+    // Нижняя граница таблицы
+    std::cout << "+"
+        << std::string(fullNameWidth + 1, '-') << "+"
+        << std::string(birthDateWidth + 1, '-') << "+"
+        << std::string(cityNameWidth + 1, '-') << "+"
+        << "\n";
 }
+
 
 void UserInterface::addDriver() {
     string fullName = readString("Full name: ");
