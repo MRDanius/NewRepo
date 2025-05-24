@@ -202,9 +202,9 @@
 //}
 
 
-// DataBaseManager.cpp
 #include "DataBaseManager.h"
 #include <stdexcept>
+#include <sstream>
 
 void DatabaseManager::loadAll() {
     cities.loadFromFile();
@@ -248,12 +248,8 @@ void DatabaseManager::addDriver(const std::string& fullName,
     drivers.addDriver(fullName, birthDate, cityId);
 }
 
-void DatabaseManager::deleteDriver(const std::string& name) {
-    int driverId = drivers.getDriverId(name);
-    if (driverId == -1) return;
-    drivers.deleteDriver(name);
-    registry.updateDriverReferences(driverId);
-    saveAll();
+void DatabaseManager::deleteDriver(const std::string& /*name*/) {
+    // Реализация удаления осуществляется в UserInterface через deleteDriverById
 }
 
 void DatabaseManager::deleteDriverById(int driverId) {

@@ -164,6 +164,7 @@
 #include <map>
 #include "IntHashMap.h"
 #include <ctime>
+#include <vector>
 
 class DriverTable {
 public:
@@ -185,7 +186,6 @@ public:
     void addDriver(const std::string& fullName,
         const std::string& birthDate,
         int cityId);
-    void deleteDriver(const std::string& fullName);
     void deleteDriverById(int id);
 
     // Итератор по списку водителей
@@ -194,9 +194,11 @@ public:
     DriverInfo driverIteratorNext() const;
 
     // Геттеры
-    int getDriverId(const std::string& fullName) const;
+    int getDriverId(const std::string& fullName,
+        const std::string& birthDate = "",
+        int cityId = -1) const;
     int getCityIdForDriver(const std::string& fullName) const;
-    std::string getDriverNameById(int id) const;  // ← добавлено
+    std::string getDriverNameById(int id) const;
 
     // Обновление ссылок при удалении города
     void updateCityReferences(int deletedCityId);
@@ -214,6 +216,9 @@ public:
     int getFilterCount() const;
     std::string getFilterDescription(int index) const;
     void removeFilterAt(int index);
+
+    // Вспомогательное: вернуть всех водителей с данным ФИО
+    std::vector<DriverInfo> findAllByName(const std::string& fullName) const;
 
 private:
     // Узел списка водителей
@@ -240,7 +245,7 @@ private:
 
     DriverNode* head;                 // заголовочный узел
     IntHashMap idToDriverMap;         // поиск по ID
-    std::map<std::string, int> nameToIdMap; // ФИО → ID
+    std::map<std::string, int> nameToIdMap; // ФИО → ID (хранит только последнее вхождение)
     mutable DriverNode* currentIterator;
     Filter* currentFilter;
 

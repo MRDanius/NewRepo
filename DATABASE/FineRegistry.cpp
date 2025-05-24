@@ -457,7 +457,206 @@
 //}
 
 
-// FineRegistry.cpp
+//// FineRegistry.cpp
+//#include "FineRegistry.h"
+//#include <fstream>
+//#include <sstream>
+//#include <stdexcept>
+//#include <iomanip>
+//using namespace std;
+//
+//FineRegistry::FineRegistry()
+//    : head(new ViolationNode(-1, -1, -1, -1, false, "", nullptr)),
+//    currentIterator(nullptr),
+//    recordIdWidth(5),
+//    driverIdWidth(5),
+//    cityIdWidth(5),
+//    fineIdWidth(5),
+//    paidWidth(8),
+//    dateWidth(12)
+//{
+//    loadFromFile();
+//}
+//
+//FineRegistry::~FineRegistry() {
+//    ViolationNode* current = head->next;
+//    while (current) {
+//        ViolationNode* temp = current;
+//        current = current->next;
+//        delete temp;
+//    }
+//    delete head;
+//    recordToNodeMap.clear();
+//}
+//
+//void FineRegistry::loadFromFile() {
+//    ifstream file("registry.txt");
+//    if (!file.is_open()) {
+//        cerr << "Error opening registry file!" << endl;
+//        return;
+//    }
+//    ViolationNode* current = head->next;
+//    while (current) {
+//        ViolationNode* temp = current;
+//        current = current->next;
+//        delete temp;
+//    }
+//    head->next = nullptr;
+//    recordToNodeMap.clear();
+//
+//    string line;
+//    while (getline(file, line)) {
+//        parseLine(line);
+//    }
+//    file.close();
+//}
+//
+//void FineRegistry::parseLine(const std::string& line) {
+//    if (line.empty()) return;
+//    istringstream iss(line);
+//    int recordId, driverId, cityId, fineId;
+//    int paidInt;
+//    string date;
+//    iss >> recordId >> driverId >> cityId >> fineId >> paidInt >> quoted(date);
+//
+//    bool paid = (paidInt == 1);
+//    addViolationNode(recordId, driverId, cityId, fineId, paid, date);
+//}
+//
+//void FineRegistry::addViolationNode(int recordId, int driverId, int cityId,
+//    int fineId, bool paid, const std::string& date)
+//{
+//    ViolationNode* newNode = new ViolationNode(
+//        recordId, driverId, cityId, fineId, paid, date, head->next
+//    );
+//    head->next = newNode;
+//    recordToNodeMap.insert(recordId, newNode);
+//}
+//
+//void FineRegistry::addViolation(int driverId, int cityId, int fineId, const std::string& date) {
+//    int newId = 1;
+//    ViolationNode* curr = head->next;
+//    while (curr) {
+//        if (curr->recordId >= newId) newId = curr->recordId + 1;
+//        curr = curr->next;
+//    }
+//    addViolationNode(newId, driverId, cityId, fineId, false, date);
+//}
+//
+//void FineRegistry::violationIteratorReset() const {
+//    currentIterator = head->next;
+//}
+//
+//bool FineRegistry::violationIteratorHasNext() const {
+//    return currentIterator != nullptr;
+//}
+//
+//FineRegistry::ViolationInfo FineRegistry::violationIteratorNext(
+//    const DriverTable& drivers, const CityTable& cities, const FineTable& fines) const
+//{
+//    ViolationInfo info{};
+//    if (!currentIterator) return info;
+//    info.recordId = currentIterator->recordId;
+//    info.driverId = currentIterator->driverId;
+//    info.cityId = currentIterator->cityId;
+//    info.fineId = currentIterator->fineId;
+//    info.paid = currentIterator->paid;
+//    info.date = currentIterator->date;
+//
+//    info.driverName = drivers.getDriverNameById(info.driverId);
+//    info.cityName = cities.getCityNameById(info.cityId);
+//    info.fineType = fines.getFineTypeById(info.fineId);
+//    info.fineAmount = fines.getAmountById(info.fineId);
+//
+//    currentIterator = currentIterator->next;
+//    return info;
+//}
+//
+//void FineRegistry::markAsPaid(int recordId) {
+//    ViolationNode* node = recordToNodeMap.find<ViolationNode>(recordId);
+//    if (node) {
+//        node->paid = true;
+//    }
+//}
+//
+//void FineRegistry::updateDriverReferences(int deletedDriverId) {
+//    ViolationNode* curr = head->next;
+//    while (curr) {
+//        if (curr->driverId == deletedDriverId) {
+//            curr->driverId = -1;
+//        }
+//        curr = curr->next;
+//    }
+//}
+//
+//void FineRegistry::updateCityReferences(int deletedCityId) {
+//    ViolationNode* curr = head->next;
+//    while (curr) {
+//        if (curr->cityId == deletedCityId) {
+//            curr->cityId = -1;
+//        }
+//        curr = curr->next;
+//    }
+//}
+//
+//void FineRegistry::updateViolationsCity(int driverId, int newCityId) {
+//    ViolationNode* curr = head->next;
+//    while (curr) {
+//        if (curr->driverId == driverId) {
+//            curr->cityId = newCityId;
+//        }
+//        curr = curr->next;
+//    }
+//}
+//
+//FineRegistry::ViolationInfo FineRegistry::getViolationById(int recordId,
+//    const DriverTable& drivers,
+//    const CityTable& cities,
+//    const FineTable& fines) const
+//{
+//    ViolationNode* curr = head->next;
+//    while (curr) {
+//        if (curr->recordId == recordId) {
+//            ViolationInfo info;
+//            info.recordId = curr->recordId;
+//            info.driverId = curr->driverId;
+//            info.cityId = curr->cityId;
+//            info.fineId = curr->fineId;
+//            info.paid = curr->paid;
+//            info.date = curr->date;
+//
+//            info.driverName = drivers.getDriverNameById(info.driverId);
+//            info.cityName = cities.getCityNameById(info.cityId);
+//            info.fineType = fines.getFineTypeById(info.fineId);
+//            info.fineAmount = fines.getAmountById(info.fineId);
+//
+//            return info;
+//        }
+//        curr = curr->next;
+//    }
+//    return ViolationInfo{};
+//}
+//
+//void FineRegistry::saveToFile() const {
+//    ofstream file("registry.txt");
+//    if (!file.is_open()) {
+//        cerr << "Error opening registry file for writing!" << endl;
+//        return;
+//    }
+//    ViolationNode* curr = head->next;
+//    while (curr) {
+//        file << curr->recordId << ' '
+//            << curr->driverId << ' '
+//            << curr->cityId << ' '
+//            << curr->fineId << ' '
+//            << (curr->paid ? 1 : 0) << ' '
+//            << quoted(curr->date) << '\n';
+//        curr = curr->next;
+//    }
+//    file.close();
+//}
+
+
 #include "FineRegistry.h"
 #include <fstream>
 #include <sstream>
@@ -465,6 +664,7 @@
 #include <iomanip>
 using namespace std;
 
+// Конструктор: инициализация заголовочного узла и загрузка данных
 FineRegistry::FineRegistry()
     : head(new ViolationNode(-1, -1, -1, -1, false, "", nullptr)),
     currentIterator(nullptr),
@@ -478,6 +678,7 @@ FineRegistry::FineRegistry()
     loadFromFile();
 }
 
+// Деструктор: очистка списка и хеш-таблицы
 FineRegistry::~FineRegistry() {
     ViolationNode* current = head->next;
     while (current) {
@@ -489,12 +690,14 @@ FineRegistry::~FineRegistry() {
     recordToNodeMap.clear();
 }
 
+// Загрузка данных из файла
 void FineRegistry::loadFromFile() {
     ifstream file("registry.txt");
     if (!file.is_open()) {
         cerr << "Error opening registry file!" << endl;
         return;
     }
+    // Очищаем существующие данные
     ViolationNode* current = head->next;
     while (current) {
         ViolationNode* temp = current;
@@ -511,6 +714,7 @@ void FineRegistry::loadFromFile() {
     file.close();
 }
 
+// Парсинг строки: "recordId driverId cityId fineId paid date"
 void FineRegistry::parseLine(const std::string& line) {
     if (line.empty()) return;
     istringstream iss(line);
@@ -523,6 +727,7 @@ void FineRegistry::parseLine(const std::string& line) {
     addViolationNode(recordId, driverId, cityId, fineId, paid, date);
 }
 
+// Добавление узла в список и в хеш-таблицу
 void FineRegistry::addViolationNode(int recordId, int driverId, int cityId,
     int fineId, bool paid, const std::string& date)
 {
@@ -533,7 +738,9 @@ void FineRegistry::addViolationNode(int recordId, int driverId, int cityId,
     recordToNodeMap.insert(recordId, newNode);
 }
 
+// Добавление нового нарушения (с генерацией recordId)
 void FineRegistry::addViolation(int driverId, int cityId, int fineId, const std::string& date) {
+    // Генерация recordId: максимум существующего +1
     int newId = 1;
     ViolationNode* curr = head->next;
     while (curr) {
@@ -543,18 +750,21 @@ void FineRegistry::addViolation(int driverId, int cityId, int fineId, const std:
     addViolationNode(newId, driverId, cityId, fineId, false, date);
 }
 
+// Итератор: сброс на начало
 void FineRegistry::violationIteratorReset() const {
     currentIterator = head->next;
 }
 
+// Есть ли следующий?
 bool FineRegistry::violationIteratorHasNext() const {
     return currentIterator != nullptr;
 }
 
+// Получение следующего с детализированной информацией
 FineRegistry::ViolationInfo FineRegistry::violationIteratorNext(
     const DriverTable& drivers, const CityTable& cities, const FineTable& fines) const
 {
-    ViolationInfo info{};
+    ViolationInfo info;
     if (!currentIterator) return info;
     info.recordId = currentIterator->recordId;
     info.driverId = currentIterator->driverId;
@@ -563,8 +773,13 @@ FineRegistry::ViolationInfo FineRegistry::violationIteratorNext(
     info.paid = currentIterator->paid;
     info.date = currentIterator->date;
 
+    // Получаем driverName
     info.driverName = drivers.getDriverNameById(info.driverId);
+
+    // Получаем cityName
     info.cityName = cities.getCityNameById(info.cityId);
+
+    // Получаем fineType и fineAmount
     info.fineType = fines.getFineTypeById(info.fineId);
     info.fineAmount = fines.getAmountById(info.fineId);
 
@@ -572,6 +787,32 @@ FineRegistry::ViolationInfo FineRegistry::violationIteratorNext(
     return info;
 }
 
+// Получить одно нарушение по recordId
+FineRegistry::ViolationInfo FineRegistry::getViolationById(
+    int recordId,
+    const DriverTable& drivers,
+    const CityTable& cities,
+    const FineTable& fines) const
+{
+    ViolationNode* node = recordToNodeMap.find<ViolationNode>(recordId);
+    if (!node) return ViolationInfo{};
+    ViolationInfo info;
+    info.recordId = node->recordId;
+    info.driverId = node->driverId;
+    info.cityId = node->cityId;
+    info.fineId = node->fineId;
+    info.paid = node->paid;
+    info.date = node->date;
+
+    info.driverName = drivers.getDriverNameById(info.driverId);
+    info.cityName = cities.getCityNameById(info.cityId);
+    info.fineType = fines.getFineTypeById(info.fineId);
+    info.fineAmount = fines.getAmountById(info.fineId);
+
+    return info;
+}
+
+// Пометка оплаченным
 void FineRegistry::markAsPaid(int recordId) {
     ViolationNode* node = recordToNodeMap.find<ViolationNode>(recordId);
     if (node) {
@@ -579,6 +820,7 @@ void FineRegistry::markAsPaid(int recordId) {
     }
 }
 
+// Обновление ссылок при удалении водителя (driverId = -1)
 void FineRegistry::updateDriverReferences(int deletedDriverId) {
     ViolationNode* curr = head->next;
     while (curr) {
@@ -589,6 +831,7 @@ void FineRegistry::updateDriverReferences(int deletedDriverId) {
     }
 }
 
+// Обновление ссылок при удалении города (cityId = -1)
 void FineRegistry::updateCityReferences(int deletedCityId) {
     ViolationNode* curr = head->next;
     while (curr) {
@@ -599,6 +842,7 @@ void FineRegistry::updateCityReferences(int deletedCityId) {
     }
 }
 
+// Обновление cityId у всех нарушений данного водителя
 void FineRegistry::updateViolationsCity(int driverId, int newCityId) {
     ViolationNode* curr = head->next;
     while (curr) {
@@ -609,34 +853,42 @@ void FineRegistry::updateViolationsCity(int driverId, int newCityId) {
     }
 }
 
-FineRegistry::ViolationInfo FineRegistry::getViolationById(int recordId,
-    const DriverTable& drivers,
-    const CityTable& cities,
-    const FineTable& fines) const
-{
-    ViolationNode* curr = head->next;
-    while (curr) {
-        if (curr->recordId == recordId) {
-            ViolationInfo info;
-            info.recordId = curr->recordId;
-            info.driverId = curr->driverId;
-            info.cityId = curr->cityId;
-            info.fineId = curr->fineId;
-            info.paid = curr->paid;
-            info.date = curr->date;
+// ======== НОВЫЕ МЕТОДЫ ДЛЯ РЕДАКТИРОВАНИЯ НАРУШЕНИЯ ========
 
-            info.driverName = drivers.getDriverNameById(info.driverId);
-            info.cityName = cities.getCityNameById(info.cityId);
-            info.fineType = fines.getFineTypeById(info.fineId);
-            info.fineAmount = fines.getAmountById(info.fineId);
-
-            return info;
-        }
-        curr = curr->next;
-    }
-    return ViolationInfo{};
+// Изменить водителя (и cityId) у записи нарушения
+bool FineRegistry::updateViolationDriver(int recordId, int newDriverId, int newCityId) {
+    ViolationNode* node = recordToNodeMap.find<ViolationNode>(recordId);
+    if (!node) return false;
+    node->driverId = newDriverId;
+    node->cityId = newCityId;
+    return true;
 }
 
+// Изменить тип штрафа (fineId)
+bool FineRegistry::updateViolationFine(int recordId, int newFineId) {
+    ViolationNode* node = recordToNodeMap.find<ViolationNode>(recordId);
+    if (!node) return false;
+    node->fineId = newFineId;
+    return true;
+}
+
+// Изменить дату нарушения
+bool FineRegistry::updateViolationDate(int recordId, const std::string& newDate) {
+    ViolationNode* node = recordToNodeMap.find<ViolationNode>(recordId);
+    if (!node) return false;
+    node->date = newDate;
+    return true;
+}
+
+// Изменить статус оплаты
+bool FineRegistry::updateViolationPaid(int recordId, bool paid) {
+    ViolationNode* node = recordToNodeMap.find<ViolationNode>(recordId);
+    if (!node) return false;
+    node->paid = paid;
+    return true;
+}
+
+// Сохранение данных в файл
 void FineRegistry::saveToFile() const {
     ofstream file("registry.txt");
     if (!file.is_open()) {

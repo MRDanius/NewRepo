@@ -158,16 +158,14 @@ private:
     static bool parseDate(const std::string& dateStr, Date& date);
     static bool isDateValid(const Date& date);
     static int calculateAge(const Date& birthDate, const Date& violationDate);
-    static bool isDriverAdult(const std::string& birthDateStr,
-        const std::string& violationDateStr);
 
     static const int MAX_CITIES = 100;
     static const int MAX_VIOLATIONS_PER_CITY = 1000;
 
     struct CityViolations {
         std::string name;
-        int violationIds[MAX_VIOLATIONS_PER_CITY] = { 0 };
-        int count = 0;
+        int violationIds[MAX_VIOLATIONS_PER_CITY];
+        int count;
     };
 
     DatabaseManager dbManager;
@@ -180,7 +178,7 @@ private:
     void registryMenu();
     void statisticsMenu();
 
-    // Городa
+    // Города
     void listCities();
     void addCity();
     void deleteCity();

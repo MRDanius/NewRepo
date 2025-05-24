@@ -585,25 +585,7 @@ void DriverTable::addDriverNode(int id, const std::string& fullName,
     nameToIdMap[fullName] = id;
 }
 
-// Проверка ФИО
-bool DriverTable::validateName(const std::string& name) const {
-    static const regex pattern("^[A-Za-z\\s]+$");
-    return regex_match(name, pattern);
-}
-
-// Проверка формата даты
-bool DriverTable::validateDate(const std::string& date) const {
-    static const regex pattern("^\\d{2}\\.\\d{2}\\.\\d{4}$");
-    return regex_match(date, pattern);
-}
-
-// Проверка возраста: 18–100
-bool DriverTable::validateAge(const std::string& birthDate) const {
-    int age = calculateAgeFromBirth(birthDate);
-    return age >= 18 && age <= 100;
-}
-
-// Добавление водителя (валидирует ФИО, дату и возраст)
+// Добавление водителя (OK)
 void DriverTable::addDriver(const std::string& fullName,
     const std::string& birthDate, int cityId)
 {
@@ -619,14 +601,6 @@ void DriverTable::addDriver(const std::string& fullName,
         if (pair.second >= newId) newId = pair.second + 1;
     }
     addDriverNode(newId, fullName, birthDate, cityId);
-}
-
-// Удаление водителя по ФИО
-void DriverTable::deleteDriver(const std::string& fullName) {
-    auto it = nameToIdMap.find(fullName);
-    if (it == nameToIdMap.end()) return;
-    int id = it->second;
-    deleteDriverById(id);
 }
 
 // Удаление водителя по ID
@@ -668,10 +642,10 @@ DriverTable::DriverInfo DriverTable::driverIteratorNext() const {
     return info;
 }
 
-// Геттер: получить ID по ФИО
-int DriverTable::getDriverId(const std::string& fullName) const {
-    auto it = nameToIdMap.find(fullName);
-    return (it != nameToIdMap.end()) ? it->second : -1;
+// Геттер: получить ФИО по ID
+std::string DriverTable::getDriverNameById(int id) const {
+    DriverNode* node = idToDriverMap.find<DriverNode>(id);
+    return node ? node->fullName : "";
 }
 
 // Геттер: получить ID города для водителя
@@ -682,10 +656,53 @@ int DriverTable::getCityIdForDriver(const std::string& fullName) const {
     return node ? node->cityId : -1;
 }
 
-// Геттер: получить ФИО по ID
-std::string DriverTable::getDriverNameById(int id) const {
-    DriverNode* node = idToDriverMap.find<DriverNode>(id);
-    return node ? node->fullName : "";
+// Геттер: получить ID по ФИО (в случае дублей возвращает первый попавшийся,
+// если заданы birthDate и cityId — найдет точное совпадение)
+int DriverTable::getDriverId(const std::string& fullName,
+    const std::string& birthDate,
+    int cityId) const
+{
+    std::vector<DriverInfo> candidates = findAllByName(fullName);
+    if (candidates.empty()) return -1;
+    if (candidates.size() == 1 && birthDate.empty() && cityId == -1) {
+        return candidates[0].id;
+    }
+    // Если задана только дата рождения
+    if (!birthDate.empty() && cityId == -1) {
+        for (auto& d : candidates) {
+            if (d.birthDate == birthDate) return d.id;
+        }
+        return -1;
+    }
+    // Если заданы дата и город
+    if (!birthDate.empty() && cityId != -1) {
+        for (auto& d : candidates) {
+            if (d.birthDate == birthDate && d.cityId == cityId) return d.id;
+        }
+        return -1;
+    }
+    // Если заданы только город
+    if (birthDate.empty() && cityId != -1) {
+        for (auto& d : candidates) {
+            if (d.cityId == cityId) return d.id;
+        }
+        return -1;
+    }
+    // Несколько совпадений, но неподходят уточнения
+    return -1;
+}
+
+// Вспомогательное: вернуть всех водителей с данным ФИО
+std::vector<DriverTable::DriverInfo> DriverTable::findAllByName(const std::string& fullName) const {
+    std::vector<DriverInfo> result;
+    DriverNode* curr = head->next;
+    while (curr) {
+        if (curr->fullName == fullName) {
+            result.push_back(cloneInfo(curr));
+        }
+        curr = curr->next;
+    }
+    return result;
 }
 
 // Обновление ссылок при удалении города: устанавливаем cityId = -1
@@ -725,6 +742,24 @@ bool DriverTable::updateDriverCity(int id, int newCityId) {
     if (!node) return false;
     node->cityId = newCityId;
     return true;
+}
+
+// Проверка ФИО
+bool DriverTable::validateName(const std::string& name) const {
+    static const regex pattern("^[A-Za-z\\s]+$");
+    return regex_match(name, pattern);
+}
+
+// Проверка формата даты
+bool DriverTable::validateDate(const std::string& date) const {
+    static const regex pattern("^\\d{2}\\.\\d{2}\\.\\d{4}$");
+    return regex_match(date, pattern);
+}
+
+// Проверка возраста: 18–100
+bool DriverTable::validateAge(const std::string& birthDate) const {
+    int age = calculateAgeFromBirth(birthDate);
+    return age >= 18 && age <= 100;
 }
 
 // Сохранение в файл
